@@ -17,11 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-<<<<<<< HEAD
-=======
 
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 
->>>>>>> f0f4776ff75e6316c8f8b37c6ae10b4a3d697a90
