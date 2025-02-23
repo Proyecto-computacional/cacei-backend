@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PruebaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,3 +37,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
+Route::post('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
