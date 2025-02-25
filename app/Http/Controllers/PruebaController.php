@@ -20,7 +20,7 @@ class PruebaController extends Controller
 
         // Guardar los datos en la base de datos
         $user = new User();
-        $user->user_rpe = (int) $request->rpe;  // Convertimos rpe a entero
+        $user->user_rpe = $request->rpe;  // Convertimos rpe a entero
         $user->role = $request->cargo;   
         $user->save();          
 
