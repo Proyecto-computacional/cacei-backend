@@ -40,3 +40,4 @@ require __DIR__.'/auth.php';
 
 Route::get('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
 Route::post('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
+Route::post('/guardar', [PruebaController::class, 'guardar'])->name('guardar');

@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prueba API REST - POST</title>
 
-    <script>
-        function enableSaveButton(rpe, cargo) {
-            // Habilitar botón de guardar y almacenar los valores en campos ocultos
-            document.getElementById('saveButton').disabled = false;
-            document.getElementById('rpe').value = rpe;
-            document.getElementById('cargo').value = cargo;
-        }
-    </script>
 </head>
 <body>
     <h1>Prueba de API REST - Método POST - Valida Usuarios</h1>
@@ -61,8 +53,41 @@
             if (curl_errno($ch)) {
                 echo "Error en la solicitud: " . curl_error($ch);
             } else {
-                // Mostrar la respuesta de la API
-                echo htmlspecialchars($response, ENT_QUOTES, 'UTF-8');
+                // Decodificar la respuesta JSON
+                $data = json_decode($response, true); // Convertir en array asociativo
+
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    // Verificar si la respuesta es correcta
+                    if (!empty($data['correcto']) && $data['correcto'] === true && !empty($data['datos'])) {
+                        // Obtener el primer elemento del array "datos"
+                         $usuario = $data['datos'][0];
+
+                        // Extraer valores específicos
+                        $rpe = $usuario['rpe'] ?? 'No disponible';
+                        $correo = $usuario['correo'] ?? 'No disponible';
+                        $cargo = $usuario['cargo'] ?? 'No disponible';
+
+                        // Mostrar los datos extraídos
+                        echo "<h3>Datos del usuario:</h3>";
+                        echo "<ul>";
+                        echo "<li><strong>RPE:</strong> " . htmlspecialchars($rpe, ENT_QUOTES, 'UTF-8') . "</li>";
+                        echo "<li><strong>Correo:</strong> " . htmlspecialchars($correo, ENT_QUOTES, 'UTF-8') . "</li>";
+                        echo "<li><strong>Cargo:</strong> " . htmlspecialchars($cargo, ENT_QUOTES, 'UTF-8') . "</li>";
+                        echo "</ul>";
+                        // **Formulario oculto para enviar los datos al controlador de Laravel**
+            echo '
+            <form method="POST" action="/guardar">
+                <input type="hidden" name="user_rpe" value="' . htmlspecialchars($rpe, ENT_QUOTES, 'UTF-8') . '">
+                <input type="hidden" name="usr_mail" value="' . htmlspecialchars($correo, ENT_QUOTES, 'UTF-8') . '">
+                <input type="hidden" name="role" value="' . htmlspecialchars($cargo, ENT_QUOTES, 'UTF-8') . '">
+                <button type="submit">Guardar en la Base de Datos</button>
+            </form>';
+                    } else {
+                        echo "<p>No se encontraron datos válidos.</p>";
+                    }
+                } else {
+                     echo "<p>Error al decodificar JSON.</p>";
+                }
             }
 
             // Cerrar la conexión cURL
@@ -70,11 +95,5 @@
         }
         ?>
     </pre>
-    <form method="POST" action="/guardar">
-        @csrf
-        <input type="hidden" id="rpe" name="rpe">
-        <input type="hidden" id="cargo" name="cargo">
-        <button type="submit" id="saveButton" disabled>Guardar Usuario</button>
-    </form>
 </body>
 </html>
