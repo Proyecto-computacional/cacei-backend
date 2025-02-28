@@ -44,7 +44,7 @@ Asegúrate de tener instalados los siguientes requisitos antes de continuar:
    DB_PASSWORD=tu_contraseña
    ```
 
-5. Ejecuta las migraciones (*pendientes por ahora, no ejecutar las migraciones*):
+5. Ejecuta las migraciones (*queda pendiente la asignación de roles por su cargo*):
 
    ```sh
    php artisan migrate 
