@@ -50,15 +50,30 @@ Asegúrate de tener instalados los siguientes requisitos antes de continuar:
    php artisan migrate 
    ```
 
-## Ejecutar el Servidor
+## Ejecutar el Servidor (Desarrollo)
 
-Para iniciar el servidor localmente, usa:
+Para iniciar el servidor localmente necesitarás dos terminales, en la primera, usa:
 
+```sh
+npm run dev
+```
+
+En la segunda:
 ```sh
 php artisan serve
 ```
 
-Por defecto, la API correrá en `http://127.0.0.1:8000`.
+## Ejecutar el Servidor (Producción)
+Construye el proyecto:
+```sh
+npm run build
+```
+
+Para iniciar el servidor, usa:
+
+```sh
+php artisan serve
+```
 
 ## Pruebas de la API
 
