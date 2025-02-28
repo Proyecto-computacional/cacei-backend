@@ -74,6 +74,10 @@
                         echo "<li><strong>Correo:</strong> " . htmlspecialchars($correo, ENT_QUOTES, 'UTF-8') . "</li>";
                         echo "<li><strong>Cargo:</strong> " . htmlspecialchars($cargo, ENT_QUOTES, 'UTF-8') . "</li>";
                         echo "</ul>";
+
+                        /////////////////////////////////
+                        echo "<h3>Procesos de acreditación vinculados:</h3>";
+
                         // **Formulario oculto para enviar los datos al controlador de Laravel**
             echo '
             <form method="POST" action="/guardar">
