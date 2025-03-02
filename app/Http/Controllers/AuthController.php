@@ -6,49 +6,74 @@ use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
+
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
         // Validar los datos de entrada
-       $request->validate([
-            'rpe' => 'required|rpe',
-            'password' => 'required|password', 
-        ]);
+        /*$request->validate([
+            'rpe' => 'required',
+            'password' => 'required',
+        ]);*/
 
-        $url = "https://servicios.ing.uaslp.mx/ws_cacei/ValidaUsuario.php";
-        $data = [
-        'rpe' => $request->rpe,
-        'password' => $request->password
+        $endpoint = "https://servicios.ing.uaslp.mx/ws_cacei/ValidaUsuario.php";
+        $clave = "B3E06D96-1562-4713-BCD7-7F762A87F205";
+        $payload = [
+            'rpe' => $request->rpe,
+            'contra' => $request->password,
+            'key' => $clave
         ];
 
-        $response = Http::withHeaders([
-        'Authorization' => 'Bearer B3E06D96-1562-4713-BCD7-7F762A87F205',
-        'Content-Type' => 'application/x-www-form-urlencoded',
-        ])->post($url, $data);
+        $responseApi = Http::withHeaders([
+            'Content-Type: application/json',
+        ])->post($endpoint, $payload);
 
-        if ($response->successful()) {
+        if ($responseApi->successful()) {
 
-            $data = $response->json();
+            $responseApi = $responseApi->json();
+            //indices response
+            /*"correcto":true,
+                "datos":[{
+                    "rpe",
+                    "nombre",
+                    "correo",
+                    "cve_area",
+                    "area",
+                    "cve_carrera",
+                    "carrera",
+                    "cve_cargo",
+                    "cargo"
 
-            $user = new User();
-            $user->fill([
-                'rpe' => $data['rpe'],
-                'email' => $data['email'],
-                'name' => $data['nombre'],
-                'role' => $data['nombre'],
-            ]);
-            // Puedes devolverlo como JSON o usarlo como necesites
+            "correcto":false,
+            "mensaje"
+            */
+
+            if ($responseApi['correcto']) {
+                //json de datos
+                $data = $responseApi['datos'][0];
+                //Crear registro en nuestra base de datos(pendiente)
+
                 return response()->json([
-                'user' => $user,
-                'message' => 'Login exitoso'
+                    'correct' => true,
+                    'message' => 'Login exitoso',
+                    'role' => $data['cargo'],
+                    //'token' => $token
                 ]);
             } else {
                 return response()->json([
-                    'message' => 'Error en el login',
-                    'status' => $response->status()
-                ], $response->status());
-             }
+                    'correct' => false,
+                    'message' => 'Error en rpe o contra',
+                ]);
+            }
+
+        } else {
+            return response()->json([
+                'message' => 'Error en api universitaria',
+                'status' => $responseApi->status()
+            ], $responseApi->status());
         }
     }
+}

@@ -14,13 +14,14 @@ use Illuminate\Http\RedirectResponse;
 class PruebaController extends Controller
 {
     //
-    public function index(){
+    public function index()
+    {
         return view('prueba_valida_usuario_v1');
     }
     public function guardar(Request $request): RedirectResponse
     {
-         
-            // Validar los datos recibidos
+
+        // Validar los datos recibidos
         $request->validate([
             'user_rpe' => 'required|string|max:255',
             'usr_mail' => 'required|email|max:255',
