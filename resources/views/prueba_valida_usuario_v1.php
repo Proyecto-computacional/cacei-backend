@@ -78,8 +78,8 @@
             echo '
             <form method="POST" action="/guardar">
                 <input type="hidden" name="user_rpe" value="' . htmlspecialchars($rpe, ENT_QUOTES, 'UTF-8') . '">
-                <input type="hidden" name="usr_mail" value="' . htmlspecialchars($correo, ENT_QUOTES, 'UTF-8') . '">
-                <input type="hidden" name="role" value="' . htmlspecialchars($cargo, ENT_QUOTES, 'UTF-8') . '">
+                <input type="hidden" name="user_mail" value="' . htmlspecialchars($correo, ENT_QUOTES, 'UTF-8') . '">
+                <input type="hidden" name="user_role" value="' . htmlspecialchars($cargo, ENT_QUOTES, 'UTF-8') . '">
                 <button type="submit">Guardar en la Base de Datos</button>
             </form>';
                     } else {
