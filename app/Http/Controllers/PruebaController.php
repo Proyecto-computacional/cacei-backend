@@ -24,16 +24,16 @@ class PruebaController extends Controller
         // Validar los datos recibidos
         $request->validate([
             'user_rpe' => 'required|string|max:255',
-            'usr_mail' => 'required|email|max:255',
-            'role' => 'required|string|max:255',
+            'user_mail' => 'required|email|max:255',
+            'user_role' => 'required|string|max:255',
         ]);
 
         // Guardar en la base de datos (actualizar si ya existe)
         User::updateOrCreate(
             ['user_rpe' => $request->user_rpe],
             [
-                'usr_mail' => $request->usr_mail,
-                'role' => $request->role,
+                'user_mail' => $request->user_mail,
+                'user_role' => $request->user_role,
             ]
         );
 
