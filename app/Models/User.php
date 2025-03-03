@@ -12,8 +12,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     public $timestamps = false;
-    protected $primaryKey = 'user_rpe'; 
-    public $incrementing = false; 
+    protected $primaryKey = 'user_rpe';
+    public $incrementing = false;
     protected $keyType = 'string';
     /**
      * The attributes that are mass assignable.
@@ -26,18 +26,23 @@ class User extends Authenticatable
         'user_role',
     ];
 
+    public function processes()
+    {
+        return $this->hasMany(Accreditation_Process::class);
+    }
+
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
 
-     /**protected $hidden = [
-        'password',
-        'remember_token',
-        'password' => 'hashed',
-    ];
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];*/
+    /**protected $hidden = [
+       'password',
+       'remember_token',
+       'password' => 'hashed',
+   ];
+   protected $casts = [
+       'email_verified_at' => 'datetime',
+   ];*/
 }
