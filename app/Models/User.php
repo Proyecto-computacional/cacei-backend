@@ -20,6 +20,8 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    protected $table = 'user_t';
     protected $fillable = [
         'user_rpe',
         'user_mail',
@@ -32,12 +34,12 @@ class User extends Authenticatable
      * @var array<string, string>
      */
 
-     /**protected $hidden = [
-        'password',
-        'remember_token',
-        'password' => 'hashed',
-    ];
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];*/
+    /**protected $hidden = [
+       'password',
+       'remember_token',
+       'password' => 'hashed',
+   ];
+   protected $casts = [
+       'email_verified_at' => 'datetime',
+   ];*/
 }
