@@ -56,11 +56,21 @@ class AuthController extends Controller
                 $data = $responseApi['datos'][0];
                 //Crear registro en nuestra base de datos(pendiente)
 
+                $user = User::updateOrCreate(
+                    ['user_rpe' => $data['rpe']],
+                    [
+                        'user_mail' => $data['correo'],
+                        'user_role' => $data['cargo'],
+                    ]
+                );
+                $token = $user->createToken('auth_token')->plainTextToken;
+
                 return response()->json([
                     'correct' => true,
                     'message' => 'Login exitoso',
                     'role' => $data['cargo'],
-                    //'token' => $token
+                    'name' => $data['nombre'],
+                    'token' => $token
                 ]);
             } else {
                 return response()->json([
@@ -75,5 +85,10 @@ class AuthController extends Controller
                 'status' => $responseApi->status()
             ], $responseApi->status());
         }
+    }
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        return response()->json(['message' => 'Logout exitoso']);
     }
 }

@@ -27,6 +27,8 @@ Route::middleware(['role:guest'])->get('/admin', function () {
 //1. Login
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
+
 //2. Menu prinicipal
 Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $request) {
     return response()->json(['message' => 'Bienvenido al menu principal']);
