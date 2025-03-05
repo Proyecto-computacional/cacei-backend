@@ -16,6 +16,7 @@ use App\Http\Controllers\ProcessController;
 |
 */
 
+/*
 Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Request $request) {
     $user = $request->user();
 
@@ -30,7 +31,10 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
         'linked_processes' => $linkedProcesses
     ]);
 });
+*/
+
+
 
 
 Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
-Route::get('/test_check_user_example', [ProcessController::class, 'checkUser']);
+Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
