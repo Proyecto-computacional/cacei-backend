@@ -27,7 +27,6 @@
                     <tr>
                         <th>RPE</th>
                         <th>Rol</th>
-                        <th>Asignación</th>
                         <th>Configuración de permisos</th>
                     </tr>
                 </thead>
@@ -44,7 +43,6 @@
                              @endforeach
                         </select>
                     </td>
-                    <td></td> <!-- Asignación en blanco por ahora -->
                     <td>
                         <i class="{{ iluminarPermiso($usuario->user_role, 'ver') }}">Ver</i>
                         <i class="{{ iluminarPermiso($usuario->user_role, 'crear') }}">Crear</i>
