@@ -17,7 +17,7 @@ Asegúrate de tener instalados los siguientes requisitos antes de continuar:
 
    ```sh
    git clone TU_REPO_URL backend
-   cd backend
+   c
    ```
 
 2. Instala las dependencias con Composer:
