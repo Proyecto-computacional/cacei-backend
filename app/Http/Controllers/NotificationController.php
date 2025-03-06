@@ -6,28 +6,38 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 { 
-    /*
+    // Método para obtener todas las notificaciones ordenadas por 'pinned' y luego por 'created_at'
     public function index()
     {
-        $user = auth()->user();//Obtiene al usuario actualmente autenticado
-        $notifications = $user->notifications;//Accede a la relación notifications definida en User.php y obtiene todas sus notificaciones.(MODIFICAR USER.PHP)
+        return Notification::orderBy('pinned', 'desc')  // Ordena primero por 'pinned' en orden descendente
+            ->orderBy('created_at', 'desc')  // Luego ordena por 'created_at' en orden descendente
+            ->get();  // Devuelve todas las notificaciones
+    }
 
-        return response()->json($notifications);//Regresa las notificaciones en formato JSON para que el frontend las pueda usar.
-    }*/
-
-    public function markAsSeen($id)
+    // Método para alternar el estado de favorito de una notificación específica
+    public function toggleFavorite($id)
     {
-    //Busca una notificación con:
-    //Notification_id = $id (que viene en la URL).
-    //User_rpe = RPE del usuario autenticado.
-        $notification = Notification::where('Notification_id', $id)
-            ->where('User_rpe', auth()->user()->user_rpe)
-            ->firstOrFail();
-        //Marca la notificación como vista (Seen = true) y la guarda
-        $notification->Seen = true;
-        $notification->save();
+        $notification = Notification::findOrFail($id);  // Busca la notificación por su ID o lanza error si no se encuentra
+        $notification->favorite = !$notification->favorite;  // Cambia el valor del campo 'favorite' (true/false)
+        $notification->save();  // Guarda el cambio en la base de datos
 
-        //Devuelve una respuesta JSON de confirmación.
-        return response()->json(['message' => 'Notificación marcada como vista']);
+        return response()->json(['message' => 'Estado de favorito actualizado']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de favorito
+    }
+
+    // Método para alternar el estado de fijado de una notificación específica
+    public function togglePinned($id)
+    {
+        $notification = Notification::findOrFail($id);  // Busca la notificación por su ID o lanza error si no se encuentra
+        $notification->pinned = !$notification->pinned;  // Cambia el valor del campo 'pinned' (true/false)
+        $notification->save();  // Guarda el cambio en la base de datos
+
+        return response()->json(['message' => 'Estado de fijado actualizado']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de fijado
+    }
+
+    // Método para eliminar una notificación por su ID
+    public function destroy($id)
+    {
+        Notification::findOrFail($id)->delete();  // Busca y elimina la notificación por su ID
+        return response()->json(['message' => 'Notificación eliminada']);  // Devuelve una respuesta JSON indicando que la notificación fue eliminada
     }
 }
