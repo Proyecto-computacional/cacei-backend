@@ -9,7 +9,7 @@ if (!function_exists('iluminarPermiso')) {
             'PROFESOR RESPONSABLE' => ['ver', 'crear', 'eliminar'],
             'PROFESOR' => ['ver', 'crear'],
             'TUTOR ACADEMICO' => ['ver', 'crear'],
-            'DEPARTAMENTO UNIVERSITARIO' => ['ver', 'crear'],
+            'DEPA UNIVERSITARIO' => ['ver', 'crear'],
             'PERSONAL DE APOYO' => ['ver', 'crear'],
         ];
 

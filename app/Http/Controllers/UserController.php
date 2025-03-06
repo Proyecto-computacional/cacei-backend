@@ -7,12 +7,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Log;
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $usuarios = User::all();
-        $roles = ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR', 'PROFESOR RESPONSABLE', 'PROFESOR', 'TUTOR ACADEMICO', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO'];
-        return view('usuarios.index', compact('usuarios', 'roles'));
+        return response()->json([
+            'usuarios' => User::paginate(10), // Pagina los resultados si hay muchos
+            'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'TUTOR ACADEMICO', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO']
+        ]);
     }
+
     public function actualizarRol(Request $request)
     {
         Log::debug("Datos recibidos en la solicitud:", $request->all());

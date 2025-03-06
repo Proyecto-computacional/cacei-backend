@@ -18,11 +18,12 @@
     </head>
     
     <body class="antialiased">
-        @foreach ($usuarios as $usuario)
-        {{ $usuario->rpe }}
-        @endforeach
+        <form method="GET" action="{{ route('usuarios.index') }}" class="mb-3">
+            <input type="text" name="buscar" class="form-control" placeholder="Buscar por RPE..." value="{{ request('buscar') }}">
+            <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+        </form>       
         <div class="container">
-            <table class="table">
+            <table id="usuariosTable" class="table">
                 <thead>
                     <tr>
                         <th>RPE</th>
@@ -31,25 +32,7 @@
                     </tr>
                 </thead>
             <tbody>
-                @foreach($usuarios as $usuario)
-                <tr>
-                    <td>{{ $usuario->user_rpe }}</td>
-                    <td>
-                        <select class="form-select rol-select" data-user-id="{{ $usuario->user_rpe }}">
-                            @foreach($roles as $rol)
-                                <option value="{{ $rol }}" {{ $usuario->user_role == $rol ? 'selected' : '' }}>
-                                {{ $rol }}
-                                </option>
-                             @endforeach
-                        </select>
-                    </td>
-                    <td>
-                        <i class="{{ iluminarPermiso($usuario->user_role, 'ver') }}">Ver</i>
-                        <i class="{{ iluminarPermiso($usuario->user_role, 'crear') }}">Crear</i>
-                        <i class="{{ iluminarPermiso($usuario->user_role, 'eliminar') }}">Eliminar</i>
-                    </td>
-                </tr>
-                @endforeach
+                <!-- Aquí se llenarán los datos con JavaScript-->
             </tbody>
             </table>
         </div>
@@ -84,3 +67,27 @@
             });
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $.getJSON("{{ route('usuarios.index') }}", function(data) {
+        let usuarios = data.usuarios.data; // Acceder a la paginación
+        let tbody = $("#usuariosTable tbody");
+        tbody.empty(); // Limpiamos la tabla
+
+        usuarios.forEach(function(usuario) {
+            let row = `<tr>
+                <td>${usuario.user_rpe}</td>
+                <td>${usuario.user_role}</td>
+                <td>---</td> <!-- Aquí puedes añadir la asignación si la tienes -->
+                <td>
+                    <span>${usuario.user_role === 'DIRECTIVO' ? '👀' : ''}</span>
+                    <span>${['JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE'].includes(usuario.user_role) ? '✅' : ''}</span>
+                    <span>${['PROFESOR', 'TUTOR ACADEMICO', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO'].includes(usuario.user_role) ? '✏️' : ''}</span>
+                </td>
+            </tr>`;
+            tbody.append(row);
+        });
+    });
+});
+</script>
