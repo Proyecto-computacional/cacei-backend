@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
+use App\Http\Controllers\AcademicManagementController;
+use App\Http\Controllers\CvController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -44,12 +47,16 @@ profesor_encargado, apoyo, directivo'
 });
 
 // 3.a cv
-Route::middleware([
-    'auth:sanctum',
-    'role:admin, jefe, coordinador, profesor
-profesor_encargado'
-])->get('/cv', function () {
-    return response()->json(['message' => 'Cv de profesor']);
+Route::middleware(['auth:sanctum', 'role:admin,jefe,coordinador,profesor,profesor_encargado'])->group(function () {
+    Route::get('/cv', [CvController::class, 'index']);
+
+    Route::get('/cv/{id}', [CvController::class, 'show']);
+
+    Route::post('/cv', [CvController::class, 'store']);
+
+    Route::put('/cv/{id}', [CvController::class, 'update']);
+
+    Route::delete('/cv/{id}', [CvController::class, 'destroy']);
 });
 
 //4. Subir evidencia
