@@ -10,7 +10,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         return response()->json([
-            'usuarios' => User::paginate(10), // Pagina los resultados si hay muchos
+            'usuarios' => User::cursorPaginate(10), // Pagina los resultados si hay muchos
             'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'TUTOR ACADEMICO', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO']
         ]);
     }

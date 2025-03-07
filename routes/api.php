@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,3 +108,6 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 
+Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
+    ->name('usuarios.actualizarRol');
