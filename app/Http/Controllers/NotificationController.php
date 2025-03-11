@@ -47,9 +47,11 @@ class NotificationController extends Controller
     {
         $request->validate([
             'Title' => 'required|string|max:20',
-            'Evidence_id' => 'required|exists:Evidence,Evidence_id',
+            //'Evidence_id' => 'required|exists:Evidence,Evidence_id',
+            'Evidence_id' => 'required|integer',
             'Notification_date' => 'required|date',
-            'User_rpe' => 'required|exists:User,User_rpe',
+            //'User_rpe' => 'required|exists:User,User_rpe',
+            'User_rpe' => 'required|string',
             'Description' => 'string|max:20',
             'Seen' => 'required|boolean',
         ]);
