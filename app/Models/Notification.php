@@ -13,7 +13,7 @@ class Notification extends Model
     protected $primaryKey = 'Notification_id';
     public $timestamps = false;
     public $incrementing = true;//Define que el Notification_id es autoincremental.
-   //Lista de campos que puedes llenar automáticamente cuando creas o actualizas una notificación.
+    //Lista de campos que puedes llenar automáticamente cuando creas o actualizas una notificación.
     protected $fillable = [
         'Title',
         'Evidence_id',
@@ -28,4 +28,5 @@ class Notification extends Model
     {
         return $this->belongsTo(User::class, 'User_rpe', 'user_rpe');
     }
+
 }

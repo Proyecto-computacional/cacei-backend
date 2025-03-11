@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 
 class NotificationController extends Controller
-{ 
+{
     // Método para obtener todas las notificaciones ordenadas por 'pinned' y luego por 'created_at'
     public function index()
     {
@@ -41,5 +41,19 @@ class NotificationController extends Controller
     {
         Notification::findOrFail($id)->delete();  // Busca y elimina la notificación por su ID
         return response()->json(['message' => 'Notificación eliminada']);  // Devuelve una respuesta JSON indicando que la notificación fue eliminada
+    }
+
+    public function sendNotification(Request $request)
+    {
+        $request->validate([
+            'Title' => 'required|string|max:20',
+            'Evidence_id' => 'required|exists:Evidence,Evidence_id',
+            'Notification_date' => 'required|date',
+            'User_rpe' => 'required|exists:User,User_rpe',
+            'Description' => 'string|max:20',
+            'Seen' => 'required|boolean',
+        ]);
+
+        return response()->json(['message' => 'Se envió la notificación',]);
     }
 }
