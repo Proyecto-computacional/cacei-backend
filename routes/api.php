@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AccreditationProcessController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +40,7 @@ Route::middleware([
     'auth:sanctum',
     'role:admin, jefe, coordinador, profesor
 profesor_encargado, apoyo, directivo'
-])->get('/info_personal', function () {
+])->get('/personalInfo', function () {
     return response()->json(['message' => 'Informacion personal']);
 });
 
@@ -84,6 +85,12 @@ profesor_encargado'
     return response()->json(['message' => 'Gestionar evidencias']);
 });
 
+// 9. Procesos relacionados a un usuario
+Route::middleware(
+    'auth:sanctum'
+)->get('/ProcesosUsuario', 
+        [AccreditationProcessController::class, 'getProcessesByUser'
+]);
 
 //Exclusivos de administrador 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
