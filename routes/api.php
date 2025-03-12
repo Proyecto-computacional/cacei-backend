@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,13 +98,26 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     });
 });
 
-// 10.Notificaciones
-Route::middleware(['auth:sanctum'])->get('/Notificaciones', function () {
-    return response()->json(['message' => 'Notificaciones']);
+
+
+// 10. Notificaciones
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Listar notificaciones
+    Route::get('/Notificaciones', [NotificationController::class, 'index']);
+
+    // Marcar/Desmarcar favorito
+    Route::put('/Notificaciones/{id}/favorite', [NotificationController::class, 'toggleFavorite']);
+
+    // Marcar/Desmarcar fijada
+    Route::put('/Notificaciones/{id}/pinned', [NotificationController::class, 'togglePinned']);
+
+    // Eliminar notificación
+    Route::delete('/Notificaciones/{id}', [NotificationController::class, 'destroy']);
+    Route::post('Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 });
+
 
 
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
-
