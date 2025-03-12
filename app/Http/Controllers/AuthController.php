@@ -70,7 +70,8 @@ class AuthController extends Controller
                     'message' => 'Login exitoso',
                     'role' => $data['cargo'],
                     'name' => $data['nombre'],
-                    'token' => $token
+                    'token' => $token,
+                    'rpe' => $data['rpe']
                 ]);
             } else {
                 return response()->json([
