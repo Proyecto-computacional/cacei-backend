@@ -1,5 +1,5 @@
 CREATE TABLE cvs (
-    cv_id BIGINT NOT NULL,
+    cv_id BIGSERIAL PRIMARY KEY,
     professor_number INT UNIQUE,
     update_date DATE,
     professor_name VARCHAR(25),
@@ -250,7 +250,7 @@ CREATE TABLE files (
 CREATE TABLE notifications (
     notification_id INT NOT NULL,
     title VARCHAR(20) NOT NULL,
-    evidence_id INT NOT NULL,
+    evidence_id INT,
     notification_date DATE NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
     description VARCHAR(20),
