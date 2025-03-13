@@ -44,6 +44,6 @@ Route::get('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_u
 Route::post('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
 Route::post('/guardar', [PruebaController::class, 'guardar'])->name('guardar');
 Route::get('/index', [UserController::class, 'index'])->name('usuarios.index');
-Route::post('/usuarios/actualizar-rol', [UserController::class, 'actualizarRol'])
+Route::post('/usuarios/actualizar-rol', [UserController::class, 'actualizarRol']);
 Route::get('/Notificaciones', [NotificationController::class, 'index']);
 Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
