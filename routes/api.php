@@ -4,26 +4,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccreditationProcessController;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-/*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-//1.Inicio de sesion
-Route::middleware(['role:guest'])->get('/admin', function () {
-    Route::post('/login', [AuthController::class, 'login']);
-});*/
+use App\Http\Controllers\CvController;
+use App\Http\Controllers\EducationController;
+use App\Http\Controllers\TeacherTrainingController;
+use App\Http\Controllers\DisciplinaryUpdateController;
+use App\Http\Controllers\AcademicManagementController;
+use App\Http\Controllers\AcademicProductController;
+use App\Http\Controllers\LaboralExperienceController;
+use App\Http\Controllers\EngineeringDesignController;
+use App\Http\Controllers\ProfessionalAchievementController;
+use App\Http\Controllers\ParticipationController;
+use App\Http\Controllers\AwardController;
+use App\Http\Controllers\ContributionToPEController;
 
 //1. Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -85,13 +77,6 @@ profesor_encargado'
     return response()->json(['message' => 'Gestionar evidencias']);
 });
 
-// 9. Procesos relacionados a un usuario
-Route::middleware(
-    'auth:sanctum'
-)->get('/ProcesosUsuario', 
-        [AccreditationProcessController::class, 'getProcessesByUser'
-]);
-
 //Exclusivos de administrador 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     //6. Administracion de usuarios
@@ -109,6 +94,52 @@ Route::middleware(['auth:sanctum'])->get('/Notificaciones', function () {
     return response()->json(['message' => 'Notificaciones']);
 });
 
+// 11. Procesos relacionados a un usuario
+Route::middleware(
+    'auth:sanctum'
+)->get('/ProcesosUsuario', 
+        [AccreditationProcessController::class, 'getProcessesByUser'
+]);
+
+// 12.CV de un usuario
+Route::apiResource('cvs', CvController::class);
+
+// 13. Información adicional de un CV
+Route::prefix('additionalInfo/{cv_id}')->group(function () {
+
+    // Rutas para educaciones
+    Route::resource('educations', EducationController::class);
+    
+    // Rutas para formaciones docentes
+    Route::resource('teacher-trainings', TeacherTrainingController::class);
+
+    // Rutas para actualizaciones disciplinarias
+    Route::resource('disciplinary-updates', DisciplinaryUpdateController::class);
+
+    // Rutas para gestiones académicas
+    Route::resource('academic-managements', AcademicManagementController::class);
+
+    // Rutas para productos académicos
+    Route::resource('academic-products', AcademicProductController::class);
+
+    // Rutas para experiencias laborales
+    Route::resource('laboral-experiences', LaboralExperienceController::class);
+
+    // Rutas para diseños de ingeniería
+    Route::resource('engineering-designs', EngineeringDesignController::class);
+
+    // Rutas para logros profesionales
+    Route::resource('professional-achievements', ProfessionalAchievementController::class);
+
+    // Rutas para participaciones
+    Route::resource('participations', ParticipationController::class);
+
+    // Rutas para premios
+    Route::resource('awards', AwardController::class);
+
+    // Rutas para contribuciones al PE
+    Route::resource('contributions-to-pe', ContributionToPEController::class);
+});
 
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
