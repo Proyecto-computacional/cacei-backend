@@ -1,5 +1,5 @@
 CREATE TABLE cvs (
-    cv_id BIGINT NOT NULL,
+    cv_id BIGSERIAL PRIMARY KEY,
     professor_number INT UNIQUE,
     update_date DATE,
     professor_name VARCHAR(25),
