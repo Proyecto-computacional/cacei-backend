@@ -20,6 +20,24 @@ class User extends Authenticatable
         'user_rpe',
         'user_mail',
         'user_role',
-    ];
+  
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
 
+    /**protected $hidden = [
+       'password',
+       'remember_token',
+       'password' => 'hashed',
+   ];
+   protected $casts = [
+       'email_verified_at' => 'datetime',
+   ];*/
+
+    public function sentNotification()
+    {
+        return $this->hasMany(Notification::class, 'user_rpe');
+    }
 }
