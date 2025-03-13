@@ -113,8 +113,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Eliminar notificación
     Route::delete('/Notificaciones/{id}', [NotificationController::class, 'destroy']);
-    Route::post('Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
+    Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 });
+Route::get('/Notificaciones', [NotificationController::class, 'index']);
+Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 
 
 

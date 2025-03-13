@@ -14,7 +14,7 @@ class NotificationController extends Controller
         $notifications = Notification::where('user_rpe', $request->user_rpe)  // Ordena primero por 'pinned' en orden descendente
             ->orderBy('notification_date', 'desc')  // Luego ordena por 'created_at' en orden descendente
             ->get();  // Devuelve todas las notificaciones
-            return response()->json($notifications);
+        return response()->json($notifications);
     }
 
     // Método para alternar el estado de favorito de una notificación específica
@@ -48,8 +48,7 @@ class NotificationController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:20',
-            //Integrar cuando se empiezen a hacer las evidencias
-            //'evidence_id' => 'required|integer',
+            'evidence_id' => 'nullable|integer',
             'notification_date' => 'required|date',
             'user_rpe' => 'required|string',
             'description' => 'string|max:20',
@@ -73,6 +72,6 @@ class NotificationController extends Controller
         return response()->json([
             'message' => 'Notificación guardada exitosamente',
             'notification' => $notification
-            ], 201);
+        ], 201);
     }
 }

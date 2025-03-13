@@ -38,8 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
-require __DIR__.'/api.php';
+require __DIR__ . '/auth.php';
+require __DIR__ . '/api.php';
 Route::get('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
 Route::post('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
 Route::post('/guardar', [PruebaController::class, 'guardar'])->name('guardar');
@@ -47,4 +47,4 @@ Route::get('/index', [UserController::class, 'index'])->name('usuarios.index');
 Route::post('/usuarios/actualizar-rol', [UserController::class, 'actualizarRol'])
     ->name('usuarios.actualizarRol');
 Route::get('/Notificaciones', [NotificationController::class, 'index']);
-Route::post('Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
+Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);

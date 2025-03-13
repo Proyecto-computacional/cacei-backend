@@ -14,10 +14,10 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         // Validar los datos de entrada
-        /*$request->validate([
+        $request->validate([
             'rpe' => 'required',
             'password' => 'required',
-        ]);*/
+        ]);
 
         $endpoint = "https://servicios.ing.uaslp.mx/ws_cacei/ValidaUsuario.php";
         $clave = "B3E06D96-1562-4713-BCD7-7F762A87F205";
