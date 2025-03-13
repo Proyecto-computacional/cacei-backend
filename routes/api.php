@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccreditationProcessController;
 use App\Http\Controllers\CvController;
 use App\Http\Controllers\EducationController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\ProfessionalAchievementController;
 use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
+
 
 //1. Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -145,3 +147,6 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 
+Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
+    ->name('usuarios.actualizarRol');

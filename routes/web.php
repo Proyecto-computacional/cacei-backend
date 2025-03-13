@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PruebaController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -41,3 +42,6 @@ require __DIR__.'/auth.php';
 Route::get('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
 Route::post('/prueba', [PruebaController::class, 'index'])->name('prueba_valida_usuario_v1');
 Route::post('/guardar', [PruebaController::class, 'guardar'])->name('guardar');
+Route::get('/index', [UserController::class, 'index'])->name('usuarios.index');
+Route::post('/usuarios/actualizar-rol', [UserController::class, 'actualizarRol'])
+    ->name('usuarios.actualizarRol');
