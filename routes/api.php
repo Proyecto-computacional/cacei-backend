@@ -103,7 +103,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/Notificaciones/{id}/favorite', [NotificationController::class, 'toggleFavorite']);
 
     // Marcar/Desmarcar fijada
-    Route::put('/Notificaciones/{id}/pinned', [NotificationController::class, 'togglePinned']);
+    Route::put('/Notificaciones/pinned', [NotificationController::class, 'togglePinned']);
 
     // Eliminar notificación
     Route::delete('/Notificaciones/{id}', [NotificationController::class, 'destroy']);
@@ -162,10 +162,6 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
 
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
-
-
-    Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
-    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
-        ->name('usuarios.actualizarRol');
-
+    //Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+    //Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
 });
