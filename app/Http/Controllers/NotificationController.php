@@ -28,9 +28,9 @@ class NotificationController extends Controller
     }
 
     // Método para alternar el estado de fijado de una notificación específica
-    public function togglePinned($id)
+    public function togglePinned(Request $request)
     {
-        $notification = Notification::findOrFail($id);  // Busca la notificación por su ID o lanza error si no se encuentra
+        $notification = Notification::findOrFail($request->notification_id);  // Busca la notificación por su ID o lanza error si no se encuentra
         $notification->pinned = !$notification->pinned;  // Cambia el valor del campo 'pinned' (true/false)
         $notification->save();  // Guarda el cambio en la base de datos
 
@@ -51,6 +51,7 @@ class NotificationController extends Controller
             'evidence_id' => 'nullable|integer',
             'notification_date' => 'required|date',
             'user_rpe' => 'required|string',
+            'reviser_id' => 'required|integer',
             'description' => 'string|max:20',
         ]);
 
@@ -62,10 +63,13 @@ class NotificationController extends Controller
         $notification = Notification::create([
             'notification_id' => $randomId,
             'title' => $request->title,
+            'evidence_id' => $request->evidence_id,
             'notification_date' => $request->notification_date,
             'user_rpe' => $request->user_rpe,
+            'reviser_id' => $request->reviser_id,
             'description' => $request->description,
             'seen' => false,
+            'pinned' => false,
         ]);
 
         // Retornar la respuesta con la notificación creada

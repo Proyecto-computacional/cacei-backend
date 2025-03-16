@@ -21,14 +21,20 @@ class Notification extends Model
         'evidence_id',
         'notification_date',
         'user_rpe',
+        'reviser_id',
         'description',
-        'seen'
+        'seen',
+        'pinned'
     ];
     //Una relacion inversa belongsTo(User::class) indica que cada notificación pertenece a un solo 
     // usuario y User_rpe es de la tabla notification y  user_rpe  es de la tabla user_t (PK).
     public function user()
     {
         return $this->belongsTo(User::class, 'user_rpe', 'user_rpe');
+    }
+    public function revisor()
+    {
+        return $this->belongsTo(Reviser::class, 'reviser_id', 'reviser_id');
     }
 
 }

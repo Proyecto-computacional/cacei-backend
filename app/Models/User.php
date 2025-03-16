@@ -20,7 +20,7 @@ class User extends Authenticatable
         'user_rpe',
         'user_mail',
         'user_role',
-  
+    ];
     /**
      * The attributes that should be cast.
      *
