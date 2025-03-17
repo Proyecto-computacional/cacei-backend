@@ -82,9 +82,9 @@ profesor_encargado'
 //Exclusivos de administrador 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     //6. Administracion de usuarios
-    Route::get('/GestionUsuarios', function () {
-        return response()->json(['message' => 'Administrar usuarios']);
-    });
+    Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
+        ->name('usuarios.actualizarRol');
     //9. Gestion de formato
     Route::get('/GestionFormato', function () {
         return response()->json(['message' => 'Gestion de formatos']);
@@ -143,10 +143,10 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
     Route::resource('contributions-to-pe', ContributionToPEController::class);
 });
 
+    Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
+
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 
-Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
-Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
-    ->name('usuarios.actualizarRol');
