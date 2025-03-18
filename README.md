@@ -78,3 +78,8 @@ php artisan serve
 ## Pruebas de la API
 
 Para probar los endpoints, puedes usar **Postman**.
+
+## Helpers
+
+No olvidar que para usar helpers agregarlos en el autoload de composer.json y ejecutar el comando: 
+composer dump-autoload

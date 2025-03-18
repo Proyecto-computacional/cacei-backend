@@ -25,10 +25,10 @@ class AppServiceProvider extends ServiceProvider
             DB::connection()->getPdo();
             $dbName = DB::connection()->getDatabaseName();
             Log::info("¡¡Conectado a la base de datos: {$dbName}!!");
-            echo "¡¡Conectado a la base de datos: {$dbName}!!\n";
+            //echo "¡¡Conectado a la base de datos: {$dbName}!!\n";
         } catch (\Exception $e) {
             Log::error("Error al conectar con la base de datos: " . $e->getMessage());
-            echo "Error al conectar con la base de datos: " . $e->getMessage() . "\n";
+            //echo "Error al conectar con la base de datos: " . $e->getMessage() . "\n";
         }
     }
 }
