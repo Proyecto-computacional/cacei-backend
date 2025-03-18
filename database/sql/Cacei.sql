@@ -1,5 +1,5 @@
 CREATE TABLE cvs (
-    cv_id BIGSERIAL PRIMARY KEY,
+    cv_id BIGSERIAL NOT NULL,
     professor_number INT UNIQUE,
     update_date DATE,
     professor_name VARCHAR(25),
@@ -253,9 +253,12 @@ CREATE TABLE notifications (
     evidence_id INT,
     notification_date DATE NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
+    reviser_id BIGSERIAL NOT NULL, 
     description VARCHAR(20),
     seen BOOL NOT NULL,
+    pineed BOOL NOT NULL,
     PRIMARY KEY (notification_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
-    FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)
+    FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
+    FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
 );

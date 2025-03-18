@@ -18,7 +18,41 @@ use App\Http\Controllers\ProfessionalAchievementController;
 use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
+use App\Http\Controllers\ProcessController;
 
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
+*/
+
+/*
+Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Request $request) {
+    $user = $request->user();
+
+    $linkedProcesses = [
+        ['frame_id' => 2025, 'process_id' => 1, 'career_id' => 1],
+        ['frame_id' => 2025, 'process_id' => 2, 'career_id' => 3]
+    ];
+
+    return response()->json([
+        'message' => 'Checando procesos vinculados...',
+        'user_data' => $user,
+        'linked_processes' => $linkedProcesses
+    ]);
+});
+*/
+
+
+
+
+Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
+Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
 
 //1. Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -86,9 +120,9 @@ profesor_encargado'
 //Exclusivos de administrador 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     //6. Administracion de usuarios
-    Route::get('/GestionUsuarios', function () {
-        return response()->json(['message' => 'Administrar usuarios']);
-    });
+    Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
+        ->name('usuarios.actualizarRol');
     //9. Gestion de formato
     Route::get('/GestionFormato', function () {
         return response()->json(['message' => 'Gestion de formatos']);
@@ -106,7 +140,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/Notificaciones/{id}/favorite', [NotificationController::class, 'toggleFavorite']);
 
     // Marcar/Desmarcar fijada
-    Route::put('/Notificaciones/{id}/pinned', [NotificationController::class, 'togglePinned']);
+    Route::put('/Notificaciones/pinned', [NotificationController::class, 'togglePinned']);
 
     // Eliminar notificación
     Route::delete('/Notificaciones/{id}', [NotificationController::class, 'destroy']);
@@ -165,12 +199,9 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
     Route::resource('contributions-to-pe', ContributionToPEController::class);
 });
 
-Route::get('/mensaje', function () {
-    //return response()->json(['mensaje' => '¡Hola desde Laravel!']);
-
-
     Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
-    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
-        ->name('usuarios.actualizarRol');
+    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
 
+Route::get('/mensaje', function () {
+    return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
