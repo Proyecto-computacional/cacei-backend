@@ -32,15 +32,15 @@ class UserController extends Controller
                 'user_id' => 'required|exists:users,user_rpe',
                 'rol' => 'required|string|in:DIRECTIVO,JEFE DE AREA,COORDINADOR,PROFESOR RESPONSABLE,PROFESOR,TUTOR ACADEMICO,DEPARTAMENTO UNIVERSITARIO,PERSONAL DE APOYO',
             ]);
-    
+
             Log::debug("Datos validados correctamente:", $validado);
-    
+
             $usuario = User::findOrFail($request->user_id);
             $usuario->user_role = $request->rol;
             $usuario->save();
-    
+
             Log::debug("Rol actualizado para usuario ID {$usuario->user_rpe} a {$usuario->user_role}");
-    
+
             return response()->json(['success' => true, 'message' => 'Rol actualizado correctamente']);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error("Error de validación:", $e->errors());
