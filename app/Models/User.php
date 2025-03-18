@@ -22,6 +22,7 @@ class User extends Authenticatable
         'user_role',
     ];
 
+
     public function processes()
     {
         return $this->hasMany(Accreditation_Process::class);

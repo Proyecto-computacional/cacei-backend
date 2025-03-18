@@ -56,8 +56,10 @@ Route::post('/test_check_user_example', [ProcessController::class, 'checkUser'])
 
 //1. Login
 Route::post('/login', [AuthController::class, 'login']);
-
 Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
+Route::middleware(['auth:sanctum'])->post('/logout-all', [AuthController::class, 'logoutAll']);
+Route::middleware(['auth:sanctum'])->post('/userToken', [AuthController::class, 'getUserToken']);
+Route::middleware(['auth:sanctum'])->post('/allTokens', [AuthController::class, 'getAllTokens']);
 
 //2. Menu prinicipal
 Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $request) {
@@ -77,7 +79,8 @@ profesor_encargado, apoyo, directivo'
 Route::middleware([
     'auth:sanctum',
     'role:admin, jefe, coordinador, profesor
-profesor_encargado'
+profesor_encargado',
+    'token.expired'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Cv de profesor']);
 });
@@ -143,16 +146,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/Notificaciones/{id}', [NotificationController::class, 'destroy']);
     Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 });
-Route::get('/Notificaciones', [NotificationController::class, 'index']);
-Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 
 
 // 11. Procesos relacionados a un usuario
 Route::middleware(
     'auth:sanctum'
-)->get('/ProcesosUsuario', 
-        [AccreditationProcessController::class, 'getProcessesByUser'
-]);
+)->get(
+        '/ProcesosUsuario',
+        [
+            AccreditationProcessController::class,
+            'getProcessesByUser'
+        ]
+    );
 
 // 12.CV de un usuario
 Route::apiResource('cvs', CvController::class);
@@ -162,7 +167,7 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
 
     // Rutas para educaciones
     Route::resource('educations', EducationController::class);
-    
+
     // Rutas para formaciones docentes
     Route::resource('teacher-trainings', TeacherTrainingController::class);
 
