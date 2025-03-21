@@ -29,6 +29,12 @@ class FileController extends Controller
     public function store(Request $request)
     {
 
+        $request->validate([
+            'evidence_id' => 'required|exists:evidences,evidence_id',
+            'justification' => 'nullable|string'
+        ]);
+
+
         // Generar un ID único
         do {
             $randomId = rand(1, 100);
@@ -57,7 +63,6 @@ class FileController extends Controller
 
         $request->validate([
             'justification' => 'nullable|string',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,png,jpg,jpeg|max:2048'
         ]);
 
         if ($request->hasFile('file')) {
