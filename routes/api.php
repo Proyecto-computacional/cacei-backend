@@ -55,11 +55,12 @@ Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
 Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
 
 //1. Login
-Route::post('/login', [AuthController::class, 'login']);
-Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
-Route::middleware(['auth:sanctum'])->post('/logout-all', [AuthController::class, 'logoutAll']);
-Route::middleware(['auth:sanctum'])->post('/userToken', [AuthController::class, 'getUserToken']);
-Route::middleware(['auth:sanctum'])->post('/allTokens', [AuthController::class, 'getAllTokens']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::post('/userToken', [AuthController::class, 'getUserToken']);
+    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
+});
 
 //2. Menu prinicipal
 Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $request) {
@@ -92,6 +93,17 @@ Route::middleware([
 profesor_encargado, departamento, apoyo'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Subir evidencia']);
+});
+
+Route::middleware([
+    'auth:sanctum',
+    'role:admin, jefe, coordinador, profesor
+profesor_encargado, departamento, apoyo'
+])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::post('/userToken', [AuthController::class, 'getUserToken']);
+    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
 });
 
 //5. Revisar evidencias
@@ -199,8 +211,8 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
     Route::resource('contributions-to-pe', ContributionToPEController::class);
 });
 
-    Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
-    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
+Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
 
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
