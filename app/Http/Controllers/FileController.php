@@ -28,11 +28,7 @@ class FileController extends Controller
     //Subir archivos
     public function store(Request $request)
     {
-        $request->validate([
-            'evidence_id' => 'required|exists:evidences,evidence_id',
-            'file' => 'required|file|mimes:pdf,doc,docx,png,jpg,jpeg|max:2048',
-            'justification' => 'nullable|string'
-        ]);
+
         // Generar un ID único
         do {
             $randomId = rand(1, 100);
@@ -80,7 +76,7 @@ class FileController extends Controller
 
         return response()->json($file);
     }
-    
+
     //Eliminar un archivo
     public function destroy(Request $request)
     {

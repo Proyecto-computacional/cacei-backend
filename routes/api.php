@@ -219,8 +219,12 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 
-Route::get('/files/{evidence_id}', [FileController::class, 'index']);
-Route::get('/file/{file_id}', [FileController::class, 'show']);
-Route::post('/file', [FileController::class, 'store']);
-Route::put('/file/{file_id}', [FileController::class, 'update']);
-Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
+Route::middleware(['auth:sanctum', 'file.correct'])->group(function () {
+
+    Route::get('/files/{evidence_id}', [FileController::class, 'index']);
+    Route::get('/file/{file_id}', [FileController::class, 'show']);
+    Route::post('/file', [FileController::class, 'store']);
+    Route::put('/file/{file_id}', [FileController::class, 'update']);
+    Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
+
+});
