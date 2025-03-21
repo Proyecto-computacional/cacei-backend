@@ -23,9 +23,6 @@ class CheckFileMetadata
         ]);
 
         if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $path = $file->storeAs('uploads', 'public');
-
             return $next($request);
         }
 

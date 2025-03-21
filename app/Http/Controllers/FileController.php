@@ -40,7 +40,11 @@ class FileController extends Controller
             $randomId = rand(1, 100);
         } while (File::where('file_id', $randomId)->exists()); // Verifica que no se repita
         // Guardar el archivo en el servidor
-        $path = $request->file('file')->store('uploads', 'public'); //Cambiar por la ruta designada en servidor
+        $file = $request->file('file');
+        $customName = $request->input('evidence_id');
+        $extension = $file->getClientOriginalExtension();
+        $newName = $customName . '_' . time() . '.' . $extension;
+        $path = $request->file('file')->storeAs('uploads', $newName, 'public'); //Cambiar por la ruta designada en servidor
 
         $file = File::create([
             'file_id' => $randomId,
