@@ -56,6 +56,7 @@ Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
 Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
 
 //1. Login
+Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
