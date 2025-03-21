@@ -19,6 +19,7 @@ use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
 use App\Http\Controllers\ProcessController;
+use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -217,3 +218,9 @@ Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
+
+Route::get('/files/{evidence_id}', [FileController::class, 'index']);
+Route::get('/file/{file_id}', [FileController::class, 'show']);
+Route::post('/file', [FileController::class, 'store']);
+Route::put('/file/{file_id}', [FileController::class, 'update']);
+Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
