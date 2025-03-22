@@ -117,6 +117,18 @@ profesor_encargado'
     return response()->json(['message' => 'Revisar evidencia']);
 });
 
+// 5.a. Revisar archivos
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/files/{evidence_id}', [FileController::class, 'index']);
+    Route::get('/file/{file_id}', [FileController::class, 'show']);
+    Route::middleware(['file.correct'])->group(function () {
+        Route::post('/file', [FileController::class, 'store']);
+        Route::put('/file/{file_id}', [FileController::class, 'update']);
+    });
+    Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
+});
+
 // 7.Dashboard
 Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
     return response()->json(['message' => 'Dashboard']);
@@ -220,13 +232,3 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 
-Route::middleware(['auth:sanctum'])->group(function () {
-
-    Route::get('/files/{evidence_id}', [FileController::class, 'index']);
-    Route::get('/file/{file_id}', [FileController::class, 'show']);
-    Route::middleware(['file.correct'])->group(function () {
-        Route::post('/file', [FileController::class, 'store']);
-        Route::put('/file/{file_id}', [FileController::class, 'update']);
-    });
-    Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
-});

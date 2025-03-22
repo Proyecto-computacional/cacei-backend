@@ -34,16 +34,20 @@ class FileController extends Controller
             'justification' => 'nullable|string'
         ]);
 
-
         // Generar un ID único
         do {
             $randomId = rand(1, 100);
         } while (File::where('file_id', $randomId)->exists()); // Verifica que no se repita
+
         // Guardar el archivo en el servidor
         $file = $request->file('file');
-        $customName = $request->input('evidence_id');
+
+        $evidence = \App\Models\Evidence::where('evidence_id', $request->evidence_id)->first();
+        $standard_id = $evidence->standard_id;
+        $evidence_id = $evidence->evidence_id;
         $extension = $file->getClientOriginalExtension();
-        $newName = $customName . '_' . time() . '.' . $extension;
+        $newName = $standard_id . '_' . $evidence_id . '_' . $randomId . '.' . $extension;
+
         $path = $request->file('file')->storeAs('uploads', $newName, 'public'); //Cambiar por la ruta designada en servidor
 
         $file = File::create([
