@@ -57,10 +57,12 @@ Route::post('/test_check_user_example', [ProcessController::class, 'checkUser'])
 
 //1. Login
 Route::post('/login', [AuthController::class, 'login']);
-Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
-Route::middleware(['auth:sanctum'])->post('/logout-all', [AuthController::class, 'logoutAll']);
-Route::middleware(['auth:sanctum'])->post('/userToken', [AuthController::class, 'getUserToken']);
-Route::middleware(['auth:sanctum'])->post('/allTokens', [AuthController::class, 'getAllTokens']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::post('/userToken', [AuthController::class, 'getUserToken']);
+    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
+});
 
 //2. Menu prinicipal
 Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $request) {
@@ -95,6 +97,17 @@ profesor_encargado, departamento, apoyo'
     return response()->json(['message' => 'Subir evidencia']);
 });
 
+Route::middleware([
+    'auth:sanctum',
+    'role:admin, jefe, coordinador, profesor
+profesor_encargado, departamento, apoyo'
+])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::post('/userToken', [AuthController::class, 'getUserToken']);
+    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
+});
+
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
@@ -102,6 +115,18 @@ Route::middleware([
 profesor_encargado'
 ])->get('/RevisarEvidencia', function () {
     return response()->json(['message' => 'Revisar evidencia']);
+});
+
+// 5.a. Revisar archivos
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/files/{evidence_id}', [FileController::class, 'index']);
+    Route::get('/file/{file_id}', [FileController::class, 'show']);
+    Route::middleware(['file.correct'])->group(function () {
+        Route::post('/file', [FileController::class, 'store']);
+        Route::put('/file/{file_id}', [FileController::class, 'update']);
+    });
+    Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
 });
 
 // 7.Dashboard
@@ -200,15 +225,10 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
     Route::resource('contributions-to-pe', ContributionToPEController::class);
 });
 
-    Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
-    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
+Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
 
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 
-Route::get('/files/{evidence_id}', [FileController::class, 'index']);
-Route::get('/file/{file_id}', [FileController::class, 'show']);
-Route::post('/file', [FileController::class, 'store']);
-Route::put('/file/{file_id}', [FileController::class, 'update']);
-Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
