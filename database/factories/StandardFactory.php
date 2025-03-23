@@ -19,7 +19,6 @@ class StandardFactory extends Factory
         return [
         'standard_id' => $this->faker->unique()->numberBetween(1, 1000),
         'standard_name' => $this->faker->word,
-        'section_id' => $this->faker->unique()->numberBetween(1, 1000),
         ];
     }
 }

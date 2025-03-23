@@ -12,5 +12,6 @@ class Group extends Model
     protected $fillable = [
         'group_id'
     ];
-
+    public $timestamps = false;
+    protected $primaryKey = 'group_id';
 }

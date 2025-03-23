@@ -13,6 +13,10 @@ class Accreditation_Process extends Model
         'process_id',
         'career_id',
     ];
+    public $timestamps = false;
+    protected $primaryKey = 'process_id';
+
+    protected $table = 'accreditation_processes';
 
     // Define the inverse relationship with the User model
     public function user()

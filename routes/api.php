@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfessionalAchievementController;
 use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
+use App\Http\Controllers\evidenceController;
 use App\Http\Controllers\ProcessController;
 use App\Http\Controllers\FileController;
 
@@ -129,6 +130,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         return response()->json(['message' => 'Gestion de formatos']);
     });
 });
+Route::get('/ReviewEvidence', [evidenceController::class, 'allEvidence'])->name('evidence.index');
 
 
 
@@ -199,9 +201,6 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
     // Rutas para contribuciones al PE
     Route::resource('contributions-to-pe', ContributionToPEController::class);
 });
-
-    Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
-    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
 
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
