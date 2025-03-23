@@ -16,7 +16,6 @@ class Notification extends Model
     
     //Lista de campos que puedes llenar automáticamente cuando creas o actualizas una notificación.
     protected $fillable = [
-        'notification_id',
         'title',
         'evidence_id',
         'notification_date',

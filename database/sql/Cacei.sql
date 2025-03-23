@@ -231,9 +231,11 @@ CREATE TABLE statuses (
     status_id INT NOT NULL,
     status_description VARCHAR(15) NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
+    evidence_id INT NOT NULL,
     status_date DATE NOT NULL,
     feedback VARCHAR(255),
     PRIMARY KEY (status_id),
+    FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
 );
 
