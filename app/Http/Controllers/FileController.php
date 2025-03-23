@@ -45,8 +45,9 @@ class FileController extends Controller
         $evidence = \App\Models\Evidence::where('evidence_id', $request->evidence_id)->first();
         $standard_id = $evidence->standard_id;
         $evidence_id = $evidence->evidence_id;
+        $group_id = $evidence->group_id;
         $extension = $file->getClientOriginalExtension();
-        $newName = $standard_id . '_' . $evidence_id . '_' . $randomId . '.' . $extension;
+        $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '_' . $randomId . '.' . $extension;
 
         $path = $request->file('file')->storeAs('uploads', $newName, 'public'); //Cambiar por la ruta designada en servidor
 
