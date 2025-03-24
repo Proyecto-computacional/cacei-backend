@@ -12,12 +12,12 @@ class RevisionEvidenciasController extends Controller
     {
 
         return $this->actualizarEstado($request, 'Aprobado');
-        dd($request->all());
+        
     }
 
     public function desaprobarEvidencia(Request $request)
     {
-        return $this->actualizarEstado(request, 'Desaprobado');
+        return $this->actualizarEstado($request, 'Desaprobado');
     }
     //Es para regresarla a pendiente si es por defaul o como opcion para un boton de pendiente
     public function marcarPendiente(Request $request)
