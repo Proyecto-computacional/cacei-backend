@@ -6,7 +6,7 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-class RevisionEvidencias extends Controller
+class RevisionEvidenciasController extends Controller
 {
     public function aprobarEvidencia(Request $request)
     {
