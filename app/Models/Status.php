@@ -15,6 +15,7 @@ class Status extends Model
     public $incrementing = true; // Habilita autoincremento en el ID
 
     protected $fillable = [
+        'status_id',
         'status_description',
         'user_rpe',
         'evidence_id',

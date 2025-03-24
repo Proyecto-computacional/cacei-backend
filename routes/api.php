@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfessionalAchievementController;
 use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
+use App\Http\Controllers\RevisionEvidenciasController;
 
 
 //1. Login
@@ -64,6 +65,16 @@ Route::middleware([
 profesor_encargado'
 ])->get('/RevisarEvidencia', function () {
     return response()->json(['message' => 'Revisar evidencia']);
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
+
+    Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
+
+    Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
+
 });
 
 // 7.Dashboard

@@ -228,7 +228,7 @@ CREATE TABLE groups (
 );
 
 CREATE TABLE statuses (
-    status_id INT NOT NULL,
+    status_id BIGSERIAL NOT NULL,
     status_description VARCHAR(15) NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
     evidence_id INT NOT NULL,
@@ -251,12 +251,12 @@ CREATE TABLE files (
 
 CREATE TABLE notifications (
     notification_id BIGSERIAL NOT NULL,
-    title VARCHAR(20) NOT NULL,
+    title VARCHAR(30) NOT NULL,
     evidence_id INT,
     notification_date DATE NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
     reviser_id BIGSERIAL NOT NULL, 
-    description VARCHAR(20),
+    description VARCHAR(255),
     seen BOOL NOT NULL,
     pinned BOOL NOT NULL,
     PRIMARY KEY (notification_id),

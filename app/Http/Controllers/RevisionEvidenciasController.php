@@ -10,7 +10,9 @@ class RevisionEvidenciasController extends Controller
 {
     public function aprobarEvidencia(Request $request)
     {
+
         return $this->actualizarEstado($request, 'Aprobado');
+        dd($request->all());
     }
 
     public function desaprobarEvidencia(Request $request)
@@ -33,7 +35,7 @@ class RevisionEvidenciasController extends Controller
         ]);
 
         //solo aprovadp o rechazado puede tener retroalimentacIon
-        $feedback = in_array($estado, ['Aprobado', 'Rechazado']) ? $request->feedback : null;
+        $feedback = in_array($estado, ['Aprobado', 'Desaprobado']) ? $request->feedback : null;
 
        //Carga el estado a la base
         $status = Status::create([
