@@ -20,6 +20,11 @@ use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
 use App\Http\Controllers\ProcessController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ReviserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SectionController;
+use App\Http\Controllers\StandardController;
+use App\Http\Controllers\EvidenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -231,4 +236,10 @@ Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
-
+//Rutas hechas en la rama de asignarTareas
+Route::get('/revisers', [ReviserController::class, 'index']);
+Route::post('/reviser', [ReviserController::class, 'store']);
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/sections', [SectionController::class, 'getByCategory']);
+Route::get('/standards', [StandardController::class, 'getBySection']);
+Route::get('/evidences', [EvidenceController::class, 'index']);

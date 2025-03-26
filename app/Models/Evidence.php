@@ -24,4 +24,12 @@ class Evidence extends Model
         'process_id',
         'due_date',
     ];
+    public function assignEvidence()
+    {
+        return $this->hasMany(Reviser::class, 'evidence_id');
+    }
+    public function standard()
+    {
+        return $this->belongsTo(Standard::class, 'standard_id');
+    }
 }
