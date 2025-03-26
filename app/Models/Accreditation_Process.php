@@ -18,9 +18,10 @@ class Accreditation_Process extends Model
 
     protected $table = 'accreditation_processes';
 
-    // Define the inverse relationship with the User model
-    public function user()
+    public function career()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Career::class, 'career_id', 'career_id');
     }
+
+
 }

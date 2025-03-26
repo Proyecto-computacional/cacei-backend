@@ -65,9 +65,9 @@ class AuthController extends Controller
                 );
 
 
-                if ($user->tokens()->exists()) {
+                /*if ($user->tokens()->exists()) {
                     return response()->json(['message' => 'Ya hay una sesión activa de este usuario'], 409);
-                }
+                }*/
 
                 //$token = $user->createToken('auth_token')->plainTextToken;
                 $token = $user->createToken('auth_token');

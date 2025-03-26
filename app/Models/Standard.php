@@ -9,13 +9,21 @@ class Standard extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'standard_id',
-        'standard_name',
-        'section_id'
-    ];
     protected $table = 'standards';
-    public $timestamps = false;
     protected $primaryKey = 'standard_id';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'section_id',
+        'standard_name',
+        'standard_description',
+        'is_transversal',
+        'help'
+    ];
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class, 'section_id');
+    }
 
 }

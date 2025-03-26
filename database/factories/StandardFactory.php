@@ -17,8 +17,11 @@ class StandardFactory extends Factory
     public function definition(): array
     {
         return [
-        'standard_id' => $this->faker->unique()->numberBetween(1, 1000),
-        'standard_name' => $this->faker->word,
+            'section_id' => \App\Models\Section::factory(),
+            'standard_name' => $this->faker->word(),
+            'standard_description' => $this->faker->sentence(),
+            'is_transversal' => $this->faker->boolean(),
+            'help' => $this->faker->sentence()
         ];
     }
 }

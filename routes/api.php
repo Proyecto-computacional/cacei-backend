@@ -99,11 +99,8 @@ profesor_encargado, departamento, apoyo'
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:admin, jefe, coordinador
-profesor_encargado'
-])->get('/RevisarEvidencia', function () {
-    return response()->json(['message' => 'Revisar evidencia']);
-});
+    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
+])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence'])->name('evidence.index');
 
 // 7.Dashboard
 Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
@@ -130,7 +127,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         return response()->json(['message' => 'Gestion de formatos']);
     });
 });
-Route::get('/ReviewEvidence', [evidenceController::class, 'allEvidence'])->name('evidence.index');
 
 
 

@@ -14,20 +14,16 @@ use App\Models\Accreditation_Process;
  */
 class EvidenceFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected $model = Evidence::class;
+
+    public function definition()
     {
         return [
-            'evidence_id' => $this->faker->unique()->numberBetween(1, 1000),
-            'standard_id' => Standard::factory(), // Relación con Standard
-            'user_rpe' => User::factory(), // Relación con User
-            'group_id' => Group::factory(), // Relación con Group
-            'process_id' => Accreditation_Process::factory(), // Relación con Process
-            'due_date' => $this->faker->dateTimeBetween('now', '+3 month'),
+            'standard_id' => \App\Models\Standard::factory(),
+            'user_rpe' => \App\Models\User::factory(),
+            'group_id' => $this->faker->numberBetween(1, 10),
+            'process_id' => $this->faker->numberBetween(1, 10),
+            'due_date' => $this->faker->date()
         ];
     }
 }
