@@ -37,9 +37,9 @@ class evidenceController extends Controller
         if ($role === 'ADMINISTADOR') {
             // Todas las evidencias (sin filtro adicional)
         } elseif ($role === 'JEFE DE AREA') {
-            $query->where('area_admin.user_rpe', $user->user_rpe);
+            $query->where('area_manager.user_rpe', $user->user_rpe);
         } elseif ($role == 'COORDINADOR DE CARRERA') {
-
+            $query->where('career_coordinator.user_rpe', $user->user_rpe);
         } elseif ($role == 'PROFESOR') {
             // solo sus evidencias
             $query->where('evidences.user_rpe', $user->rpe);
