@@ -248,7 +248,7 @@ CREATE TABLE files (
 );
 
 CREATE TABLE notifications (
-    notification_id INT NOT NULL,
+    notification_id BIGSERIAL NOT NULL,
     title VARCHAR(20) NOT NULL,
     evidence_id INT,
     notification_date DATE NOT NULL,
