@@ -18,12 +18,56 @@ use App\Http\Controllers\ProfessionalAchievementController;
 use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
+use App\Http\Controllers\ProcessController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\ReviserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SectionController;
+use App\Http\Controllers\StandardController;
+use App\Http\Controllers\EvidenceController;
 
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
+*/
+
+/*
+Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Request $request) {
+    $user = $request->user();
+
+    $linkedProcesses = [
+        ['frame_id' => 2025, 'process_id' => 1, 'career_id' => 1],
+        ['frame_id' => 2025, 'process_id' => 2, 'career_id' => 3]
+    ];
+
+    return response()->json([
+        'message' => 'Checando procesos vinculados...',
+        'user_data' => $user,
+        'linked_processes' => $linkedProcesses
+    ]);
+});
+*/
+
+
+
+
+Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
+Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
 
 //1. Login
 Route::post('/login', [AuthController::class, 'login']);
-
-Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::post('/userToken', [AuthController::class, 'getUserToken']);
+    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
+});
 
 //2. Menu prinicipal
 Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $request) {
@@ -43,7 +87,8 @@ profesor_encargado, apoyo, directivo'
 Route::middleware([
     'auth:sanctum',
     'role:admin, jefe, coordinador, profesor
-profesor_encargado'
+profesor_encargado',
+    'token.expired'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Cv de profesor']);
 });
@@ -57,6 +102,17 @@ profesor_encargado, departamento, apoyo'
     return response()->json(['message' => 'Subir evidencia']);
 });
 
+Route::middleware([
+    'auth:sanctum',
+    'role:admin, jefe, coordinador, profesor
+profesor_encargado, departamento, apoyo'
+])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::post('/userToken', [AuthController::class, 'getUserToken']);
+    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
+});
+
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
@@ -64,6 +120,18 @@ Route::middleware([
 profesor_encargado'
 ])->get('/RevisarEvidencia', function () {
     return response()->json(['message' => 'Revisar evidencia']);
+});
+
+// 5.a. Revisar archivos
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/files/{evidence_id}', [FileController::class, 'index']);
+    Route::get('/file/{file_id}', [FileController::class, 'show']);
+    Route::middleware(['file.correct'])->group(function () {
+        Route::post('/file', [FileController::class, 'store']);
+        Route::put('/file/{file_id}', [FileController::class, 'update']);
+    });
+    Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
 });
 
 // 7.Dashboard
@@ -83,9 +151,9 @@ profesor_encargado'
 //Exclusivos de administrador 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     //6. Administracion de usuarios
-    Route::get('/GestionUsuarios', function () {
-        return response()->json(['message' => 'Administrar usuarios']);
-    });
+    Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+    Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
+        ->name('usuarios.actualizarRol');
     //9. Gestion de formato
     Route::get('/GestionFormato', function () {
         return response()->json(['message' => 'Gestion de formatos']);
@@ -109,16 +177,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/Notificaciones/{id}', [NotificationController::class, 'destroy']);
     Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 });
-Route::get('/Notificaciones', [NotificationController::class, 'index']);
-Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 
 
 // 11. Procesos relacionados a un usuario
 Route::middleware(
     'auth:sanctum'
-)->get('/ProcesosUsuario', 
-        [AccreditationProcessController::class, 'getProcessesByUser'
-]);
+)->get(
+        '/ProcesosUsuario',
+        [
+            AccreditationProcessController::class,
+            'getProcessesByUser'
+        ]
+    );
 
 // 12.CV de un usuario
 Route::apiResource('cvs', CvController::class);
@@ -128,7 +198,7 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
 
     // Rutas para educaciones
     Route::resource('educations', EducationController::class);
-    
+
     // Rutas para formaciones docentes
     Route::resource('teacher-trainings', TeacherTrainingController::class);
 
@@ -160,8 +230,16 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
     Route::resource('contributions-to-pe', ContributionToPEController::class);
 });
 
+Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
+
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
-    //Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
-    //Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
 });
+//Rutas hechas en la rama de asignarTareas
+Route::get('/revisers', [ReviserController::class, 'index']);
+Route::post('/reviser', [ReviserController::class, 'store']);
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/sections', [SectionController::class, 'getByCategory']);
+Route::get('/standards', [StandardController::class, 'getBySection']);
+Route::get('/evidences', [EvidenceController::class, 'index']);

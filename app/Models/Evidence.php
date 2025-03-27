@@ -1,21 +1,23 @@
-<?php              
+<?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
-
 
 class Evidence extends Model
 {
-    use HasFactory;
-
-    protected $table = 'evidences'; // Nombre de la tabla en la base de datos
-    protected $primaryKey = 'evidence_id'; // Clave primaria
-    public $timestamps = false; // Deshabilita timestamps automáticos
-    public $incrementing = true; // Habilita autoincremento en el ID
+    use HasApiTokens, HasFactory;
+    protected $table = 'evidences';
+    public $timestamps = false;
+    protected $primaryKey = 'evidence_id';
+    protected $foreignKey = 'standard_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
+        'evidence_id',
         'standard_id',
         'user_rpe',
         'group_id',
@@ -51,5 +53,10 @@ class Evidence extends Model
     public function notifications()
     {
         return $this->hasMany(Notification::class, 'evidence_id', 'evidence_id');
+    }
+
+    public function assignEvidence()
+    {
+        return $this->hasMany(Reviser::class, 'evidence_id');
     }
 }

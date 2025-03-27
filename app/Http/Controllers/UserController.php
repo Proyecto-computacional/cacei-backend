@@ -9,8 +9,17 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        $query = User::query();
+        if ($request->has('search')) {
+            $search = $request->input('search');
+    
+            $query->where(function ($q) use ($search) {
+                $q->where('user_mail', 'LIKE', "%$search%")
+                  ->orWhere('user_rpe', 'LIKE' , "%$search%");
+            });
+        }
         return response()->json([
-            'usuarios' => User::cursorPaginate(10), // Pagina los resultados si hay muchos
+            'usuarios' => $query->cursorPaginate(10), // Pagina los resultados si hay muchos
             'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'TUTOR ACADEMICO', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO']
         ]);
     }

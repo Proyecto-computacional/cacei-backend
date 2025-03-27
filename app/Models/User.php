@@ -21,6 +21,13 @@ class User extends Authenticatable
         'user_mail',
         'user_role',
     ];
+
+
+    public function processes()
+    {
+        return $this->hasMany(Accreditation_Process::class);
+    }
+  
     /**
      * The attributes that should be cast.
      *
@@ -35,7 +42,8 @@ class User extends Authenticatable
    protected $casts = [
        'email_verified_at' => 'datetime',
    ];*/
-
+  
+  
     public function sentNotification()
     {
         return $this->hasMany(Notification::class, 'user_rpe');
