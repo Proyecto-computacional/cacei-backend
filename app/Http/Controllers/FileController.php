@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\BackupJob;
 
 class FileController extends Controller
 {
@@ -59,6 +60,8 @@ class FileController extends Controller
             'justification' => $request->justification
         ]);
 
+        BackupJob::dispatch();
+
         return response()->json($file, 201);
     }
 
@@ -88,6 +91,8 @@ class FileController extends Controller
 
         $file->save();
 
+        BackupJob::dispatch();
+
         return response()->json($file);
     }
 
@@ -104,6 +109,8 @@ class FileController extends Controller
 
         // Eliminar el registro de la base de datos
         $file->delete();
+
+        BackupJob::dispatch();
 
         return response()->json(['message' => 'Archivo eliminado correctamente']);
     }
