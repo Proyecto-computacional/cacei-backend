@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfessionalAchievementController;
 use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
+use App\Http\Controllers\RevisionEvidenciasController;
 use App\Http\Controllers\evidenceController;
 use App\Http\Controllers\ProcessController;
 use App\Http\Controllers\FileController;
@@ -54,8 +55,6 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
     ]);
 });
 */
-
-
 
 
 Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
@@ -130,6 +129,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/file/{file_id}', [FileController::class, 'update']);
     });
     Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
+
+    Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
+
+    Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
+
 });
 
 // 7.Dashboard
