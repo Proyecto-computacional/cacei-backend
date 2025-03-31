@@ -67,7 +67,7 @@ CREATE TABLE evidences (
 
 CREATE TABLE revisers (
     reviser_id BIGSERIAL NOT NULL,
-    user_rpe VARCHAR(20) UNIQUE NOT NULL,
+    user_rpe VARCHAR(20) NOT NULL,
     evidence_id BIGINT,
     PRIMARY KEY (reviser_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
@@ -249,6 +249,7 @@ CREATE TABLE files (
     upload_date DATE NOT NULL,
     evidence_id INT NOT NULL,
     justification VARCHAR(255),
+    file_name VARCHAR(50),
     PRIMARY KEY (file_id),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)
 );

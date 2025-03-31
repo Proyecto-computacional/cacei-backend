@@ -21,6 +21,7 @@ class Evidence extends Model
         'due_date'
     ];
 
+
     public function standard()
     {
         return $this->belongsTo(Standard::class, 'standard_id');
@@ -36,4 +37,8 @@ class Evidence extends Model
         return $this->belongsTo(User::class, 'user_rpe');
     }
 
+    public function files()
+    {
+        return $this->hasMany(File::class, 'evidence_id');
+    }
 }

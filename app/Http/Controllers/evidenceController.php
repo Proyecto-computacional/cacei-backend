@@ -16,10 +16,8 @@ class evidenceController extends Controller
 
         $query = Evidence::query()
             ->leftJoin('standards', 'evidences.standard_id', '=', 'standards.standard_id')
-            ->leftJoin('users', 'evidences.user_rpe', '=', 'users.user_rpe')
-            ->leftJoin('accreditation_processes', 'evidences.process_id', '=', 'accreditation_processes.process_id')
-            ->leftJoin('files', 'evidences.evidence_id', '=', 'files.evidence_id')
-            ->leftJoin('careers', 'accreditation_processes.career_id', '=', 'careers.career_id')
+            ->leftJoin('users as evidence_owner', 'evidences.user_rpe', '=', 'evidence_owner.user_rpe')
+            ->leftJoin('accreditation_processes', 'evidences.process_id', '=', 'accreditation_processes.process_id')->leftJoin('careers', 'accreditation_processes.career_id', '=', 'careers.career_id')
             ->leftJoin('areas', 'careers.area_id', '=', 'areas.area_id')
             ->leftJoin('users as career_coordinator', 'careers.user_rpe', '=', 'career_coordinator.user_rpe')
             ->leftJoin('users as area_manager', 'areas.user_rpe', '=', 'area_manager.user_rpe')
@@ -28,15 +26,12 @@ class evidenceController extends Controller
             ->select(
                 'evidences.*',
                 'standards.standard_name as standard_name',
-                'users.user_name as user_name',
+                'evidence_owner.user_name as evidence_owner_name',
                 'accreditation_processes.process_name as process_name',
-                'files.file_url as file_url',
                 'career_coordinator.user_rpe as career_admin_rpe',
                 'area_manager.user_rpe as area_admin_rpe',
-                'professors.user_rpe as revisor_rpe' // Profesor revisor de la evidencia
-            )
-            ->whereNull('files.file_url') // Filtrar los registros que no tienen archivo
-        ;
+                'professors.user_rpe as revisor_rpe', // Profesor revisor de la evidencia
+            );
         // Filtrar por rol de usuario
         if ($role === 'ADMINISTADOR') {
             // Todas las evidencias (sin filtro adicional)
@@ -60,8 +55,8 @@ class evidenceController extends Controller
             $search = $request->input('search');
 
             $query->where(function ($q) use ($search) {
-                $q->where('standards.name', 'LIKE', "%$search%")
-                    ->orWhere('users.name', 'LIKE', "%$search%")
+                $q->where('standard_name', 'LIKE', "%$search%")
+                    ->orWhere('evidence_owner.user_name', 'LIKE', "%$search%")
                     ->orWhere('evidences.user_rpe', 'LIKE', "%$search%");
             });
         }
@@ -71,15 +66,23 @@ class evidenceController extends Controller
             $direction = $request->input('sort_order', $request->input('order')); // Orden (asc o desc)
 
             // Validar que la columna está permitida para evitar SQL Injection
-            $allowedColumns = ['evidence_id', 'standard_name', 'user_name', 'process_name', 'file_url'];
+            $allowedColumns = ['evidence_id', 'standard_name', 'evidence_owner.user_name', 'process_name', 'file_url'];
 
             if (in_array($column, $allowedColumns)) {
                 $query->orderBy($column, $direction);
             }
         }
 
+        $evidences = $query->cursorPaginate(10);
+
+        $evidences->each(function ($evidence) {
+            $evidence->files = DB::table('files')
+                ->where('evidence_id', $evidence->evidence_id)
+                ->get();
+        });
+
         return response()->json([
-            'evidencias' => $query->cursorPaginate(10), // Pagina los resultados
+            'evidencias' => $evidences,
             'estatus' => ['APROBADO', 'NO APROBADO', 'PENDIENTE'],
             'Rol' => $role
         ]);
