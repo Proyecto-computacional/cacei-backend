@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\BackupJob;
 
 class FileController extends Controller
 {
@@ -49,7 +50,9 @@ class FileController extends Controller
         $extension = $file->getClientOriginalExtension();
         $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '_' . $randomId . '.' . $extension;
 
-        $path = $request->file('file')->storeAs('uploads', $newName, 'public'); //Cambiar por la ruta designada en servidor
+        $path_name = 'uploads_' . $evidence_id; // Ver como especificar las rutas
+
+        $path = $request->file('file')->storeAs($path_name, $newName, 'public'); //Cambiar por la ruta designada en servidor
 
         $file = File::create([
             'file_id' => $randomId,
@@ -58,6 +61,8 @@ class FileController extends Controller
             'evidence_id' => $request->evidence_id,
             'justification' => $request->justification
         ]);
+
+        BackupJob::dispatch();
 
         return response()->json($file, 201);
     }
@@ -88,6 +93,8 @@ class FileController extends Controller
 
         $file->save();
 
+        BackupJob::dispatch();
+
         return response()->json($file);
     }
 
@@ -104,6 +111,8 @@ class FileController extends Controller
 
         // Eliminar el registro de la base de datos
         $file->delete();
+
+        BackupJob::dispatch();
 
         return response()->json(['message' => 'Archivo eliminado correctamente']);
     }
