@@ -78,7 +78,11 @@ class evidenceController extends Controller
         $evidences->each(function ($evidence) {
             $evidence->files = DB::table('files')
                 ->where('evidence_id', $evidence->evidence_id)
-                ->get();
+                ->get()
+                ->map(callback: function ($file) {
+                    $file->file_url = url($file->file_url); // Agregar URL completa
+                    return $file;
+                });
         });
 
         return response()->json([
