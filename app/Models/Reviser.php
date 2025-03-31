@@ -25,4 +25,8 @@ class Reviser extends Model
     {
         return $this->hasMany(Notification::class, 'reviser_id');
     }
+    public function evidence()
+    {
+        return $this->belongsTo(Evidence::class, 'evidence_id', 'evidence_id');
+    }
 }

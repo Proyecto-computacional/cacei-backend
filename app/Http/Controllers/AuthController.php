@@ -7,7 +7,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
-
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -63,7 +63,15 @@ class AuthController extends Controller
                         'user_role' => $data['cargo'],
                     ]
                 );
-                $token = $user->createToken('auth_token')->plainTextToken;
+
+
+                //$token = $user->createToken('auth_token')->plainTextToken;
+                $token = $user->createToken('auth_token');
+
+                $token->accessToken->forceFill([
+                    'expires_at' => Carbon::now()->addMinutes(20)
+                ])->save();
+
 
                 return response()->json([
                     'correct' => true,
@@ -91,5 +99,31 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'Logout exitoso']);
+    }
+
+    public function logoutAll(Request $request)
+    {
+        $user = $request->user();
+        $user->tokens()->delete();
+        return response()->json(['message' => 'Todas las sesiones cerradas.']);
+    }
+
+    public function getUserToken(Request $request)
+    {
+        $user = $request->user();
+        $token = $user->currentAccesstoken();
+        return response()->json(compact('user', 'token'));
+    }
+
+    public function getAllTokens(Request $request)
+    {
+        $user = $request->user();
+
+        $activeTokens = $user->tokens()->where(function ($query) {
+            $query->whereNull('expires_at')
+                ->orWhere('expires_at', '>', now());
+        })->get();
+
+        return response()->json(compact('activeTokens'));
     }
 }

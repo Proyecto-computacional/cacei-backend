@@ -14,6 +14,7 @@ CREATE TABLE users (
     user_rpe VARCHAR(20) NOT NULL,
     user_mail VARCHAR(100) UNIQUE NOT NULL,
     user_role VARCHAR(20) NOT NULL,
+    user_name VARCHAR(150) NOT NULL,
     cv_id BIGINT,
     PRIMARY KEY (user_rpe),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
@@ -66,7 +67,7 @@ CREATE TABLE evidences (
 
 CREATE TABLE revisers (
     reviser_id BIGSERIAL NOT NULL,
-    user_rpe VARCHAR(20) UNIQUE NOT NULL,
+    user_rpe VARCHAR(20) NOT NULL,
     evidence_id BIGINT,
     PRIMARY KEY (reviser_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
@@ -185,21 +186,26 @@ CREATE TABLE contributions_to_pe (
 CREATE TABLE areas (
     area_id VARCHAR(20) NOT NULL,
     area_name VARCHAR(20) NOT NULL,
-    PRIMARY KEY (area_id)
+    user_rpe VARCHAR(20) UNIQUE NOT NULL,
+    PRIMARY KEY (area_id),
+    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
 );
 
 CREATE TABLE careers (
     career_id VARCHAR(20) NOT NULL,
     area_id VARCHAR(20) NOT NULL,
     career_name VARCHAR(20) NOT NULL,
+    user_rpe VARCHAR(20) UNIQUE NOT NULL,
     PRIMARY KEY (career_id),
-    FOREIGN KEY (area_id) REFERENCES areas(area_id)
+    FOREIGN KEY (area_id) REFERENCES areas(area_id),
+    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
 );
 
 CREATE TABLE accreditation_processes (
     process_id INT NOT NULL,
     career_id VARCHAR(20) NOT NULL,
     frame_id INT,
+    process_name VARCHAR(150) NOT NULL,
     start_date DATE,
     end_date DATE,
     due_date DATE,
@@ -245,6 +251,7 @@ CREATE TABLE files (
     upload_date DATE NOT NULL,
     evidence_id INT NOT NULL,
     justification VARCHAR(255),
+    file_name VARCHAR(50),
     PRIMARY KEY (file_id),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)
 );
@@ -258,7 +265,7 @@ CREATE TABLE notifications (
     reviser_id BIGSERIAL NOT NULL, 
     description VARCHAR(255),
     seen BOOL NOT NULL,
-    pinned BOOL NOT NULL,
+    pinned BOOL NOT NULL DEFAULT FALSE,
     PRIMARY KEY (notification_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
