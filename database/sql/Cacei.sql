@@ -255,7 +255,7 @@ CREATE TABLE files (
 );
 
 CREATE TABLE notifications (
-    notification_id INT NOT NULL,
+    notification_id BIGSERIAL NOT NULL,
     title VARCHAR(20) NOT NULL,
     evidence_id INT,
     notification_date DATE NOT NULL,
@@ -263,7 +263,7 @@ CREATE TABLE notifications (
     reviser_id BIGSERIAL NOT NULL, 
     description VARCHAR(20),
     seen BOOL NOT NULL,
-    pineed BOOL NOT NULL,
+    pinned BOOL NOT NULL DEFAULT FALSE,
     PRIMARY KEY (notification_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),

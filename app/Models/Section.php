@@ -8,15 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Section extends Model
 {
     use HasFactory;
-
     protected $table = 'sections';
-    protected $primaryKey = 'section_id';
     public $timestamps = false;
-
+    protected $primaryKey = 'section_id';
+    protected $foreignKey = 'category_id';
+    public $incrementing = false;
+    protected $keyType = 'int';
     protected $fillable = [
+        'section_id',
         'category_id',
         'section_name',
-        'section_description'
+        'section_description',
     ];
 
     public function category()

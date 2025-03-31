@@ -8,22 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class Standard extends Model
 {
     use HasFactory;
-
     protected $table = 'standards';
-    protected $primaryKey = 'standard_id';
     public $timestamps = false;
-
+    protected $primaryKey = 'standard_id';
+    protected $foreignKey = 'section_id';
+    public $incrementing = false;
+    protected $keyType = 'int';
     protected $fillable = [
+        'standard_id',
         'section_id',
         'standard_name',
         'standard_description',
         'is_transversal',
-        'help'
+        'help',
     ];
-
     public function section()
     {
         return $this->belongsTo(Section::class, 'section_id');
     }
-
 }
