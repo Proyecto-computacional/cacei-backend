@@ -9,9 +9,8 @@ class CheckRole
 {
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // Por ahora, simulamos un usuario autenticado con un rol
-        //$userRole = $request->user() ? $request->user()->role : 'guest'; // Esto lo ajustarás con la API
-        $userRole = 'admin'; // Esto lo ajustarás con la API
+        $user = auth()->user();
+        $userRole = $user->user_role;
 
         // Verificar si el rol del usuario está en la lista de roles permitidos
         if (!in_array($userRole, $roles)) {

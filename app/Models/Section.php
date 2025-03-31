@@ -20,6 +20,7 @@ class Section extends Model
         'section_name',
         'section_description',
     ];
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');

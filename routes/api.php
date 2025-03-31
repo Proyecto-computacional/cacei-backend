@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfessionalAchievementController;
 use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
+use App\Http\Controllers\evidenceController;
 use App\Http\Controllers\ProcessController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ReviserController;
@@ -116,11 +117,8 @@ profesor_encargado, departamento, apoyo'
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:admin, jefe, coordinador
-profesor_encargado'
-])->get('/RevisarEvidencia', function () {
-    return response()->json(['message' => 'Revisar evidencia']);
-});
+    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
+])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence'])->name('evidence.index');
 
 // 5.a. Revisar archivos
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -230,8 +228,6 @@ Route::prefix('additionalInfo/{cv_id}')->group(function () {
     Route::resource('contributions-to-pe', ContributionToPEController::class);
 });
 
-Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
-Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])->name('usuarios.actualizarRol');
 
 Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);

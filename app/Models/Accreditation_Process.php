@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Accreditation_Process extends Model
 {
     use HasFactory;
@@ -13,10 +14,15 @@ class Accreditation_Process extends Model
         'process_id',
         'career_id',
     ];
+    public $timestamps = false;
+    protected $primaryKey = 'process_id';
 
-    // Define the inverse relationship with the User model
-    public function user()
+    protected $table = 'accreditation_processes';
+
+    public function career()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Career::class, 'career_id', 'career_id');
     }
+
+
 }

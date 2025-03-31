@@ -22,4 +22,9 @@ class File extends Model
         'evidence_id',
         'justification'
     ];
+
+    public function evidence()
+    {
+        return $this->belongsTo(Evidence::class, 'evidence_id');
+    }
 }
