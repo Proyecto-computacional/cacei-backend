@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
-class evidenceController extends Controller
+class EvidenceController extends Controller
 {
     public function allEvidence(Request $request)
     {
