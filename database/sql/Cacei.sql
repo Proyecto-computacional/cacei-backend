@@ -266,6 +266,7 @@ CREATE TABLE notifications (
     description VARCHAR(255),
     seen BOOL NOT NULL,
     pinned BOOL NOT NULL DEFAULT FALSE,
+    starred BOOL NOT NULL DEFAULT FALSE,
     PRIMARY KEY (notification_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),

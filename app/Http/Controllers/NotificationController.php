@@ -18,10 +18,10 @@ class NotificationController extends Controller
     }
 
     // Método para alternar el estado de favorito de una notificación específica
-    public function toggleFavorite($id)
+    public function toggleFavorite(Request $request)
     {
-        $notification = Notification::findOrFail($id);  // Busca la notificación por su ID o lanza error si no se encuentra
-        $notification->favorite = !$notification->favorite;  // Cambia el valor del campo 'favorite' (true/false)
+        $notification = Notification::findOrFail($request->notification_id);  // Busca la notificación por su ID o lanza error si no se encuentra
+        $notification->starred = !$notification->starred;  // Cambia el valor del campo 'favorite' (true/false)
         $notification->save();  // Guarda el cambio en la base de datos
 
         return response()->json(['message' => 'Estado de favorito actualizado']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de favorito
@@ -35,6 +35,16 @@ class NotificationController extends Controller
         $notification->save();  // Guarda el cambio en la base de datos
 
         return response()->json(['message' => 'Estado de fijado actualizado']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de fijado
+    }
+
+    // Método para hacer soft delete a una notificación por su ID
+    public function toggleDeleted(Request $request)
+    {
+        $notification = Notification::findOrFail($request->notification_id);  // Busca la notificación por su ID o lanza error si no se encuentra
+        $notification->seen = !$notification->seen;  // Cambia el valor del campo 'seen' (true/false)
+        $notification->save();  // Guarda el cambio en la base de datos
+
+        return response()->json(['message' => 'Notificación eliminada']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de fijado
     }
 
     // Método para eliminar una notificación por su ID

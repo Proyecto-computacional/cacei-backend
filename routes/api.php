@@ -19,7 +19,6 @@ use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
 use App\Http\Controllers\RevisionEvidenciasController;
-use App\Http\Controllers\evidenceController;
 use App\Http\Controllers\ProcessController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ReviserController;
@@ -173,15 +172,19 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
     // Listar notificaciones
     Route::get('/Notificaciones', [NotificationController::class, 'index']);
+    Route::post('/Notificaciones', [NotificationController::class, 'index']);
 
     // Marcar/Desmarcar favorito
-    Route::put('/Notificaciones/{id}/favorite', [NotificationController::class, 'toggleFavorite']);
+    Route::put('/Notificaciones/favorite', [NotificationController::class, 'toggleFavorite']);
 
     // Marcar/Desmarcar fijada
     Route::put('/Notificaciones/pinned', [NotificationController::class, 'togglePinned']);
 
+    // Marcar/Desmarcar eliminada (seen)
+    Route::put('/Notificaciones/deleted', [NotificationController::class, 'toggleDeleted']);
+
     // Eliminar notificación
-    Route::delete('/Notificaciones/{id}', [NotificationController::class, 'destroy']);
+    Route::delete('/Notificaciones', [NotificationController::class, 'destroy']);
     Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 });
 
