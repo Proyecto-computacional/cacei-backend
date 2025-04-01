@@ -23,7 +23,8 @@ class Notification extends Model
         'reviser_id',
         'description',
         'seen',
-        'pinned'
+        'pinned',
+        'starred'
     ];
     //Una relacion inversa belongsTo(User::class) indica que cada notificación pertenece a un solo 
     // usuario y User_rpe es de la tabla notification y  user_rpe  es de la tabla user_t (PK).
