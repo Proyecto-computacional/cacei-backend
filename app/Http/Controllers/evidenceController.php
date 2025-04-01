@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
-class evidenceController extends Controller
+class EvidenceController extends Controller
 {
     public function allEvidence(Request $request)
     {
@@ -89,6 +89,28 @@ class evidenceController extends Controller
             'evidencias' => $evidences,
             'estatus' => ['APROBADO', 'NO APROBADO', 'PENDIENTE'],
             'Rol' => $role
+        ]);
+    }
+
+    public function index(Request $request)
+    {
+        $evidences = Evidence::where("standard_id", $request->standard_id)->get();
+        return response()->json($evidences);
+    }
+
+    public function show(Request $request)
+    {
+        $evidence = Evidence::find($request->file_id);
+        if (!$evidence) {
+            return response()->json(['message' => 'Evidencia no encontrada'], 404);
+        }
+        return response()->json($evidence);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            '' => '',
         ]);
     }
 }

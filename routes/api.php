@@ -19,14 +19,13 @@ use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\ContributionToPEController;
 use App\Http\Controllers\RevisionEvidenciasController;
-use App\Http\Controllers\evidenceController;
+use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\ProcessController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ReviserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StandardController;
-use App\Http\Controllers\EvidenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -117,7 +116,7 @@ profesor_encargado, departamento, apoyo'
 Route::middleware([
     'auth:sanctum',
     'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
-])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence'])->name('evidence.index');
+])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence'])->name('evidence.index');
 
 // 5.a. Revisar archivos
 Route::middleware(['auth:sanctum'])->group(function () {
