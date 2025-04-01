@@ -12,12 +12,12 @@ class RevisionEvidenciasController extends Controller
     {
 
         return $this->actualizarEstado($request, 'Aprobado');
-        
+
     }
 
     public function desaprobarEvidencia(Request $request)
     {
-        return $this->actualizarEstado($request, 'Desaprobado');
+        return $this->actualizarEstado($request, 'No aprobado');
     }
     //Es para regresarla a pendiente si es por defaul o como opcion para un boton de pendiente
     public function marcarPendiente(Request $request)
@@ -30,14 +30,16 @@ class RevisionEvidenciasController extends Controller
         $request->validate([
             'evidence_id' => 'required|integer',
             'user_rpe' => 'required|string',
-            'reviser_id' => 'required|integer',
             'feedback' => 'nullable|string|max:255' //puede ser null
         ]);
 
-        //solo aprovadp o rechazado puede tener retroalimentacIon
-        $feedback = in_array($estado, ['Aprobado', 'Desaprobado']) ? $request->feedback : null;
+        $user = auth()->user();
+        $reviser_rpe = $user->user_rpe;
 
-       //Carga el estado a la base
+        //solo aprovadp o rechazado puede tener retroalimentacIon
+        $feedback = in_array($estado, ['Aprobado', 'No aprobado']) ? $request->feedback : null;
+
+        //Carga el estado a la base
         $status = Status::create([
             'evidence_id' => $request->evidence_id,
             'user_rpe' => $request->user_rpe,
@@ -46,13 +48,13 @@ class RevisionEvidenciasController extends Controller
             'feedback' => $feedback
         ]);
 
-       //crea la notificacion y carga el comentario..
+        //crea la notificacion y carga el comentario..
         Notification::create([
             'title' => "Evidencia {$estado}",
             'evidence_id' => $request->evidence_id,
             'notification_date' => Carbon::now(),
             'user_rpe' => $request->user_rpe,
-            'reviser_id' => $request->reviser_id,
+            'reviser_id' => $reviser_rpe,
             'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
             'seen' => false,
             'pinned' => false
