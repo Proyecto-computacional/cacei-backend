@@ -50,6 +50,12 @@ Asegúrate de tener instalados los siguientes requisitos antes de continuar:
    php artisan migrate 
    ```
 
+* Asegurarse de tener instalado el paquete: spatie/laravel-backup *
+```sh
+   composer require spatie/laravel-backup
+   ```
+
+
 ## Ejecutar el Servidor (Desarrollo)
 
 Para iniciar el servidor localmente necesitarás dos terminales, en la primera, usa:
