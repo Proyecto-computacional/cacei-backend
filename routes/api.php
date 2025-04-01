@@ -141,6 +141,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 });
 
+Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
+
+    Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
+
+    Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
+
 // 7.Dashboard
 Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
     return response()->json(['message' => 'Dashboard']);
