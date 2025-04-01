@@ -26,6 +26,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StandardController;
 use App\Http\Controllers\EvidenceController;
+use App\Http\Middleware\CorsMiddleware;
 
 /*
 |--------------------------------------------------------------------------
