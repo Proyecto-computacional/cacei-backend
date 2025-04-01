@@ -38,7 +38,7 @@ class RevisionEvidenciasController extends Controller
         $feedback = in_array($estado, ['Aprobado', 'Desaprobado']) ? $request->feedback : null;
 
        //Carga el estado a la base
-        $status = Status::create([
+        $status = Status::updateOrCreate([
             'evidence_id' => $request->evidence_id,
             'user_rpe' => $request->user_rpe,
             'status_description' => $estado,
