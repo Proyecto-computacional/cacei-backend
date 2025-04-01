@@ -50,7 +50,7 @@ class FileController extends Controller
         $extension = $file->getClientOriginalExtension();
         $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '_' . $randomId . '.' . $extension;
 
-        $path_name = 'uploads_' . $evidence_id; // Ver como especificar las rutas
+        $path_name = 'uploads/' . $evidence_id; // Ver como especificar las rutas
 
         $path = $request->file('file')->storeAs($path_name, $newName, 'public'); //Cambiar por la ruta designada en servidor
 

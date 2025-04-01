@@ -30,6 +30,7 @@ class Evidence extends Model
     public function files()
     {
         return $this->hasMany(File::class, 'evidence_id');
+    }
     // Relación con Standard (Cada evidencia pertenece a un estándar)
     public function standard()
     {
