@@ -77,8 +77,7 @@ Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $req
 //3. Confitguracion personal
 Route::middleware([
     'auth:sanctum',
-    'role:admin, jefe, coordinador, profesor
-profesor_encargado, apoyo, directivo'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, PERSONAL DE APOYO, DIRECTIVO'
 ])->get('/personalInfo', function () {
     return response()->json(['message' => 'Informacion personal']);
 });
@@ -86,8 +85,7 @@ profesor_encargado, apoyo, directivo'
 // 3.a cv
 Route::middleware([
     'auth:sanctum',
-    'role:admin, jefe, coordinador, profesor
-profesor_encargado',
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE',
     'token.expired'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Cv de profesor']);
@@ -96,8 +94,7 @@ profesor_encargado',
 //4. Subir evidencia
 Route::middleware([
     'auth:sanctum',
-    'role:admin, jefe, coordinador, profesor
-profesor_encargado, departamento, apoyo'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Subir evidencia']);
 });
@@ -144,8 +141,7 @@ Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
 // 8.Gestion Evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:admin, jefe, coordinador
-profesor_encargado'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR RESPONSABLE'
 ])->get('/GestionEvidencias', function () {
     return response()->json(['message' => 'Gestionar evidencias']);
 });
