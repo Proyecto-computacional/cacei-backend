@@ -92,6 +92,7 @@ Route::middleware([
 });
 
 //4. Subir evidencia
+//REPETIDA CON CV
 Route::middleware([
     'auth:sanctum',
     'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'

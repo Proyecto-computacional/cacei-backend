@@ -29,7 +29,6 @@ class FileController extends Controller
     //Subir archivos
     public function store(Request $request)
     {
-
         $request->validate([
             'evidence_id' => 'required|exists:evidences,evidence_id',
             'justification' => 'nullable|string'

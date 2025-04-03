@@ -15,11 +15,12 @@ class CheckFileMetadata
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // pending: revisar que si sean los formatos
         $request->validate([
-            'file' => 'required|file|mimes:pdf,doc,docx,png,jpg,jpeg|max:2048',
+            'file' => 'required|file|mimes:pdf,doc,docx,png,jpg,jpeg,xlsx|max:2048',
         ], [
             'file.max' => 'El archivo no debe de exceder 50 MB',
-            'file.mimes' => 'El archivo debe ser PDF, DOC, DOCX, PNG, JPG, JPEG'
+            'file.mimes' => 'El archivo debe ser PDF, DOC, DOCX, PNG, JPG, JPEG, XLSX'
         ]);
 
         if ($request->hasFile('file')) {
