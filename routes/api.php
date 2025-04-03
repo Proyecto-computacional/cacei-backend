@@ -102,17 +102,6 @@ profesor_encargado, departamento, apoyo'
     return response()->json(['message' => 'Subir evidencia']);
 });
 
-Route::middleware([
-    'auth:sanctum',
-    'role:admin, jefe, coordinador, profesor
-profesor_encargado, departamento, apoyo'
-])->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
-    Route::post('/userToken', [AuthController::class, 'getUserToken']);
-    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
-});
-
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',

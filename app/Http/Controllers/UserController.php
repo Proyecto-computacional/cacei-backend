@@ -9,7 +9,6 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        error_log('es esta función');
         $query = User::query();
         if ($request->has('search')) {
             $search = $request->input('search');
