@@ -28,50 +28,42 @@ class AuthController extends Controller
         ];
 
         $responseApi = Http::withHeaders([
-            'Content-Type: application/json',
+            'Content-Type' => 'application/json',
         ])->post($endpoint, $payload);
 
         if ($responseApi->successful()) {
 
             $responseApi = $responseApi->json();
-            //indices response
-            /*"correcto":true,
-                "datos":[{
-                    "rpe",
-                    "nombre",
-                    "correo",
-                    "cve_area",
-                    "area",
-                    "cve_carrera",
-                    "carrera",
-                    "cve_cargo",
-                    "cargo"
-
-            "correcto":false,
-            "mensaje"
-            */
 
             if ($responseApi['correcto']) {
-                //json de datos
                 $data = $responseApi['datos'][0];
-                //Crear registro en nuestra base de datos(pendiente)
 
-                $user = User::updateOrCreate(
-                    ['user_rpe' => $data['rpe']],
-                    [
+                // Verificar si el usuario ya existe en la base de datos
+                $user = User::where('user_rpe', $data['rpe'])->first();
+
+                // Si el usuario ya existe, no actualiza el rol
+                if ($user) {
+                    // Si el rol ya es el correcto, no actualiza nada
+                    if ($user->user_role !== $data['cargo']) {
+                        // Si el rol cambió, solo actualiza el correo
+                        $user->update([
+                            'user_mail' => $data['correo'],
+                        ]);
+                    }
+                } else {
+                    // Si el usuario no existe, lo crea
+                    $user = User::create([
+                        'user_rpe' => $data['rpe'],
                         'user_mail' => $data['correo'],
                         'user_role' => $data['cargo'],
-                    ]
-                );
+                    ]);
+                }
 
-
-                //$token = $user->createToken('auth_token')->plainTextToken;
                 $token = $user->createToken('auth_token');
 
                 $token->accessToken->forceFill([
                     'expires_at' => Carbon::now()->addMinutes(20)
                 ])->save();
-
 
                 return response()->json([
                     'correct' => true,
@@ -95,6 +87,7 @@ class AuthController extends Controller
             ], $responseApi->status());
         }
     }
+
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
