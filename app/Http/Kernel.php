@@ -71,5 +71,5 @@ class Kernel extends HttpKernel
         'token.expired' => \App\Http\Middleware\EnsureTokenNotExpired::class,
         'file.correct' => \App\Http\Middleware\CheckFileMetadata::class,
         'cors' => \App\Http\Middleware\CorsMiddleware::class,
-    ];
+    ];    
 }

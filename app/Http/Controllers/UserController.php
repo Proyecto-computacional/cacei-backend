@@ -9,6 +9,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        error_log('es esta función');
         $query = User::query();
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -30,7 +31,7 @@ class UserController extends Controller
         try {
             $validado = $request->validate([
                 'user_id' => 'required|exists:users,user_rpe',
-                'rol' => 'required|string|in:DIRECTIVO,JEFE DE AREA,COORDINADOR,PROFESOR RESPONSABLE,PROFESOR,TUTOR ACADEMICO,DEPARTAMENTO UNIVERSITARIO,PERSONAL DE APOYO',
+                'rol' => 'required|string|in:DIRECTIVO,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR RESPONSABLE,PROFESOR,TUTOR ACADEMICO,DEPARTAMENTO UNIVERSITARIO,PERSONAL DE APOYO,ADMINISTRADOR',
             ]);
 
             Log::debug("Datos validados correctamente:", $validado);

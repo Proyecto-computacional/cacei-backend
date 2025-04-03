@@ -162,7 +162,7 @@ profesor_encargado'
 });
 
 //Exclusivos de administrador 
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
     //6. Administracion de usuarios
     Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
     Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])

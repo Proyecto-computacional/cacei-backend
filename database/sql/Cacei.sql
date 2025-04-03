@@ -13,7 +13,7 @@ CREATE TABLE cvs (
 CREATE TABLE users (
     user_rpe VARCHAR(20) NOT NULL,
     user_mail VARCHAR(100) UNIQUE NOT NULL,
-    user_role VARCHAR(20) NOT NULL,
+    user_role VARCHAR(30) NOT NULL,
     user_name VARCHAR(150) NOT NULL,
     cv_id BIGINT,
     PRIMARY KEY (user_rpe),
