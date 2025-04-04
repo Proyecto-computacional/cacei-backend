@@ -13,7 +13,7 @@ class ProcessController extends Controller
     {
         return response()->json([
             ['frame_id' => 2025, 'process_id' => 1, 'career_id' => 1],
-            ['frame_id' => 2025, 'process_id' => 2, 'career_id' => 3]
+            //['frame_id' => 2025, 'process_id' => 2, 'career_id' => 3]
         ]);
     }
 
@@ -39,7 +39,7 @@ class ProcessController extends Controller
 
         $linkedProcesses = [
             ['frame_id' => 2025, 'process_id' => 1, 'career_id' => 1],
-            ['frame_id' => 2025, 'process_id' => 2, 'career_id' => 3]
+           // ['frame_id' => 2025, 'process_id' => 2, 'career_id' => 3]
         ];
 
         return response()->json([

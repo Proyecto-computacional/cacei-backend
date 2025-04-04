@@ -93,4 +93,9 @@ class EvidenceController extends Controller
             'Rol' => $role
         ]);
     }
+    public function getByStandard(Request $request)
+    {
+        $evidences = Evidence::where('standard_id', $request->standard_id)->get();
+        return response()->json($evidences);
+    }
 }

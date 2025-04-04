@@ -1,4 +1,7 @@
 <?php
+use Spatie\Backup\Notifications\Notifications\BackupHasFailedNotification;
+use Spatie\Backup\Notifications\Notifications\UnhealthyBackupWasFoundNotification;
+use Spatie\Backup\Notifications\Notifications\CleanupHasFailedNotification;
 
 return [
 
