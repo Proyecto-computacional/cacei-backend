@@ -56,6 +56,7 @@ class AuthController extends Controller
                         'user_rpe' => $data['rpe'],
                         'user_mail' => $data['correo'],
                         'user_role' => $data['cargo'],
+                        'user_name' => $data['nombre'],
                     ]);
                 }
 
