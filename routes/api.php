@@ -104,7 +104,7 @@ Route::middleware([
 Route::middleware([
     'auth:sanctum',
     'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
-])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence'])->name('evidence.index');
+])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence']);
 
 // 5.a. Revisar archivos
 Route::middleware(['auth:sanctum'])->group(function () {

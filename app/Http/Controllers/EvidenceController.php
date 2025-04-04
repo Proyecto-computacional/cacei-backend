@@ -11,6 +11,7 @@ class EvidenceController extends Controller
 {
     public function allEvidence(Request $request)
     {
+        error_log('llega aquí al evidence');
         $user = auth()->user();
         $role = $user->user_role;
 
@@ -33,7 +34,7 @@ class EvidenceController extends Controller
                 'professors.user_rpe as revisor_rpe', // Profesor revisor de la evidencia
             );
         // Filtrar por rol de usuario
-        if ($role === 'ADMINISTADOR') {
+        if ($role === 'ADMINISTRADOR') {
             // Todas las evidencias (sin filtro adicional)
         } elseif ($role === 'JEFE DE AREA') {
             $query->where('area_manager.user_rpe', $user->user_rpe);
@@ -66,20 +67,21 @@ class EvidenceController extends Controller
             $direction = $request->input('sort_order', $request->input('order')); // Orden (asc o desc)
 
             // Validar que la columna está permitida para evitar SQL Injection
-            $allowedColumns = ['evidence_id', 'standard_name', 'evidence_owner.user_name', 'process_name', 'file_url'];
+            $allowedColumns = ['evidence_id', 'standard_name', 'process_name', 'file_url'];
 
             if (in_array($column, $allowedColumns)) {
                 $query->orderBy($column, $direction);
             }
         }
 
-        $evidences = $query->cursorPaginate(10);
+        $evidences = $query->orderBy('evidence_id')->cursorPaginate(10);
+        
 
         $evidences->each(function ($evidence) {
             $evidence->files = DB::table('files')
                 ->where('evidence_id', $evidence->evidence_id)
                 ->get()
-                ->map(callback: function ($file) {
+                ->map(function ($file) {
                     $file->file_url = url($file->file_url); // Agregar URL completa
                     return $file;
                 });
