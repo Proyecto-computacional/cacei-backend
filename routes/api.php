@@ -241,6 +241,6 @@ Route::get('/mensaje', function () {
 Route::get('/revisers', [ReviserController::class, 'index']);
 Route::post('/reviser', [ReviserController::class, 'store']);
 Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/sections', [SectionController::class, 'getByCategory']);
-Route::get('/standards', [StandardController::class, 'getBySection']);
-Route::get('/evidences', [EvidenceController::class, 'index']);
+Route::post('/sections', [SectionController::class, 'getByCategory']);
+Route::post('/standards', [StandardController::class, 'getBySection']);
+Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
