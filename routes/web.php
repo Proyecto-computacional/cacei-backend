@@ -51,3 +51,7 @@ Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotif
 Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
 Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
 Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
+
+
+Route::get('/estadisticas/carreras', [EvidenciaEstadisticaController::class, 'estadisticasPorCarrera']);
+Route::get('/estadisticas/general', [EvidenciaEstadisticaController::class, 'resumenGeneral']);

@@ -26,7 +26,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StandardController;
 use App\Http\Controllers\EvidenceController;
-use App\Http\Middleware\CorsMiddleware;
+use App\Http\Controllers\EvidenciaEstadisticaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,7 +77,8 @@ Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $req
 //3. Confitguracion personal
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, PERSONAL DE APOYO, DIRECTIVO'
+    'role:admin, jefe, coordinador, profesor
+profesor_encargado, apoyo, directivo'
 ])->get('/personalInfo', function () {
     return response()->json(['message' => 'Informacion personal']);
 });
@@ -85,26 +86,38 @@ Route::middleware([
 // 3.a cv
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE',
+    'role:admin, jefe, coordinador, profesor
+profesor_encargado',
     'token.expired'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Cv de profesor']);
 });
 
 //4. Subir evidencia
-//REPETIDA CON CV
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
+    'role:admin, jefe, coordinador, profesor
+profesor_encargado, departamento, apoyo'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Subir evidencia']);
+});
+
+Route::middleware([
+    'auth:sanctum',
+    'role:admin, jefe, coordinador, profesor
+profesor_encargado, departamento, apoyo'
+])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::post('/userToken', [AuthController::class, 'getUserToken']);
+    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
 });
 
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
     'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
-])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence']);
+])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence'])->name('evidence.index');
 
 // 5.a. Revisar archivos
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -136,19 +149,26 @@ Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class,
 
 // 7.Dashboard
 Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
+
     return response()->json(['message' => 'Dashboard']);
 });
+
+
+
+Route::get('/estadisticas/carreras', [EvidenciaEstadisticaController::class, 'estadisticasPorCarrera']);
+Route::get('/estadisticas/general', [EvidenciaEstadisticaController::class, 'resumenGeneral']);
 
 // 8.Gestion Evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR RESPONSABLE'
+    'role:admin, jefe, coordinador
+profesor_encargado'
 ])->get('/GestionEvidencias', function () {
     return response()->json(['message' => 'Gestionar evidencias']);
 });
 
 //Exclusivos de administrador 
-Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     //6. Administracion de usuarios
     Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
     Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
@@ -241,6 +261,6 @@ Route::get('/mensaje', function () {
 Route::get('/revisers', [ReviserController::class, 'index']);
 Route::post('/reviser', [ReviserController::class, 'store']);
 Route::get('/categories', [CategoryController::class, 'index']);
-Route::post('/sections', [SectionController::class, 'getByCategory']);
-Route::post('/standards', [StandardController::class, 'getBySection']);
-Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
+Route::get('/sections', [SectionController::class, 'getByCategory']);
+Route::get('/standards', [StandardController::class, 'getBySection']);
+Route::get('/evidences', [EvidenceController::class, 'index']);
