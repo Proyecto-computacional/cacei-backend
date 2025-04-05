@@ -14,7 +14,7 @@ class EvidenciaEstadisticaController extends Controller
                 c.career_name,
                 fr.frame_name,
                 COUNT(e.evidence_id) AS total,
-                SUM(CASE WHEN s.status_description = 'Aprobada' THEN 1 ELSE 0 END) AS aprobadas,
+                SUM(CASE WHEN s.status_description = 'Aprobado' THEN 1 ELSE 0 END) AS aprobadas,
                 SUM(CASE WHEN s.status_description = 'Pendiente' THEN 1 ELSE 0 END) AS pendientes,
                 COUNT(e.evidence_id) - COUNT(s.status_id) AS sin_subir
             FROM careers c
@@ -51,7 +51,7 @@ class EvidenciaEstadisticaController extends Controller
         $datos = DB::select("
             SELECT
                 COUNT(e.evidence_id) AS total,
-                SUM(CASE WHEN s.status_description = 'Aprobada' THEN 1 ELSE 0 END) AS aprobadas,
+                SUM(CASE WHEN s.status_description = 'Aprobado' THEN 1 ELSE 0 END) AS aprobadas,
                 SUM(CASE WHEN s.status_description = 'Pendiente' THEN 1 ELSE 0 END) AS pendientes,
                 COUNT(e.evidence_id) - COUNT(s.status_id) AS sin_subir
             FROM evidences e
