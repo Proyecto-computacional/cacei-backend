@@ -19,4 +19,9 @@ class Category extends Model
         'category_name',
         'frame_id',
     ];
+
+    public function frame()
+    {
+        return $this->belongsTo(FrameOfReference::class, 'frame_id', 'frame_id');
+    }
 }
