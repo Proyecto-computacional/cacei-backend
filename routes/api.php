@@ -241,7 +241,7 @@ Route::get('/mensaje', function () {
 //Rutas hechas en la rama de asignarTareas
 Route::get('/revisers', [ReviserController::class, 'index']);
 Route::post('/reviser', [ReviserController::class, 'store']);
-Route::get('/categories', [CategoryController::class, 'getByFrame']);
+Route::post('/categories', [CategoryController::class, 'getByFrame']);
 Route::post('/category',[CategoryController::class, 'store']);
 Route::put('/category-update',[CategoryController::class, 'update']);
 Route::post('/sections', [SectionController::class, 'getByCategory']);
