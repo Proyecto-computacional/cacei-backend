@@ -130,9 +130,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
 
-    Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
+Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
 
-    Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
+Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
 
 // 7.Dashboard
 Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
@@ -158,6 +158,8 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
         return response()->json(['message' => 'Gestion de formatos']);
     });
 });
+Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
+
 
 
 
