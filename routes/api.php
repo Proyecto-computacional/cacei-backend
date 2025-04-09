@@ -26,6 +26,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StandardController;
 use App\Http\Controllers\EvidenceController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CorsMiddleware;
 
 /*
@@ -37,23 +38,6 @@ use App\Http\Middleware\CorsMiddleware;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
-*/
-
-/*
-Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Request $request) {
-    $user = $request->user();
-
-    $linkedProcesses = [
-        ['frame_id' => 2025, 'process_id' => 1, 'career_id' => 1],
-        ['frame_id' => 2025, 'process_id' => 2, 'career_id' => 3]
-    ];
-
-    return response()->json([
-        'message' => 'Checando procesos vinculados...',
-        'user_data' => $user,
-        'linked_processes' => $linkedProcesses
-    ]);
-});
 */
 
 
@@ -70,8 +54,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 //2. Menu prinicipal
-Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $request) {
-    return response()->json(['message' => 'Bienvenido al menu principal']);
+Route::middleware('auth:sanctum')->get('/menuPrinicipal', [DashboardController::class, 'showProcesses']);
+
+Route::middleware([
+    'auth:sanctum',
+    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
+])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence']);
+
+// 2.a Dashboard
+Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
+    return response()->json(['message' => 'Dashboard']);
 });
 
 //3. Confitguracion personal
@@ -130,14 +122,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
 
-    Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
+Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
 
-    Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
-
-// 7.Dashboard
-Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
-    return response()->json(['message' => 'Dashboard']);
-});
+Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
 
 // 8.Gestion Evidencias
 Route::middleware([
