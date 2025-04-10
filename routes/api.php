@@ -153,6 +153,8 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
         return response()->json(['message' => 'Gestion de formatos']);
     });
 });
+Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
+
 
 
 

@@ -3,6 +3,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\GenerateAcreditacionZip;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AccreditationProcessController extends Controller
 {
@@ -34,5 +37,21 @@ class AccreditationProcessController extends Controller
 
         // retornar la respuesta JSON con los procesos encontrados
         return response()->json($processes);
+    }
+
+    public function downloadProcess($processId)
+    {
+        // Ejecutamos el job sin colas, de forma sincrónica
+        GenerateAcreditacionZip::dispatchSync($processId);
+
+        // Ruta del ZIP generado por el job
+        $zipPath = storage_path("app/temp_zips/proceso_{$processId}.zip");
+
+        // Si el archivo existe, lo devolvemos para descarga
+        if (file_exists($zipPath)) {
+            return response()->download($zipPath)->deleteFileAfterSend(true);
+        }
+
+        return response()->json(['error' => 'No se pudo generar el archivo ZIP.'], 500);
     }
 }
