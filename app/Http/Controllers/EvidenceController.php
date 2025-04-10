@@ -86,6 +86,16 @@ class EvidenceController extends Controller
                     return $file;
                 });
         });
+        $evidences->each(function ($evidence) {
+            $evidence->statuses = DB::table('statuses')
+                ->join('users', 'statuses.user_rpe', '=', 'users.user_rpe')
+                ->where('evidence_id', $evidence->evidence_id)
+                ->select('statuses.*', 'user_role')
+                ->get()
+                ->map(callback: function ($status) {
+                    return $status;
+                });
+        });
 
         return response()->json([
             'evidencias' => $evidences,
