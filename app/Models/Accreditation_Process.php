@@ -24,5 +24,8 @@ class Accreditation_Process extends Model
         return $this->belongsTo(Career::class, 'career_id', 'career_id');
     }
 
-
+    public function frame()
+    {
+        return $this->belongsTo(FrameOfReference::class, 'frame_id', 'frame_id');
+    }
 }
