@@ -38,13 +38,18 @@ class RevisionEvidenciasController extends Controller
         $feedback = in_array($estado, ['Aprobado', 'Desaprobado']) ? $request->feedback : null;
 
        //Carga el estado a la base
-        $status = Status::updateOrCreate([
-            'evidence_id' => $request->evidence_id,
-            'user_rpe' => $request->user_rpe,
-            'status_description' => $estado,
-            'status_date' => Carbon::now(),
-            'feedback' => $feedback
-        ]);
+        
+            $status = Status::updateOrCreate(
+                [
+                    'evidence_id' => $request->evidence_id,
+                    'user_rpe' => $request->user_rpe
+                ],
+                [
+                    'status_description' => $estado,
+                    'status_date' => Carbon::now(),
+                    'feedback' => $feedback
+                ]
+            );
 
        //crea la notificacion y carga el comentario..
         Notification::create([

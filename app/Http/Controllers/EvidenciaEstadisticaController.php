@@ -71,4 +71,14 @@ class EvidenciaEstadisticaController extends Controller
             'sin_subir' => round(($d->sin_subir / $total) * 100, 2),
         ]);
     }
+
+    public function notificacionesNoVistas($rpe)
+    {
+        $count = DB::table('notifications')
+            ->where('user_rpe', $rpe)
+            ->where('seen', false)
+            ->count();
+
+        return response()->json(['no_vistas' => $count]);
+    }
 }

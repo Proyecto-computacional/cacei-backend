@@ -55,3 +55,4 @@ Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::clas
 
 Route::get('/estadisticas/carreras', [EvidenciaEstadisticaController::class, 'estadisticasPorCarrera']);
 Route::get('/estadisticas/general', [EvidenciaEstadisticaController::class, 'resumenGeneral']);
+Route::get('/estadisticas/no-vistas/{rpe}', [EvidenciaEstadisticaController::class, 'notificacionesNoVistas']);

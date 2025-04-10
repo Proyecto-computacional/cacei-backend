@@ -157,6 +157,7 @@ Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
 
 Route::get('/estadisticas/carreras', [EvidenciaEstadisticaController::class, 'estadisticasPorCarrera']);
 Route::get('/estadisticas/general', [EvidenciaEstadisticaController::class, 'resumenGeneral']);
+Route::get('/estadisticas/no-vistas/{rpe}', [EvidenciaEstadisticaController::class, 'notificacionesNoVistas']);
 
 // 8.Gestion Evidencias
 Route::middleware([
