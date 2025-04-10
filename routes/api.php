@@ -56,15 +56,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
 //2. Menu prinicipal
 Route::middleware('auth:sanctum')->get('/menuPrinicipal', [DashboardController::class, 'showProcesses']);
 
-Route::middleware([
-    'auth:sanctum',
-    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
-])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence']);
-
 // 2.a Dashboard
-Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
-    return response()->json(['message' => 'Dashboard']);
-});
+Route::middleware(['auth:sanctum'])->get('/dashboard', [DashboardController::class, 'displayProcess']);
+
+// 2.b. Procesos relacionados a un usuario
+Route::middleware(
+    'auth:sanctum'
+)->get(
+        '/ProcesosUsuario',
+        [
+            AccreditationProcessController::class,
+            'getProcessesByUser'
+        ]
+    );
 
 //3. Confitguracion personal
 Route::middleware([
@@ -168,17 +172,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/Notificaciones/Enviar', [NotificationController::class, 'sendNotification']);
 });
 
-
-// 11. Procesos relacionados a un usuario
-Route::middleware(
-    'auth:sanctum'
-)->get(
-        '/ProcesosUsuario',
-        [
-            AccreditationProcessController::class,
-            'getProcessesByUser'
-        ]
-    );
 
 // 12.CV de un usuario
 Route::apiResource('cvs', CvController::class);
