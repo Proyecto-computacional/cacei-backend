@@ -105,7 +105,7 @@ Route::middleware([
 Route::middleware([
     'auth:sanctum',
     'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
-])->get('/ReviewEvidence', [evidenceController::class, 'allEvidence']);
+])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence']);
 
 // 5.a. Revisar archivos
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -128,12 +128,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
 
 });
-
-Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
-
-    Route::post('/RevisionEvidencias/desaprobar', [RevisionEvidenciasController::class, 'desaprobarEvidencia']);
-
-    Route::post('/RevisionEvidencias/pendiente', [RevisionEvidenciasController::class, 'marcarPendiente']);
 
 // 7.Dashboard
 Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
