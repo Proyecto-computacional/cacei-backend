@@ -36,7 +36,7 @@ class FileController extends Controller
 
         // Generar un ID único
         do {
-            $randomId = rand(1, 100);
+            $randomId = rand(1, 100); //cambiar por fecha y hora para asegurar que no se repita
         } while (File::where('file_id', $randomId)->exists()); // Verifica que no se repita
 
         // Guardar el archivo en el servidor
@@ -47,7 +47,7 @@ class FileController extends Controller
         $evidence_id = $evidence->evidence_id;
         $group_id = $evidence->group_id;
         $extension = $file->getClientOriginalExtension();
-        $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '_' . $randomId . '.' . $extension;
+        $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '-' . $randomId . '.' . $extension;
 
         $path_name = 'uploads/' . $evidence_id; // Aquí es la ruta donde se guardará el archivo, depende de
 

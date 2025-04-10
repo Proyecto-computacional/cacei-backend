@@ -30,34 +30,40 @@ class RevisionEvidenciasController extends Controller
         $request->validate([
             'evidence_id' => 'required|integer',
             'user_rpe' => 'required|string',
-            'reviser_id' => 'required|integer',
             'feedback' => 'nullable|string|max:255' //puede ser null
         ]);
-
+ 
+        $user = auth()->user();
+        $reviser_rpe = $user->user_rpe;
+ 
         //solo aprovadp o rechazado puede tener retroalimentacIon
-        $feedback = in_array($estado, ['Aprobado', 'Desaprobado']) ? $request->feedback : null;
-
-       //Carga el estado a la base
-        $status = Status::updateOrCreate([
-            'evidence_id' => $request->evidence_id,
-            'user_rpe' => $request->user_rpe,
-            'status_description' => $estado,
-            'status_date' => Carbon::now(),
-            'feedback' => $feedback
-        ]);
-
-       //crea la notificacion y carga el comentario..
+        $feedback = in_array($estado, ['Aprobada', 'No aprobada']) ? $request->feedback : null;
+ 
+        //Carga el estado a la base
+        $status = Status::updateOrCreate(
+            [
+                'evidence_id' => $request->evidence_id,
+                'user_rpe' => $reviser_rpe,
+            ],
+            [
+                'status_description' => $estado,
+                'status_date' => Carbon::now(),
+                'feedback' => $feedback
+            ]
+        );
+ 
+        //crea la notificacion y carga el comentario..
         Notification::create([
             'title' => "Evidencia {$estado}",
             'evidence_id' => $request->evidence_id,
             'notification_date' => Carbon::now(),
             'user_rpe' => $request->user_rpe,
-            'reviser_id' => $request->reviser_id,
+            'reviser_id' => $reviser_rpe,
             'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
             'seen' => false,
             'pinned' => false
         ]);
-
+ 
         return response()->json([
             'message' => "Evidencia marcada como {$estado}",
             'status' => $status
