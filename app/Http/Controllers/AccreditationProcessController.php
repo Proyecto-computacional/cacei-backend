@@ -45,11 +45,11 @@ class AccreditationProcessController extends Controller
         GenerateAcreditacionZip::dispatchSync($processId);
 
         // Ruta del ZIP generado por el job
-        $zipPath = storage_path("app/temp_zips/proceso_{$processId}.zip");
+        $zipPath = storage_path("app/zips/proceso_{$processId}.zip");
 
         // Si el archivo existe, lo devolvemos para descarga
         if (file_exists($zipPath)) {
-            return response()->download($zipPath)->deleteFileAfterSend(true);
+            return response()->download($zipPath)/*->deleteFileAfterSend(true)*/;
         }
 
         return response()->json(['error' => 'No se pudo generar el archivo ZIP.'], 500);

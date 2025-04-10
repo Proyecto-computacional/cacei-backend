@@ -105,6 +105,6 @@ class GenerateAcreditacionZip implements ShouldQueue
         File::deleteDirectory($tempPath);
 
         // Paso 7: Devolver el ZIP para descarga
-        return response()->download($zipPath)->deleteFileAfterSend(true);
+        return response()->download($zipPath)/*->deleteFileAfterSend(true)*/;
     }
 }
