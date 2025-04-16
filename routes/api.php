@@ -68,6 +68,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
     Route::post('/userToken', [AuthController::class, 'getUserToken']);
     Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
+    Route::post('/refreshToken', [AuthController::class, 'getAllTokens']);
 });
 
 //2. Menu prinicipal
@@ -238,8 +239,8 @@ Route::get('/mensaje', function () {
 Route::get('/revisers', [ReviserController::class, 'index']);
 Route::post('/reviser', [ReviserController::class, 'store']);
 Route::post('/categories', [CategoryController::class, 'getByFrame']);
-Route::post('/category',[CategoryController::class, 'store']);
-Route::put('/category-update',[CategoryController::class, 'update']);
+Route::post('/category', [CategoryController::class, 'store']);
+Route::put('/category-update', [CategoryController::class, 'update']);
 Route::post('/sections', [SectionController::class, 'getByCategory']);
 Route::post('/section', [SectionController::class, 'store']);
 Route::put('/section-update', [SectionController::class, 'update']);

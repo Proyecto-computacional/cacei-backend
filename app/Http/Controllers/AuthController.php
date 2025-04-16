@@ -119,4 +119,27 @@ class AuthController extends Controller
 
         return response()->json(compact('activeTokens'));
     }
+
+    public function refreshToken(Request $request)
+    {
+        $token = $request->user()->currentAccessToken();
+
+        if (!$token) {
+            return response()->json([
+                'correct' => false,
+                'message' => 'No existe un token de este usuario.',
+            ], 401);
+        }
+
+        $token->forceFill([
+            'expires_at' => Carbon::now()->addMinutes(20),
+        ])->save();
+
+        return response()->json([
+            'correct' => true,
+            'message' => 'Se actualizó la sesión del usuario.',
+            // ISO‐8601 string is easy for JS Date parsing:
+            'expires_at' => $token->expires_at->toIso8601String(),
+        ]);
+    }
 }
