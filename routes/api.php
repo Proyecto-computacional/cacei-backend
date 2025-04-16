@@ -68,7 +68,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
     Route::post('/userToken', [AuthController::class, 'getUserToken']);
     Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
-    Route::post('/refreshToken', [AuthController::class, 'getAllTokens']);
+    Route::post('/refreshToken', [AuthController::class, 'refreshToken']);
 });
 
 //2. Menu prinicipal
