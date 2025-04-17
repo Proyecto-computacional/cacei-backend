@@ -15,12 +15,13 @@ class CategoryController extends Controller
 
     public function getByFrame(Request $request)
     {
-        $categories = Category::where('frame_id', $request->frame_id)->get();
+        $categories = Category::where('frame_id', $request->frame_id)->orderBy('indice')->get();
         return response()->json($categories);
     }
 
     public function store(Request $request)
     {
+        $indice = 0;
         $request->validate([
             'frame_id' => 'required|int',
             'category_name' => 'required|string|max:50'
@@ -31,10 +32,15 @@ class CategoryController extends Controller
             $randomId = rand(1, 100);
         } while (Category::where('category_id', $randomId)->exists()); // Verifica que no se repita
 
+        do{
+            $indice = $indice + 1;
+        } while (Category::where('indice', $indice)->where('frame_id', $request->input('frame_id'))->exists());
+
         $category = new Category();
         $category->category_id = $randomId;
         $category->frame_id = $request->input('frame_id');
         $category->category_name = $request->input('category_name');
+        $category->indice = $indice;
 
         $category->save();
 
