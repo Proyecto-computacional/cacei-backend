@@ -18,6 +18,7 @@ class Category extends Model
         'category_id',
         'category_name',
         'frame_id',
+        'indice'
     ];
 
     public function frame()
