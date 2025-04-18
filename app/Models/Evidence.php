@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Accreditation_Process;
 class Evidence extends Model
 {
     use HasApiTokens, HasFactory;
@@ -13,7 +13,7 @@ class Evidence extends Model
     public $timestamps = false;
     protected $primaryKey = 'evidence_id';
     protected $foreignKey = 'standard_id';
-    public $incrementing = true;
+    public $incrementing = false;
     protected $keyType = 'int';
 
     protected $fillable = [
@@ -52,7 +52,7 @@ class Evidence extends Model
     // Relación con Proceso (Cada evidencia pertenece a un proceso)
     public function process()
     {
-        return $this->belongsTo(Process::class, 'process_id', 'process_id');
+        return $this->belongsTo(Accreditation_Process::class, 'process_id', 'process_id');
     }
 
     // Relación con Notificaciones (Una evidencia puede tener muchas notificaciones)
