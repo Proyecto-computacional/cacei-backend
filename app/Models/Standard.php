@@ -21,6 +21,7 @@ class Standard extends Model
         'standard_description',
         'is_transversal',
         'help',
+        'indice'
     ];
     public function section()
     {

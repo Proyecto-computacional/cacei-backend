@@ -19,6 +19,7 @@ class Section extends Model
         'category_id',
         'section_name',
         'section_description',
+        'indice'
     ];
 
     public function category()

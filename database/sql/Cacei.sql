@@ -30,6 +30,7 @@ CREATE TABLE categories (
     category_id INT NOT NULL,
     category_name VARCHAR(50) NOT NULL,
     frame_id INT NOT NULL,
+    indice INT NOT NULL, 
     PRIMARY KEY (category_id),
     FOREIGN KEY (frame_id) REFERENCES frames_of_reference(frame_id)
 );
@@ -39,6 +40,7 @@ CREATE TABLE sections (
     category_id INT NOT NULL,
     section_name VARCHAR(25) NOT NULL,
     section_description VARCHAR(50) NOT NULL,
+    indice INT NOT NULL,
     PRIMARY KEY (section_id),
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
@@ -50,6 +52,7 @@ CREATE TABLE standards (
     standard_description VARCHAR(50) NOT NULL,
     is_transversal BOOL NOT NULL,
     help VARCHAR(255),
+    indice INT NOT NULL,
     PRIMARY KEY (standard_id),
     FOREIGN KEY (section_id) REFERENCES sections(section_id)
 );
