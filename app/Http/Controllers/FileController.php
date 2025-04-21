@@ -7,6 +7,8 @@ use App\Models\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\BackupJob;
+use Mews\Purifier\Facades\Purifier as FacadesPurifier;
+use Purifier;
 
 class FileController extends Controller
 {
@@ -63,7 +65,7 @@ class FileController extends Controller
                 'file_url' => $path,
                 'upload_date' => now(),
                 'evidence_id' => $evidence_id,
-                'justification' => $request->justification
+                'justification' => FacadesPurifier::clean($request->justification)
             ]);
     
             $savedFiles[] = $newFile;
