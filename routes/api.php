@@ -93,6 +93,8 @@ Route::middleware([
 });
 
 //4. Subir evidencia
+Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
+
 //REPETIDA CON CV
 Route::middleware([
     'auth:sanctum',

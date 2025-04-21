@@ -9,6 +9,27 @@ use Illuminate\Support\Facades\DB;
 
 class EvidenceController extends Controller
 {
+    public function show($id)
+{
+    $evidence = Evidence::with([
+        'process:process_id,process_name',
+        'standard:standard_id,standard_name,section_id',
+        'standard.section:section_id,section_name,category_id',
+        'standard.section.category:category_id,category_name',
+        'files:file_id,evidence_id,file_url',
+        'status' => function($query) {
+            $query->orderByDesc('status_date'); // Último estado
+        }
+    ])
+    ->where('evidence_id', $id)
+    ->first();
+
+    if (!$evidence) {
+        return response()->json(['message' => 'Evidencia no encontrada'], 404);
+    }
+
+    return response()->json($evidence);
+}
     public function allEvidence(Request $request)
     {
         error_log('llega aquí al evidence');

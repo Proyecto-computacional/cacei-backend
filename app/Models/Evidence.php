@@ -52,7 +52,7 @@ class Evidence extends Model
     // Relación con Proceso (Cada evidencia pertenece a un proceso)
     public function process()
     {
-        return $this->belongsTo(Process::class, 'process_id', 'process_id');
+        return $this->belongsTo(Accreditation_Process::class, 'process_id', 'process_id');
     }
 
     // Relación con Notificaciones (Una evidencia puede tener muchas notificaciones)
@@ -64,5 +64,10 @@ class Evidence extends Model
     public function assignEvidence()
     {
         return $this->hasMany(Reviser::class, 'evidence_id');
+    }
+
+        public function status()
+    {
+        return $this->hasMany(Status::class, 'evidence_id');
     }
 }
