@@ -18,6 +18,8 @@ CREATE TABLE users (
     cv_id BIGINT,
     PRIMARY KEY (user_rpe),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    FOREIGN KEY (user_role) REFERENCES role_permissions(user_role)
+
 );
 
 CREATE TABLE frames_of_reference (
@@ -41,6 +43,7 @@ CREATE TABLE sections (
     section_name VARCHAR(25) NOT NULL,
     section_description VARCHAR(50) NOT NULL,
     indice INT NOT NULL,
+    is_Standard BOOL NOT NULL,
     PRIMARY KEY (section_id),
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
@@ -53,6 +56,7 @@ CREATE TABLE standards (
     is_transversal BOOL NOT NULL,
     help VARCHAR(255),
     indice INT NOT NULL,
+    expected_content VARCHAR(50),
     PRIMARY KEY (standard_id),
     FOREIGN KEY (section_id) REFERENCES sections(section_id)
 );
@@ -274,4 +278,19 @@ CREATE TABLE notifications (
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
     FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
+);
+
+CREATE TABLE permissions (
+    permission_id SERIAL PRIMARY KEY,
+    permission_name VARCHAR(50) UNIQUE NOT NULL,
+    description VARCHAR(255)
+);
+
+
+CREATE TABLE role_permissions (
+    user_role VARCHAR(30) NOT NULL,
+    permission_id INT NOT NULL,
+    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (user_role, permission_id),
+    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
 );
