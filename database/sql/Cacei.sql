@@ -10,6 +10,24 @@ CREATE TABLE cvs (
     PRIMARY KEY (cv_id)
 );
 
+
+
+
+CREATE TABLE permissions (
+    permission_id SERIAL PRIMARY KEY,
+    permission_name VARCHAR(50) UNIQUE NOT NULL,
+    description VARCHAR(255)
+);
+
+
+CREATE TABLE role_permissions (
+    rolper_id BIGSERIAL PRIMARY KEY,
+    user_role VARCHAR(30) NOT NULL,
+    permission_id INT NOT NULL,
+    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
+);
+
 CREATE TABLE users (
     user_rpe VARCHAR(20) NOT NULL,
     user_mail VARCHAR(100) UNIQUE NOT NULL,
@@ -18,13 +36,11 @@ CREATE TABLE users (
     cv_id BIGINT,
     PRIMARY KEY (user_rpe),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
-    FOREIGN KEY (user_role) REFERENCES role_permissions(user_role)
-
 );
 
 CREATE TABLE frames_of_reference (
     frame_id INT NOT NULL,
-    frame_name VARCHAR(20) NOT NULL,
+    frame_name VARCHAR(50) NOT NULL,
     PRIMARY KEY (frame_id)
 );
 
@@ -88,7 +104,7 @@ CREATE TABLE educations (
     degree_obtained VARCHAR(1),
     obtained_year INT,
     professional_license VARCHAR(8),
-    degree_name VARCHAR(50),
+    degree_name VARCHAR(100),
     PRIMARY KEY (education_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -192,7 +208,7 @@ CREATE TABLE contributions_to_pe (
 
 CREATE TABLE areas (
     area_id VARCHAR(20) NOT NULL,
-    area_name VARCHAR(20) NOT NULL,
+    area_name VARCHAR(50) NOT NULL,
     user_rpe VARCHAR(20) UNIQUE NOT NULL,
     PRIMARY KEY (area_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
@@ -201,7 +217,7 @@ CREATE TABLE areas (
 CREATE TABLE careers (
     career_id VARCHAR(20) NOT NULL,
     area_id VARCHAR(20) NOT NULL,
-    career_name VARCHAR(20) NOT NULL,
+    career_name VARCHAR(50) NOT NULL,
     user_rpe VARCHAR(20) UNIQUE NOT NULL,
     PRIMARY KEY (career_id),
     FOREIGN KEY (area_id) REFERENCES areas(area_id),
@@ -280,17 +296,3 @@ CREATE TABLE notifications (
     FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
 );
 
-CREATE TABLE permissions (
-    permission_id SERIAL PRIMARY KEY,
-    permission_name VARCHAR(50) UNIQUE NOT NULL,
-    description VARCHAR(255)
-);
-
-
-CREATE TABLE role_permissions (
-    user_role VARCHAR(30) NOT NULL,
-    permission_id INT NOT NULL,
-    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (user_role, permission_id),
-    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
-);
