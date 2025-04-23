@@ -251,3 +251,4 @@ Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
 Route::get('/frames-of-references', [FrameOfReferenceController::class, 'index']);
 Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
 Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
+Route::post('/validate-user', [UserController::class, 'validateUser']);
