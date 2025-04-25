@@ -17,6 +17,8 @@ class EvidenceController extends Controller
 
         $query = Evidence::query()
             ->leftJoin('standards', 'evidences.standard_id', '=', 'standards.standard_id')
+            ->leftJoin('sections', 'standards.section_id', '=', 'sections.section_id') // 
+            ->leftJoin('categories', 'sections.category_id', '=', 'categories.category_id')
             ->leftJoin('users as evidence_owner', 'evidences.user_rpe', '=', 'evidence_owner.user_rpe')
             ->leftJoin('accreditation_processes', 'evidences.process_id', '=', 'accreditation_processes.process_id')->leftJoin('careers', 'accreditation_processes.career_id', '=', 'careers.career_id')
             ->leftJoin('areas', 'careers.area_id', '=', 'areas.area_id')
@@ -27,6 +29,8 @@ class EvidenceController extends Controller
             ->select(
                 'evidences.*',
                 'standards.standard_name as standard_name',
+                'sections.section_name as section_name',
+                'categories.category_name as category_name',
                 'evidence_owner.user_name as evidence_owner_name',
                 'accreditation_processes.process_name as process_name',
                 'career_coordinator.user_rpe as career_admin_rpe',
