@@ -5,9 +5,13 @@ use App\Models\Reviser;
 use App\Models\Status;
 use App\Models\Notification;
 use App\Models\User;
+use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Jobs\BackupJob;
 
 class RevisionEvidenciasController extends Controller
 {
@@ -85,7 +89,80 @@ class RevisionEvidenciasController extends Controller
 
     public function desaprobarEvidencia(Request $request)
     {
-        return $this->actualizarEstado($request, 'Desaprobado');
+        $request->validate([
+            'evidence_id' => 'required|integer|exists:evidences,evidence_id',
+            'feedback' => 'required|string|max:255'
+        ]);
+        $reviser = Reviser::where('user_rpe', $request->user_rpe)->first();
+        return DB::transaction(function () use ($request) {
+            $user = auth()->user();
+            $evidenceId = $request->evidence_id;
+
+            // 1. Registrar el estado de desaprobación
+            $status = Status::updateOrCreate(
+                [
+                    'evidence_id' => $evidenceId,
+                    'user_rpe' => $user->user_rpe
+                ],
+                [
+                    'status_description' => 'Desaprobado',
+                    'status_date' => now(),
+                    'feedback' => $request->feedback
+                ]
+            );
+
+            // 2. Eliminar archivos relacionados usando el modelo File
+            $files = File::where('evidence_id', $evidenceId)->get();
+            $deletedFiles = [];
+
+            foreach ($files as $file) {
+                try {
+                    // Eliminar el archivo físico
+                    Storage::disk('public')->delete($file->file_url);
+                    
+                    // Registrar metadatos antes de eliminar
+                    $deletedFiles[] = [
+                        'name' => $file->file_name,
+                        'url' => $file->file_url
+                    ];
+                    
+                    // Eliminar de la base de datos
+                    $file->delete();
+                    
+                } catch (\Exception $e) {
+                    Log::error("Error eliminando archivo {$file->file_id}: " . $e->getMessage());
+                    continue;
+                }
+            }
+
+            // Generar un ID único
+            do {
+                $randomId = rand(1, 100);
+            } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
+            $reviser = Reviser::where('evidence_id', $evidenceId)->first();
+            //crea la notificacion y carga el comentario..
+            Notification::create([
+                'notification_id' => $randomId,
+                'title' => "Evidencia Rechazada",
+                'evidence_id' => $request->evidence_id,
+                'notification_date' => Carbon::now(),
+                'user_rpe' => $request->user_rpe,
+                'reviser_id' => $reviser->reviser_id,
+                'description' => $request->feedback ? "Tu evidencia ha sido marcada como Desaprobado con el siguiente comentario: {$request->feedback}" : "Tu evidencia ha sido marcada como Desaprobado",
+                'seen' => false,
+                'pinned' => false
+            ]);
+
+            // 3. Disparar backup
+            //BackupJob::dispatch();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Evidencia desaprobada y archivos eliminados',
+                'deleted_files_count' => count($deletedFiles),
+                'deleted_files' => $deletedFiles
+            ]);
+        });
     }
     //Es para regresarla a pendiente si es por defaul o como opcion para un boton de pendiente
     public function marcarPendiente(Request $request)
