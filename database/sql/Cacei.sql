@@ -10,23 +10,17 @@ CREATE TABLE cvs (
     PRIMARY KEY (cv_id)
 );
 
-
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(30) UNIQUE NOT NULL
+);
 
 
 CREATE TABLE permissions (
     permission_id SERIAL PRIMARY KEY,
-    permission_name VARCHAR(50) UNIQUE NOT NULL,
-    description VARCHAR(255)
+    permission_name VARCHAR(50) UNIQUE NOT NULL
 );
 
-
-CREATE TABLE role_permissions (
-    rolper_id BIGSERIAL PRIMARY KEY,
-    user_role VARCHAR(30) NOT NULL,
-    permission_id INT NOT NULL,
-    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
-);
 
 CREATE TABLE users (
     user_rpe VARCHAR(20) NOT NULL,
@@ -34,8 +28,18 @@ CREATE TABLE users (
     user_role VARCHAR(30) NOT NULL,
     user_name VARCHAR(150) NOT NULL,
     cv_id BIGINT,
+    situacion VARCHAR(20),--agregar situacion jubilado o trabajan varchar...
     PRIMARY KEY (user_rpe),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+);
+
+CREATE TABLE role_permissions (
+    rolper_id BIGSERIAL PRIMARY KEY,
+    user_rpe VARCHAR(30) UNIQUE NOT NULL,
+    permission_id INT NOT NULL,
+    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
+    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
 );
 
 CREATE TABLE frames_of_reference (
@@ -72,7 +76,6 @@ CREATE TABLE standards (
     is_transversal BOOL NOT NULL,
     help VARCHAR(255),
     indice INT NOT NULL,
-    expected_content VARCHAR(50),
     PRIMARY KEY (standard_id),
     FOREIGN KEY (section_id) REFERENCES sections(section_id)
 );
