@@ -37,7 +37,7 @@ class RevisionEvidenciasController extends Controller
         $reviser_rpe = $user->user_rpe;
  
         //solo aprovadp o rechazado puede tener retroalimentacIon
-        $feedback = in_array($estado, ['Aprobada', 'No aprobada']) ? $request->feedback : null;
+        $feedback = in_array($estado, ['Aprobado', 'Desaprobado']) ? $request->feedback : null;
  
         //Carga el estado a la base
         $status = Status::updateOrCreate(

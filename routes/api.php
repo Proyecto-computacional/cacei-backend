@@ -27,6 +27,8 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StandardController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameOfReferenceController;
+use App\Http\Controllers\EvidenciaEstadisticaController;
+
 use App\Http\Middleware\CorsMiddleware;
 
 /*
@@ -141,6 +143,11 @@ Route::middleware([
 ])->get('/GestionEvidencias', function () {
     return response()->json(['message' => 'Gestionar evidencias']);
 });
+
+Route::get('/estadisticas/carreras', [EvidenciaEstadisticaController::class, 'estadisticasPorCarrera']);
+Route::get('/estadisticas/general', [EvidenciaEstadisticaController::class, 'resumenGeneral']);
+Route::get('/estadisticas/no-vistas/{rpe}', [EvidenciaEstadisticaController::class, 'notificacionesNoVistas']);
+
 
 //Exclusivos de administrador 
 Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
