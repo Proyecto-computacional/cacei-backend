@@ -94,7 +94,7 @@ class EvidenceController extends Controller
             $evidence->statuses = DB::table('statuses')
                 ->join('users', 'statuses.user_rpe', '=', 'users.user_rpe')
                 ->where('evidence_id', $evidence->evidence_id)
-                ->select('statuses.*', 'user_role')
+                ->select('statuses.*', 'users.user_role', 'users.user_name')
                 ->get()
                 ->map(callback: function ($status) {
                     return $status;
@@ -140,4 +140,5 @@ class EvidenceController extends Controller
         $evidences = Evidence::where('standard_id', $request->standard_id)->get();
         return response()->json($evidences);
     }
+
 }

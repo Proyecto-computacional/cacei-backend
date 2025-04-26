@@ -49,4 +49,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'user_rpe');
     }
+
+    public function revisers()
+    {
+        return $this->hasMany(Reviser::class, 'user_rpe', 'user_rpe');
+    }
 }

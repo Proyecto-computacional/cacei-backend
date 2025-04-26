@@ -28,4 +28,9 @@ class Status extends Model
     {
         return $this->belongsTo(User::class, 'user_rpe', 'user_rpe');
     }
+
+    public function evidence()
+    {
+        return $this->belongsTo(Evidence::class, 'evidence_id', 'evidence_id');
+    }
 }

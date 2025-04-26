@@ -4,16 +4,83 @@ namespace App\Http\Controllers;
 use App\Models\Reviser;
 use App\Models\Status;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class RevisionEvidenciasController extends Controller
 {
     public function aprobarEvidencia(Request $request)
     {
+        $user = auth()->user();
+        $evidenceId = $request->input('evidence_id');
+        $feedback = $request->input('feedback');
+        $reviser = Reviser::where('user_rpe', $request->user_rpe)->first();
+        // Obtener RPEs de todos los roles
+        $rolesRpe = [
+            'ADMINISTRADOR' => User::where('user_role', 'ADMINISTRADOR')->first()->user_rpe,
+            'JEFE DE AREA' => User::where('user_role', 'JEFE DE AREA')->first()->user_rpe,
+            'COORDINADOR' => User::where('user_role', 'COORDINADOR')->first()->user_rpe,
+            'PROFESOR' => User::where('user_role', 'PROFESOR')->whereHas('revisers', fn($q) => $q->where('evidence_id', $evidenceId))->first()?->user_rpe
+        ];
 
-        return $this->actualizarEstado($request, 'Aprobado');
-        
+        DB::transaction(function () use ($evidenceId, $user, $feedback, $rolesRpe) {
+            // Si es administrador, actualiza TODOS los statuses
+            if ($user->user_role === 'ADMINISTRADOR') {
+                foreach ($rolesRpe as $rpe) {
+                    Status::updateOrCreate(
+                        [
+                            'evidence_id' => $evidenceId,
+                            'user_rpe' => $rpe
+                        ],
+                        [
+                            'status_description' => 'Aprobado',
+                            'status_date' => now(),
+                            'feedback' => $feedback
+                        ]
+                    );
+                }
+            } else {
+                // Para otros roles, solo actualizan su propio status
+                Status::updateOrCreate(
+                    [
+                        'evidence_id' => $evidenceId,
+                        'user_rpe' => $user->user_rpe
+                    ],
+                    [
+                        'status_description' => 'Aprobado',
+                        'status_date' => now(),
+                        'feedback' => $feedback
+                    ]
+                );
+            }
+        });
+
+         // Generar un ID único
+         do {
+            $randomId = rand(1, 100);
+        } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
+
+        //crea la notificacion y carga el comentario..
+        Notification::create([
+            'notification_id' => $randomId,
+            'title' => "Evidencia Aprobada",
+            'evidence_id' => $request->evidence_id,
+            'notification_date' => Carbon::now(),
+            'user_rpe' => $request->user_rpe,
+            'reviser_id' => $reviser->reviser_id,
+            'description' => $feedback ? "Tu evidencia ha sido marcada como Aprobada con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como Aprobada",
+            'seen' => false,
+            'pinned' => false
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $user->user_role === 'ADMINISTRADOR' 
+                ? 'Evidencia aprobada completamente (todos los roles)' 
+                : 'Evidencia aprobada para tu rol'
+        ]);
     }
 
     public function desaprobarEvidencia(Request $request)
@@ -80,7 +147,7 @@ class RevisionEvidenciasController extends Controller
  
         return response()->json([
             'message' => "Evidencia marcada como {$estado}",
-            'status' => $status
+            'status' => $status->load('user')
         ], 200);
     }
 }
