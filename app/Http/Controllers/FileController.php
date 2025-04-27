@@ -65,7 +65,8 @@ class FileController extends Controller
                 'file_url' => $path,
                 'upload_date' => now(),
                 'evidence_id' => $evidence_id,
-                'justification' => FacadesPurifier::clean($request->justification)
+                'justification' => FacadesPurifier::clean($request->justification),
+                'file_name' => $file->getClientOriginalName()
             ]);
     
             $savedFiles[] = $newFile;

@@ -16,7 +16,7 @@ class EvidenceController extends Controller
         'standard:standard_id,standard_name,section_id',
         'standard.section:section_id,section_name,category_id',
         'standard.section.category:category_id,category_name',
-        'files:file_id,evidence_id,file_url',
+        'files:file_id,evidence_id,file_url,upload_date,file_name,justification',
         'status' => function($query) {
             $query->orderByDesc('status_date'); // Último estado
         }

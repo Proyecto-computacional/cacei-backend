@@ -17,7 +17,7 @@ class CheckFileMetadata
     {
         $request->validate([
             'files' => 'required|array',
-            'files.*' => 'file|mimes:pdf,rar,zip,doc,docx,png,jpg,jpeg,xlsx|max:2048',
+            'files.*' => 'file|mimes:pdf,rar,zip,doc,docx,png,jpg,jpeg,xlsx|max:2048', //imagenes y docx?
         ], [
             'files.required' => 'Debes subir al menos un archivo.',
             'files.*.max' => 'Cada archivo no debe de exceder 50 MB.',

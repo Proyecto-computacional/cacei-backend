@@ -20,7 +20,8 @@ class File extends Model
         'file_url',
         'upload_date',
         'evidence_id',
-        'justification'
+        'justification',
+        'file_name'
     ];
 
     public function evidence()
