@@ -119,6 +119,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/file/{file_id}', [FileController::class, 'update']);
     });
     Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
+    Route::delete('/file/{id}', [EvidenceController::class, 'deleteFile']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {

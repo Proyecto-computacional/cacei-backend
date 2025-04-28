@@ -126,4 +126,22 @@ class FileController extends Controller
 
         return response()->json(['message' => 'Archivo eliminado correctamente']);
     }
+
+    public function deleteFile($file_id)
+{
+    $file = File::find($file_id);
+
+    if (!$file) {
+        return response()->json(['message' => 'Archivo no encontrado'], 404);
+    }
+
+    $path = public_path('uploads/' . $file->file_url);
+    if (file_exists($path)) {
+        unlink($path);
+    }
+
+    $file->delete();
+
+    return response()->json(['message' => 'Archivo eliminado correctamente']);
+}
 }
