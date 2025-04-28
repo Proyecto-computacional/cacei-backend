@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Evidence;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -47,4 +48,29 @@ class UserController extends Controller
             return response()->json(['error' => 'Datos inválidos', 'detalles' => $e->errors()], 422);
         }
     }
+
+    public function myAssignments()
+{
+    $user = auth()->user();
+
+    $assignments = Evidence::with([
+        'standard:standard_id,standard_name', // Traemos el criterio (nombre del standard)
+        'status' => function($query) {
+            $query->orderByDesc('status_date')->limit(1); // Solo el último estado
+        }
+    ])
+    ->where('user_rpe', $user->user_rpe)
+    ->select('evidence_id', 'standard_id') // Solo traemos lo necesario
+    ->get()
+    ->map(function ($evidence) {
+        return [
+            'evidence_id' => $evidence->evidence_id,
+            'criterio' => $evidence->standard?->standard_name,
+            'estado' => $evidence->status->first()?->status_description ?? 'PENDIENTE', // El nombre del estado más reciente
+        ];
+    });
+
+    return response()->json($assignments);
+}
+
 }
