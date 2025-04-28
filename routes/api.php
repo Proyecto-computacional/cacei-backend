@@ -237,6 +237,7 @@ Route::get('/mensaje', function () {
 //Rutas hechas en la rama de asignarTareas
 Route::get('/revisers', [ReviserController::class, 'index']);
 Route::post('/reviser', [ReviserController::class, 'store']);
+Route::post('/evidence', [EvidenceController::class, 'store']);
 Route::post('/categories', [CategoryController::class, 'getByFrame']);
 Route::post('/category',[CategoryController::class, 'store']);
 Route::put('/category-update',[CategoryController::class, 'update']);
@@ -250,3 +251,4 @@ Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
 Route::get('/frames-of-references', [FrameOfReferenceController::class, 'index']);
 Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
 Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
+Route::post('/validate-user', [UserController::class, 'validateUser']);

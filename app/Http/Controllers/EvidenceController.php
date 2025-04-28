@@ -103,6 +103,34 @@ class EvidenceController extends Controller
             'Rol' => $role
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'standard_id' => 'required|int',
+            'user_rpe' => 'required|string',
+            'process_id' => 'required|int',
+            'due_date' => 'required|date'
+        ]);
+
+        do {
+            $randomId = rand(1, 100);
+        } while (Evidence::where('evidence_id', $randomId)->exists()); // Verifica que no se repita
+
+        $evidence = Evidence::create([
+            'evidence_id' => $randomId,
+            'standard_id' => $request->standard_id,
+            'user_rpe' => $request->user_rpe,
+            'process_id' => $request->process_id,
+            'due_date' => $request->due_date
+        ]);
+
+        // Retornar la respuesta con la notificación creada
+        return response()->json([
+            'message' => 'Asignado exitosamente',
+            'evidence' => $evidence
+        ], 201);
+    }
     public function getByStandard(Request $request)
     {
         $evidences = Evidence::where('standard_id', $request->standard_id)->get();
