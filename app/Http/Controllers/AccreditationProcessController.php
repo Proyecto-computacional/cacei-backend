@@ -17,7 +17,6 @@ class AccreditationProcessController extends Controller
         if (!$userRpe) {
             return response()->json(['message' => 'El parámetro userRpe es requerido.'], 400);
         }
-        error_log("Si llego aquí");
         // consultar a la base de datos
         $processes = DB::select(" 
             SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name
@@ -32,8 +31,8 @@ class AccreditationProcessController extends Controller
 
         // verificar si hay procesos
         if (empty($processes)) {
-            return response()->json(['message' => 'No se encontraron procesos para este usuario.'], 404);
-        }
+            return response()->json(['processes' => [], 'message' => 'No se encontraron procesos para este usuario.'], 200);
+        }        
 
         // retornar la respuesta JSON con los procesos encontrados
         return response()->json($processes);

@@ -52,12 +52,12 @@ class AuthController extends Controller
                         ]);
                     }
                 } else {
-                    // Si el usuario no existe, lo crea
                     $user = User::create([
                         'user_rpe' => $data['rpe'],
                         'user_mail' => $data['correo'],
                         'user_role' => $data['cargo'],
-                    ]);
+                        'user_name' => $data['nombre']
+                    ]);                  
                 }
 
                 $token = $user->createToken('auth_token');
