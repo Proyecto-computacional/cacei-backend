@@ -30,10 +30,11 @@ CREATE TABLE users (
 );
 
 CREATE TABLE role_permissions (
-    rolper_id BIGSERIAL PRIMARY KEY,
-    user_rpe VARCHAR(30) UNIQUE NOT NULL,
+   
+    user_rpe VARCHAR(30) NOT NULL,
     permission_id INT NOT NULL,
     is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (user_rpe, permission_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
 );
