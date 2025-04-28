@@ -18,11 +18,13 @@ class EvidenceController extends Controller
         'standard.section.category:category_id,category_name',
         'files:file_id,evidence_id,file_url,upload_date,file_name,justification',
         'status' => function($query) {
-            $query->orderByDesc('status_date'); // Último estado
-        }
+            $query->orderByDesc('status_date');
+        },
+        'status.user:user_rpe,user_name' // 
     ])
     ->where('evidence_id', $id)
     ->first();
+    
 
     if (!$evidence) {
         return response()->json(['message' => 'Evidencia no encontrada'], 404);
