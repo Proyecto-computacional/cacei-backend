@@ -69,6 +69,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/userToken', [AuthController::class, 'getUserToken']);
     Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
     Route::get('/my-assignments', [UserController::class, 'myAssignments']);
+    Route::get('/user',function () {
+        return auth()->user();
+    });
 
 });
 
