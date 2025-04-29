@@ -5,24 +5,27 @@ use App\Models\Status;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class RevisionEvidenciasController extends Controller
 {
     public function aprobarEvidencia(Request $request)
     {
 
-        return $this->actualizarEstado($request, 'Aprobado');
-        
+        return $this->actualizarEstado($request, 'APROBADA');
+
     }
 
     public function desaprobarEvidencia(Request $request)
     {
-        return $this->actualizarEstado($request, 'Desaprobado');
+        return $this->actualizarEstado($request, 'NO APROBADA');
     }
     //Es para regresarla a pendiente si es por defaul o como opcion para un boton de pendiente
     public function marcarPendiente(Request $request)
     {
-        return $this->actualizarEstado($request, 'Pendiente');
+        Log::debug('marcar pendiente');
+        return $this->actualizarEstado($request, 'PENDIENTE');
+
     }
 
     private function actualizarEstado(Request $request, $estado)
@@ -30,15 +33,22 @@ class RevisionEvidenciasController extends Controller
         $request->validate([
             'evidence_id' => 'required|integer',
             'user_rpe' => 'required|string',
-            'feedback' => 'nullable|string|max:255' //puede ser null
+            'feedback' => 'nullable|string|max:1048', //puede ser null
+            'reviser_rpe' => 'nullable|string'
         ]);
- 
-        $user = auth()->user();
-        $reviser_rpe = $user->user_rpe;
- 
+        Log::debug('Datos recibidos:', ['user_rpe' => $request->reviser_rpe, 'evidence_id' => $request->evidence_id]);
+        if ($request->reviser_rpe == NULL) {
+            $user = auth()->user();
+            $reviser_rpe = $user->user_rpe;
+        } else {
+            $reviser_rpe = $request->reviser_rpe;
+        }
+
         //solo aprovadp o rechazado puede tener retroalimentacIon
-        $feedback = in_array($estado, ['Aprobada', 'No aprobada']) ? $request->feedback : null;
- 
+        $feedback = in_array($estado, ['ARPOBADA', 'NO APROBADA',]) ? $request->feedback : null;
+
+
+
         //Carga el estado a la base
         $status = Status::updateOrCreate(
             [
@@ -51,7 +61,7 @@ class RevisionEvidenciasController extends Controller
                 'feedback' => $feedback
             ]
         );
- 
+
         //crea la notificacion y carga el comentario..
         Notification::create([
             'title' => "Evidencia {$estado}",
@@ -63,7 +73,7 @@ class RevisionEvidenciasController extends Controller
             'seen' => false,
             'pinned' => false
         ]);
- 
+
         return response()->json([
             'message' => "Evidencia marcada como {$estado}",
             'status' => $status
