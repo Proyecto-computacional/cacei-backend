@@ -15,6 +15,7 @@ class StandardController extends Controller
     
     public function store(Request $request)
     {
+        // cuando se guarda un standard 'transversal' no hace nada especial
         $indice = 0;
         $request->validate([
             'section_id' => 'required|int',

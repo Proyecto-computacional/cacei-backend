@@ -40,6 +40,7 @@ class AccreditationProcessController extends Controller
 
     public function downloadProcess($processId)
     {
+        error_log('llega a download process');
         // Ejecutamos el job sin colas, de forma sincrónica
         GenerateAcreditacionZip::dispatchSync($processId);
 
@@ -48,9 +49,11 @@ class AccreditationProcessController extends Controller
 
         // Si el archivo existe, lo devolvemos para descarga
         if (file_exists($zipPath)) {
+            error_log('genera el zip');
             return response()->download($zipPath)/*->deleteFileAfterSend(true)*/;
         }
 
+        error_log('no genera el zip');
         return response()->json(['error' => 'No se pudo generar el archivo ZIP.'], 500);
     }
 }
