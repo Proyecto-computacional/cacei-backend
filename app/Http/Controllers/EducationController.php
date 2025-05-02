@@ -15,7 +15,7 @@ class EducationController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'institution' => 'required|string|max:30',
             'degree_obtained' => 'required|string|max:1',
             'obtained_year' => 'required|integer',
@@ -23,14 +23,13 @@ class EducationController extends Controller
             'degree_name' => 'required|string|max:50',
         ]);
         
-        $education = Education::create([
-            'cv_id' => $cv_id,
-            'institution' => $request->institution,
-            'degree_obtained' => $request->degree_obtained,
-            'obtained_year' => $request->obtained_year,
-            'professional_license' => $request->professional_license,
-            'degree_name' => $request->degree_name,
-        ]);
+        $education = Education::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'degree_name' => $validated['degree_name']
+            ],
+            $validated
+        );
 
         return response()->json($education, 201);
     }

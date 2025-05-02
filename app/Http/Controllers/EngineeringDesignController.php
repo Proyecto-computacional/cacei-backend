@@ -15,18 +15,19 @@ class EngineeringDesignController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'institution' => 'required|string|max:30',
             'period' => 'required|integer',
             'level_experience' => 'required|string|max:20',
         ]);
 
-        $engineeringDesign = EngineeringDesign::create([
-            'cv_id' => $cv_id,
-            'institution' => $request->institution,
-            'period' => $request->period,
-            'level_experience' => $request->level_experience,
-        ]);
+        $engineeringDesign = EngineeringDesign::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'institution' => $validated['institution']
+            ],
+            $validated
+        );
 
         return response()->json($engineeringDesign, 201);
     }
