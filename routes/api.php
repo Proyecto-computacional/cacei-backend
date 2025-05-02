@@ -144,9 +144,12 @@ Route::middleware([
     return response()->json(['message' => 'Gestionar evidencias']);
 });
 
-Route::get('/estadisticas/carreras', [EvidenciaEstadisticaController::class, 'estadisticasPorCarrera']);
-Route::get('/estadisticas/general', [EvidenciaEstadisticaController::class, 'resumenGeneral']);
+
+
+Route::get('/estadisticas/{rpe}', [EvidenciaEstadisticaController::class, 'estadisticasPorRPE']);
+Route::get('/estadisticas/resumen/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPE']);
 Route::get('/estadisticas/no-vistas/{rpe}', [EvidenciaEstadisticaController::class, 'notificacionesNoVistas']);
+Route::get('/cv/ultima-actualizacion/{rpe}', [EvidenciaEstadisticaController::class, 'ultimaActualizacionCV']);
 
 
 //Exclusivos de administrador 

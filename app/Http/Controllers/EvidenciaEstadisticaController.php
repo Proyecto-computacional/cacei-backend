@@ -7,70 +7,96 @@ use Illuminate\Support\Facades\DB;
 
 class EvidenciaEstadisticaController extends Controller
 {
-    public function estadisticasPorCarrera()
+    
+    public function estadisticasPorRPE($rpe){
+        $estadisticas = DB::select("
+        SELECT
+            c.career_name,
+            rf.frame_name,
+            COALESCE(SUM(CASE WHEN st.status_description = 'Aprobado' THEN 1 ELSE 0 END), 0) AS aprobadas,
+            COALESCE(SUM(CASE WHEN st.status_description = 'Desaprobado' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+            (
+                SELECT COUNT(*)
+                FROM standards s
+                WHERE s.standard_id NOT IN (
+                    SELECT DISTINCT e.standard_id
+                    FROM evidences e
+                    JOIN revisers r ON r.evidence_id = e.evidence_id
+                    WHERE r.user_rpe = ?
+                )
+            ) AS sin_evidencia
+        FROM revisers r
+        JOIN evidences e ON r.evidence_id = e.evidence_id
+        JOIN standards s ON s.standard_id = e.standard_id
+        JOIN accreditation_processes ap ON ap.process_id = e.process_id
+        JOIN frames_of_reference rf ON rf.frame_id = ap.frame_id
+        JOIN careers c ON c.career_id = ap.career_id
+        LEFT JOIN (
+            SELECT DISTINCT ON (evidence_id) *
+            FROM statuses
+            ORDER BY evidence_id, status_date DESC
+        ) st ON st.evidence_id = e.evidence_id
+        WHERE r.user_rpe = ?
+        GROUP BY c.career_name, rf.frame_name
+        ORDER BY c.career_name, rf.frame_name
+    ", [$rpe, $rpe]);
+
+$resultado = [];
+foreach ($estadisticas as $e) {
+    $total = $e->aprobadas + $e->desaprobadas + $e->sin_evidencia;
+    $total = $total > 0 ? $total : 1; // evitar división entre 0
+
+    $resultado[] = [
+        'career_name' => $e->career_name,
+        'frame_name' => $e->frame_name,
+        'aprobado' => round(($e->aprobadas / $total) * 100, 2),
+        'desaprobado' => round(($e->desaprobadas / $total) * 100, 2),
+        'sin_evidencia' => round(($e->sin_evidencia / $total) * 100, 2),
+    ];
+}
+
+return response()->json($resultado);
+}
+
+
+    public function resumenGeneralPorRPE($rpe)
     {
         $datos = DB::select("
             SELECT
-                c.career_name,
-                fr.frame_name,
-                COUNT(e.evidence_id) AS total,
-                SUM(CASE WHEN s.status_description = 'Aprobado' THEN 1 ELSE 0 END) AS aprobadas,
-                SUM(CASE WHEN s.status_description = 'Pendiente' THEN 1 ELSE 0 END) AS pendientes,
-                COUNT(e.evidence_id) - COUNT(s.status_id) AS sin_subir
-            FROM careers c
-            JOIN accreditation_processes ap ON ap.career_id = c.career_id
-            JOIN frames_of_reference fr ON fr.frame_id = ap.frame_id
-            JOIN evidences e ON e.process_id = ap.process_id
-            LEFT JOIN (
-                SELECT DISTINCT ON (evidence_id) *
-                FROM statuses
-                ORDER BY evidence_id, status_date DESC
-            ) s ON s.evidence_id = e.evidence_id
-            GROUP BY c.career_name, fr.frame_name
-        ");
-//en el left join trae el último estatus registrado de cada evidencia (por evidence_id), gracias a DISTINCT ON (...) y ORDER BY status_date DESC
-
-
-        $resumen = collect($datos)->map(function ($item) {// $resumen es una nueva colección como arreglo y map te permite modificarlos
-            $total = $item->total ?: 1;//(Numero de evidencias) Si $item->total tiene un valor (distinto de null, 0, "", etc.), úsalo.Si no tiene valor (o es cero), usa 1 en su lugar.
-            return [
-                'carrera' => $item->career_name,
-                'marco_referencia' => $item->frame_name,
-                'aprobado' => round(($item->aprobadas / $total) * 100, 2),
-                'pendiente' => round(($item->pendientes / $total) * 100, 2),
-                'sin_subir' => round(($item->sin_subir / $total) * 100, 2),
-            ];
-        });
-
-        return response()->json($resumen);
-    }
-
-
-    public function resumenGeneral()
-    {
-        $datos = DB::select("
-            SELECT
-                COUNT(e.evidence_id) AS total,
-                SUM(CASE WHEN s.status_description = 'Aprobado' THEN 1 ELSE 0 END) AS aprobadas,
-                SUM(CASE WHEN s.status_description = 'Pendiente' THEN 1 ELSE 0 END) AS pendientes,
-                COUNT(e.evidence_id) - COUNT(s.status_id) AS sin_subir
+                COALESCE(SUM(CASE WHEN st.status_description = 'Aprobado' THEN 1 ELSE 0 END), 0) AS aprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'Desaprobado' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+                (
+                    SELECT COUNT(*)
+                    FROM standards s
+                    WHERE s.standard_id NOT IN (
+                        SELECT DISTINCT e.standard_id
+                        FROM evidences e
+                        JOIN revisers r ON r.evidence_id = e.evidence_id
+                        WHERE r.user_rpe = ?
+                    )
+                ) AS sin_evidencia
             FROM evidences e
+            JOIN revisers r ON r.evidence_id = e.evidence_id
             LEFT JOIN (
                 SELECT DISTINCT ON (evidence_id) *
                 FROM statuses
                 ORDER BY evidence_id, status_date DESC
-            ) s ON s.evidence_id = e.evidence_id
-        ");
-          //en el left join trae el último estatus registrado de cada evidencia (por evidence_id), gracias a DISTINCT ON (...) y ORDER BY status_date DESC
-        $d = $datos[0];// el unico dato de la lista o arreglo
-        $total = $d->total ?: 1;
-
+            ) st ON st.evidence_id = e.evidence_id
+            WHERE r.user_rpe = ?
+        ", [$rpe, $rpe]);
+    
+        $d = $datos[0];
+    
+        $total = $d->aprobadas + $d->desaprobadas + $d->sin_evidencia;
+        $total = $total > 0 ? $total : 1; // evitar división entre 0
+    
         return response()->json([
             'aprobado' => round(($d->aprobadas / $total) * 100, 2),
-            'pendiente' => round(($d->pendientes / $total) * 100, 2),
-            'sin_subir' => round(($d->sin_subir / $total) * 100, 2),
+            'desaprobado' => round(($d->desaprobadas / $total) * 100, 2),
+            'sin_evidencia' => round(($d->sin_evidencia / $total) * 100, 2),
         ]);
     }
+    
 
     public function notificacionesNoVistas($rpe)
     {
@@ -80,5 +106,29 @@ class EvidenciaEstadisticaController extends Controller
             ->count();
 
         return response()->json(['no_vistas' => $count]);
+    }
+
+ 
+    public function ultimaActualizacionCV($rpe)
+    {
+        $cv = DB::table('users')
+    ->join('cvs', 'users.cv_id', '=', 'cvs.cv_id')
+    ->where('users.user_rpe', $rpe)
+    ->orderBy('cvs.update_date', 'desc') // ← usa `update_date`, no `updated_at`
+    ->select('cvs.update_date')
+    ->first();
+
+
+        if ($cv) {
+            return response()->json([
+                'rpe' => $rpe,
+                'ultima_actualizacion_cv' => $cv->update_date,
+            ]);
+        } else {
+            return response()->json([
+                'rpe' => $rpe,
+                'mensaje' => 'CV no encontrado para este usuario',
+            ], 404);
+        }
     }
 }
