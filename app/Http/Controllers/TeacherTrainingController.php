@@ -15,20 +15,20 @@ class TeacherTrainingController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
+        $validated=$request->validate([
             'title_certification' => 'required|string|max:50',
             'obtained_year' => 'required|integer',
             'institution_country' => 'required|string|max:50',
             'hours' => 'required|integer',
         ]);
 
-        $teacherTraining = TeacherTraining::create([
-            'cv_id' => $cv_id,
-            'title_certification' => $request->title_certification,
-            'obtained_year' => $request->obtained_year,
-            'institution_country' => $request->institution_country,
-            'hours' => $request->hours,
-        ]);
+        $teacherTraining = TeacherTraining::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'title_certification' => $validated['title_certification']
+            ],
+            $validated
+        );
 
         return response()->json($teacherTraining, 201);
     }

@@ -15,18 +15,19 @@ class ParticipationController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'institution' => 'required|string|max:30',
             'period' => 'required|integer',
             'level_participation' => 'required|string|max:20',
         ]);
 
-        $participation = Participation::create([
-            'cv_id' => $cv_id,
-            'institution' => $request->institution,
-            'period' => $request->period,
-            'level_participation' => $request->level_participation,
-        ]);
+        $participation = Participation::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'institution' => $validated['institution']
+            ],
+            $validated
+        );
 
         return response()->json($participation, 201);
     }
