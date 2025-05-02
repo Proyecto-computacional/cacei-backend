@@ -15,20 +15,20 @@ class DisciplinaryUpdateController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title_certification' => 'required|string|max:50',
             'year_certification' => 'required|integer',
             'institution_country' => 'required|string|max:50',
             'hours' => 'required|integer',
         ]);
 
-        $disciplinaryUpdate = DisciplinaryUpdate::create([
-            'cv_id' => $cv_id,
-            'title_certification' => $request->title_certification,
-            'year_certification' => $request->year_certification,
-            'institution_country' => $request->institution_country,
-            'hours' => $request->hours,
-        ]);
+        $disciplinaryUpdate = DisciplinaryUpdate::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'title_certification' => $validated['title_certification']
+            ],
+            $validated
+        );
 
         return response()->json($disciplinaryUpdate, 201);
     }

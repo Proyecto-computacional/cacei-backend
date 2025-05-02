@@ -15,14 +15,17 @@ class AwardController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'description' => 'required|string|max:255',
         ]);
 
-        $award = Award::create([
-            'cv_id' => $cv_id,
-            'description' => $request->description,
-        ]);
+        $award = Award::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'description' => $validated['description']
+            ],
+            $validated
+        );
 
         return response()->json($award, 201);
     }
