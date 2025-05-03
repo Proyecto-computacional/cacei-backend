@@ -40,7 +40,6 @@ class AccreditationProcessController extends Controller
 
     public function downloadProcess($processId)
     {
-        error_log('llega a download process');
         // Ejecutamos el job sin colas, de forma sincrónica
         GenerateAcreditacionZip::dispatchSync($processId);
 
