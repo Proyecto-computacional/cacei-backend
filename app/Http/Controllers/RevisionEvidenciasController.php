@@ -23,7 +23,6 @@ class RevisionEvidenciasController extends Controller
     //Es para regresarla a pendiente si es por defaul o como opcion para un boton de pendiente
     public function marcarPendiente(Request $request)
     {
-        Log::debug('marcar pendiente');
         return $this->actualizarEstado($request, 'PENDIENTE');
 
     }
@@ -45,22 +44,33 @@ class RevisionEvidenciasController extends Controller
         }
 
         //solo aprovadp o rechazado puede tener retroalimentacIon
-        $feedback = in_array($estado, ['ARPOBADA', 'NO APROBADA',]) ? $request->feedback : null;
+        $feedback = in_array($estado, ['APROBADA', 'NO APROBADA',]) ? $request->feedback : "";
 
+        if ($estado === 'PENDIENTE') {
+            //Carga el estado a la base
+            $status = Status::create(
+                [
+                    'evidence_id' => $request->evidence_id,
+                    'user_rpe' => $reviser_rpe,
+                    'status_description' => $estado,
+                    'status_date' => Carbon::now(),
+                    'feedback' => $feedback
+                ]
+            );
+        } else {
+            $status = Status::updateOrCreate(
+                [
+                    'evidence_id' => $request->evidence_id,
+                    'user_rpe' => $reviser_rpe
+                ],
 
-
-        //Carga el estado a la base
-        $status = Status::updateOrCreate(
-            [
-                'evidence_id' => $request->evidence_id,
-                'user_rpe' => $reviser_rpe,
-            ],
-            [
-                'status_description' => $estado,
-                'status_date' => Carbon::now(),
-                'feedback' => $feedback
-            ]
-        );
+                [
+                    'status_description' => $estado,
+                    'status_date' => Carbon::now(),
+                    'feedback' => $feedback
+                ]
+            );
+        }
 
         //crea la notificacion y carga el comentario..
         Notification::create([

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Career;
 use App\Models\Evidence;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,8 +15,8 @@ class EvidenceController extends Controller
     public function show($id)
     {
         $evidence = Evidence::with([
-            'process:process_id,process_name',
-            'standard:standard_id,standard_name,section_id,help',
+            'process:process_id,process_name,career_id',
+            'standard:standard_id,standard_name,section_id,help,is_transversal',
             'standard.section:section_id,section_name,category_id',
             'standard.section.category:category_id,category_name',
             'files:file_id,evidence_id,file_url,upload_date,file_name,justification',
@@ -30,7 +33,47 @@ class EvidenceController extends Controller
             return response()->json(['message' => 'Evidencia no encontrada'], 404);
         }
 
-        return response()->json($evidence);
+        $primerRevisor = null;
+        if ($evidence->standard->is_transversal === true) {
+            $primerRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
+        } else {
+            $evidenceCareer = $evidence->process->career;
+            $responsable = User::where('user_rpe', $evidence->user_rpe)->first();
+
+            if ($responsable->user_role === 'COORDINADOR DE CARRERA') {
+                if ($evidenceCareer->user_rpe == $responsable->user_rpe) {
+                    $primerRevisor = [$evidenceCareer->area->user_rpe];
+                }
+            }
+
+            if ($responsable->user_role === 'JEFE DE AREA') {
+                if ($evidenceCareer->user_rpe == $responsable->user_rpe) {
+                    $primerRevisor = User::where('user_role', 'DIRECTIVO')->pluck('user_rpe');
+                    //$primerRevisor = User::where('user_role', 'ADMINISTRADOR')->first();
+                }
+            }
+
+            if ($responsable->user_role === 'DIRECTIVO') {
+                if ($evidenceCareer->user_rpe == $responsable->user_rpe) {
+                    $primerRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
+                }
+            }
+
+            if (
+                $responsable->user_role === 'PROFESOR' ||
+                $responsable->user_role === 'DEPARTAMENTO UNIVERSITARIO' ||
+                $primerRevisor === null
+            ) {
+
+                $primerRevisor = [$evidenceCareer->user_rpe];
+            }
+        }
+
+
+        return response()->json([
+            'evidence' => $evidence,
+            'first_revisor' => $primerRevisor
+        ]);
     }
     public function allEvidence(Request $request)
     {
@@ -122,7 +165,7 @@ class EvidenceController extends Controller
 
         return response()->json([
             'evidencias' => $evidences,
-            'estatus' => ['APROBADO', 'NO APROBADO', 'PENDIENTE'],
+            'estatus' => ['APROBADA', 'NO APROBADA', 'PENDIENTE'],
             'Rol' => $role
         ]);
     }
