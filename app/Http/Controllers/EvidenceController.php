@@ -21,7 +21,8 @@ class EvidenceController extends Controller
             'standard.section.category:category_id,category_name',
             'files:file_id,evidence_id,file_url,upload_date,file_name,justification',
             'status' => function ($query) {
-                $query->orderByDesc('status_date');
+                $query->orderByDesc('status_date')
+                    ->orderByDesc('status_id');
             },
             'status.user:user_rpe,user_name,user_role' // 
         ])
@@ -33,47 +34,53 @@ class EvidenceController extends Controller
             return response()->json(['message' => 'Evidencia no encontrada'], 404);
         }
 
-        $primerRevisor = null;
-        if ($evidence->standard->is_transversal === true) {
-            $primerRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
-        } else {
-            $evidenceCareer = $evidence->process->career;
-            $responsable = User::where('user_rpe', $evidence->user_rpe)->first();
+        $responsable = User::where('user_rpe', $evidence->user_rpe)->first();
 
-            if ($responsable->user_role === 'COORDINADOR DE CARRERA') {
-                if ($evidenceCareer->user_rpe == $responsable->user_rpe) {
-                    $primerRevisor = [$evidenceCareer->area->user_rpe];
-                }
-            }
-
-            if ($responsable->user_role === 'JEFE DE AREA') {
-                if ($evidenceCareer->user_rpe == $responsable->user_rpe) {
-                    $primerRevisor = User::where('user_role', 'DIRECTIVO')->pluck('user_rpe');
-                    //$primerRevisor = User::where('user_role', 'ADMINISTRADOR')->first();
-                }
-            }
-
-            if ($responsable->user_role === 'DIRECTIVO') {
-                if ($evidenceCareer->user_rpe == $responsable->user_rpe) {
-                    $primerRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
-                }
-            }
-
-            if (
-                $responsable->user_role === 'PROFESOR' ||
-                $responsable->user_role === 'DEPARTAMENTO UNIVERSITARIO' ||
-                $primerRevisor === null
-            ) {
-
-                $primerRevisor = [$evidenceCareer->user_rpe];
-            }
-        }
-
+        $primerRevisor = EvidenceController::nextRevisor($responsable, $evidence);
 
         return response()->json([
             'evidence' => $evidence,
             'first_revisor' => $primerRevisor
         ]);
+    }
+
+    public function nextRevisor($user, $evidence)
+    {
+        $nextRevisor = null;
+        if ($evidence->standard->is_transversal === true) {
+            $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
+        } else {
+            $evidenceCareer = $evidence->process->career;
+
+            if ($user->user_role === 'COORDINADOR DE CARRERA') {
+                if ($evidenceCareer->user_rpe == $user->user_rpe) {
+                    $nextRevisor = [$evidenceCareer->area->user_rpe];
+                }
+            }
+
+            if ($user->user_role === 'JEFE DE AREA') {
+                if ($evidenceCareer->user_rpe == $user->user_rpe) {
+                    $nextRevisor = User::where('user_role', 'DIRECTIVO')->pluck('user_rpe');
+                    //$nextRevisor = User::where('user_role', 'ADMINISTRADOR')->first();
+                }
+            }
+
+            if ($user->user_role === 'DIRECTIVO') {
+                if ($evidenceCareer->user_rpe == $user->user_rpe) {
+                    $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
+                }
+            }
+
+            if (
+                $user->user_role === 'PROFESOR' ||
+                $user->user_role === 'DEPARTAMENTO UNIVERSITARIO' ||
+                $nextRevisor === null
+            ) {
+
+                $nextRevisor = [$evidenceCareer->user_rpe];
+            }
+        }
+        return $nextRevisor;
     }
     public function allEvidence(Request $request)
     {

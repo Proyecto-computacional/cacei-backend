@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Evidence;
 use App\Models\Status;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -35,7 +37,7 @@ class RevisionEvidenciasController extends Controller
             'feedback' => 'nullable|string|max:1048', //puede ser null
             'reviser_rpe' => 'nullable|string'
         ]);
-        Log::debug('Datos recibidos:', ['user_rpe' => $request->reviser_rpe, 'evidence_id' => $request->evidence_id]);
+
         if ($request->reviser_rpe == NULL) {
             $user = auth()->user();
             $reviser_rpe = $user->user_rpe;
@@ -58,18 +60,36 @@ class RevisionEvidenciasController extends Controller
                 ]
             );
         } else {
-            $status = Status::updateOrCreate(
-                [
-                    'evidence_id' => $request->evidence_id,
-                    'user_rpe' => $reviser_rpe
-                ],
+            $status = Status::where('user_rpe', $reviser_rpe)
+                ->where('evidence_id', $request->evidence_id)
+                ->where('status_description', 'PENDIENTE');
 
-                [
-                    'status_description' => $estado,
-                    'status_date' => Carbon::now(),
-                    'feedback' => $feedback
-                ]
-            );
+            $status->update([
+                'status_description' => $estado,
+                'feedback' => $feedback,
+                'status_date' => now()
+            ]);
+
+            if ($estado === 'APROBADA') {
+                $evidence = Evidence::where('evidence_id', $request->evidence_id)->first();
+                $user = User::where('user_rpe', $reviser_rpe)->first();
+
+                $nextRevisors = (new EvidenceController)->nextRevisor($user, $evidence);
+
+                if ($nextRevisors && count($nextRevisors) > 0) {
+                    foreach ($nextRevisors as $nextRpe) {
+                        Status::create([
+                            'evidence_id' => $evidence->evidence_id,
+                            'user_rpe' => $nextRpe,
+                            'status_description' => 'PENDIENTE',
+                            'feedback' => '',
+                            'status_date' => now()
+                        ]);
+                    }
+                }
+
+            }
+
         }
 
         //crea la notificacion y carga el comentario..
