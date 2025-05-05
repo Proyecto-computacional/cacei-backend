@@ -27,6 +27,8 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StandardController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameOfReferenceController;
+use App\Http\Controllers\EvidenciaEstadisticaController;
+
 use App\Http\Middleware\CorsMiddleware;
 
 /*
@@ -141,6 +143,16 @@ Route::middleware([
 ])->get('/GestionEvidencias', function () {
     return response()->json(['message' => 'Gestionar evidencias']);
 });
+
+
+
+Route::get('/estadisticas/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorRPE']);
+Route::get('/estadisticas/resumen/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPE']);
+Route::get('/estadisticas/por-autor/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorAutor']);
+Route::get('/estadisticas/autor/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPEA']);
+Route::get('/estadisticas/no-vistas/{rpe}', [EvidenciaEstadisticaController::class, 'notificacionesNoVistas']);
+Route::get('/cv/ultima-actualizacion/{rpe}', [EvidenciaEstadisticaController::class, 'ultimaActualizacionCV']);
+
 
 //Exclusivos de administrador 
 Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
