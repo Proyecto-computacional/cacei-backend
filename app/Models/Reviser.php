@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
+use function PHPUnit\Framework\returnArgument;
 
 class Reviser extends Model
 {
@@ -28,5 +29,10 @@ class Reviser extends Model
     public function evidence()
     {
         return $this->belongsTo(Evidence::class, 'evidence_id', 'evidence_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_rpe', 'user_rpe');
     }
 }

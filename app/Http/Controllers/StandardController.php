@@ -9,12 +9,14 @@ class StandardController extends Controller
 {
     public function getBySection(Request $request)
     {
-        $standards = Standard::where('section_id', $request->section_id)->get();
+        $standards = Standard::where('section_id', $request->section_id)->orderBy('indice')->get();
         return response()->json($standards);
     }
     
     public function store(Request $request)
     {
+        // cuando se guarda un standard 'transversal' no hace nada especial
+        $indice = 0;
         $request->validate([
             'section_id' => 'required|int',
             'standard_name' => 'required|string|max:25',
@@ -28,6 +30,10 @@ class StandardController extends Controller
             $randomId = rand(1, 100);
         } while (Standard::where('standard_id', $randomId)->exists()); // Verifica que no se repita
 
+        do{
+            $indice = $indice + 1;
+        } while (Standard::where('indice', $indice)->where('section_id', $request->input('section_id'))->exists());
+
         $standard = new Standard();
         $standard->standard_id = $randomId;
         $standard->section_id = $request->input('section_id');
@@ -35,6 +41,7 @@ class StandardController extends Controller
         $standard->standard_description = $request->input('standard_description');
         $standard->is_transversal = $request->input('is_transversal');
         $standard->help = $request->input('help');
+        $standard->indice = $indice;
         
         $standard->save();
 

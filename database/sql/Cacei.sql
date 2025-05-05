@@ -10,19 +10,38 @@ CREATE TABLE cvs (
     PRIMARY KEY (cv_id)
 );
 
+
+
+CREATE TABLE permissions (
+    permission_id SERIAL PRIMARY KEY,
+    permission_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+
 CREATE TABLE users (
     user_rpe VARCHAR(20) NOT NULL,
     user_mail VARCHAR(100) UNIQUE NOT NULL,
     user_role VARCHAR(30) NOT NULL,
     user_name VARCHAR(150) NOT NULL,
     cv_id BIGINT,
+    situacion VARCHAR(20),--agregar situacion jubilado o trabajan varchar...
     PRIMARY KEY (user_rpe),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 
+CREATE TABLE role_permissions (
+   
+    user_rpe VARCHAR(30) NOT NULL,
+    permission_id INT NOT NULL,
+    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (user_rpe, permission_id),
+    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
+    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
+);
+
 CREATE TABLE frames_of_reference (
     frame_id INT NOT NULL,
-    frame_name VARCHAR(20) NOT NULL,
+    frame_name VARCHAR(50) NOT NULL,
     PRIMARY KEY (frame_id)
 );
 
@@ -30,6 +49,7 @@ CREATE TABLE categories (
     category_id INT NOT NULL,
     category_name VARCHAR(50) NOT NULL,
     frame_id INT NOT NULL,
+    indice INT NOT NULL, 
     PRIMARY KEY (category_id),
     FOREIGN KEY (frame_id) REFERENCES frames_of_reference(frame_id)
 );
@@ -39,6 +59,8 @@ CREATE TABLE sections (
     category_id INT NOT NULL,
     section_name VARCHAR(25) NOT NULL,
     section_description VARCHAR(50) NOT NULL,
+    indice INT NOT NULL,
+    is_Standard BOOL NOT NULL,
     PRIMARY KEY (section_id),
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
@@ -50,6 +72,7 @@ CREATE TABLE standards (
     standard_description VARCHAR(50) NOT NULL,
     is_transversal BOOL NOT NULL,
     help VARCHAR(255),
+    indice INT NOT NULL,
     PRIMARY KEY (standard_id),
     FOREIGN KEY (section_id) REFERENCES sections(section_id)
 );
@@ -81,7 +104,7 @@ CREATE TABLE educations (
     degree_obtained VARCHAR(1),
     obtained_year INT,
     professional_license VARCHAR(8),
-    degree_name VARCHAR(50),
+    degree_name VARCHAR(100),
     PRIMARY KEY (education_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -185,7 +208,7 @@ CREATE TABLE contributions_to_pe (
 
 CREATE TABLE areas (
     area_id VARCHAR(20) NOT NULL,
-    area_name VARCHAR(20) NOT NULL,
+    area_name VARCHAR(50) NOT NULL,
     user_rpe VARCHAR(20) UNIQUE NOT NULL,
     PRIMARY KEY (area_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
@@ -194,7 +217,7 @@ CREATE TABLE areas (
 CREATE TABLE careers (
     career_id VARCHAR(20) NOT NULL,
     area_id VARCHAR(20) NOT NULL,
-    career_name VARCHAR(20) NOT NULL,
+    career_name VARCHAR(50) NOT NULL,
     user_rpe VARCHAR(20) UNIQUE NOT NULL,
     PRIMARY KEY (career_id),
     FOREIGN KEY (area_id) REFERENCES areas(area_id),
@@ -272,3 +295,4 @@ CREATE TABLE notifications (
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
     FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
 );
+

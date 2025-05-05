@@ -49,6 +49,7 @@ class UserController extends Controller
         }
     }
 
+
     public function myAssignments()
 {
     $user = auth()->user();
@@ -71,6 +72,36 @@ class UserController extends Controller
     });
 
     return response()->json($assignments);
+}
+
+=======
+    public function validateUser(Request $request)
+{
+    $validated = $request->validate([
+        'rpe' => 'required|string'
+    ]);
+
+    $endpoint = 'https://servicios.ing.uaslp.mx/ws_cacei/ValidaUsuario.php';
+    $payload = [
+        'key' => 'B3E06D96-1562-4713-BCD7-7F762A87F205',
+        'rpe' => $validated['rpe'],
+        'contra' => 'Cacei#FI@2025'
+    ];
+
+    $client = new \GuzzleHttp\Client();
+    try {
+        $response = $client->post($endpoint, [
+            'json' => $payload,
+            'verify' => false // Solo para desarrollo, en producción deberías tener certificados válidos
+        ]);
+
+        return response()->json(json_decode($response->getBody(), true));
+    } catch (\Exception $e) {
+        return response()->json([
+            'correcto' => false,
+            'mensaje' => 'Error al validar el usuario: ' . $e->getMessage()
+        ], 500);
+    }
 }
 
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Accreditation_Process;
 class Evidence extends Model
 {
     use HasApiTokens, HasFactory;
@@ -13,7 +13,7 @@ class Evidence extends Model
     public $timestamps = false;
     protected $primaryKey = 'evidence_id';
     protected $foreignKey = 'standard_id';
-    public $incrementing = true;
+    public $incrementing = false;
     protected $keyType = 'int';
 
     protected $fillable = [
@@ -31,6 +31,11 @@ class Evidence extends Model
     {
         return $this->hasMany(File::class, 'evidence_id');
     }
+
+    public function statuses()
+    {
+        return $this->hasMany(Status::class, 'evidence_id');
+    } 
     // Relación con Standard (Cada evidencia pertenece a un estándar)
     public function standard()
     {

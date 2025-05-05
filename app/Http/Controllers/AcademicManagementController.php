@@ -15,20 +15,20 @@ class AcademicManagementController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'job_position' => 'required|string|max:100',
             'institution' => 'required|string|max:50',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
         ]);
 
-        $academicManagement = AcademicManagement::create([
-            'cv_id' => $cv_id,
-            'job_position' => $request->job_position,
-            'institution' => $request->institution,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+        $academicManagement = AcademicManagement::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'job_position' => $validated['job_position']
+            ],
+            $validated
+        );
 
         return response()->json($academicManagement, 201);
     }

@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Cv;
 
 class CvController extends Controller
 {
-    public function index() {
-        return response()->json(Cv::all(), 200);
+    public function index(Request $request) {
+        $user = User::where('user_rpe', $request->user_rpe)->first();
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+        $cv = Cv::where('cv_id', $user->cv_id)->first();
+        return response()->json($cv, 200);
     }
 
     public function show($id) {

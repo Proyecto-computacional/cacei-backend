@@ -93,6 +93,8 @@ class EvidenceController extends Controller
 
         $query = Evidence::query()
             ->leftJoin('standards', 'evidences.standard_id', '=', 'standards.standard_id')
+            ->leftJoin('sections', 'standards.section_id', '=', 'sections.section_id') // 
+            ->leftJoin('categories', 'sections.category_id', '=', 'categories.category_id')
             ->leftJoin('users as evidence_owner', 'evidences.user_rpe', '=', 'evidence_owner.user_rpe')
             ->leftJoin('accreditation_processes', 'evidences.process_id', '=', 'accreditation_processes.process_id')->leftJoin('careers', 'accreditation_processes.career_id', '=', 'careers.career_id')
             ->leftJoin('areas', 'careers.area_id', '=', 'areas.area_id')
@@ -103,6 +105,8 @@ class EvidenceController extends Controller
             ->select(
                 'evidences.*',
                 'standards.standard_name as standard_name',
+                'sections.section_name as section_name',
+                'categories.category_name as category_name',
                 'evidence_owner.user_name as evidence_owner_name',
                 'accreditation_processes.process_name as process_name',
                 'career_coordinator.user_rpe as career_admin_rpe',
@@ -167,7 +171,7 @@ class EvidenceController extends Controller
             $evidence->statuses = DB::table('statuses')
                 ->join('users', 'statuses.user_rpe', '=', 'users.user_rpe')
                 ->where('evidence_id', $evidence->evidence_id)
-                ->select('statuses.*', 'user_role')
+                ->select('statuses.*', 'users.user_role', 'users.user_name')
                 ->get()
                 ->map(callback: function ($status) {
                     return $status;
@@ -180,9 +184,38 @@ class EvidenceController extends Controller
             'Rol' => $role
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'standard_id' => 'required|int',
+            'user_rpe' => 'required|string',
+            'process_id' => 'required|int',
+            'due_date' => 'required|date'
+        ]);
+
+        do {
+            $randomId = rand(1, 100);
+        } while (Evidence::where('evidence_id', $randomId)->exists()); // Verifica que no se repita
+
+        $evidence = Evidence::create([
+            'evidence_id' => $randomId,
+            'standard_id' => $request->standard_id,
+            'user_rpe' => $request->user_rpe,
+            'process_id' => $request->process_id,
+            'due_date' => $request->due_date
+        ]);
+
+        // Retornar la respuesta con la notificación creada
+        return response()->json([
+            'message' => 'Asignado exitosamente',
+            'evidence' => $evidence
+        ], 201);
+    }
     public function getByStandard(Request $request)
     {
         $evidences = Evidence::where('standard_id', $request->standard_id)->get();
         return response()->json($evidences);
     }
+
 }

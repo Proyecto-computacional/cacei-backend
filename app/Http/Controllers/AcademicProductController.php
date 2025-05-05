@@ -15,15 +15,30 @@ class AcademicProductController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
-            'academic_product_number' => 'required|integer',
+        $validated = $request->validate([
             'description' => 'required|string|max:150',
         ]);
 
+        // Verificar si ya existe un producto idéntico
+        $existingProduct = AcademicProduct::where('cv_id', $cv_id)
+            ->where('description', $validated['description'])
+            ->first();
+
+        if ($existingProduct) {
+            return response()->json([
+                'message' => 'Datos actualizados',
+                'data' => $existingProduct
+            ], 409); // Código 409 = Conflicto
+        }
+
+        // Asignar número secuencial único solo para nuevos registros
+        $lastProductNumber = AcademicProduct::where('cv_id', $cv_id)
+            ->max('academic_product_number') ?? 0;
+
         $academicProduct = AcademicProduct::create([
             'cv_id' => $cv_id,
-            'academic_product_number' => $request->academic_product_number,
-            'description' => $request->description,
+            'academic_product_number' => $lastProductNumber + 1,
+            'description' => $validated['description']
         ]);
 
         return response()->json($academicProduct, 201);

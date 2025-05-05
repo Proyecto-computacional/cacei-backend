@@ -6,18 +6,20 @@ use App\Models\Status;
 use App\Models\Notification;
 use App\Models\User;
 use DB;
+use App\Models\Reviser;
+use App\Models\File;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use App\Jobs\BackupJob;
 
 class RevisionEvidenciasController extends Controller
 {
     public function aprobarEvidencia(Request $request)
     {
-
         return $this->actualizarEstado($request, 'APROBADA');
-
-
     }
 
     public function desaprobarEvidencia(Request $request)
@@ -140,14 +142,21 @@ class RevisionEvidenciasController extends Controller
             }
 
         }
+ 
+        // Generar un ID único
+        do {
+            $randomId = rand(1, 100);
+        } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
+
 
         //crea la notificacion y carga el comentario..
         Notification::create([
+            'notification_id' => $randomId,
             'title' => "Evidencia {$estado}",
             'evidence_id' => $request->evidence_id,
             'notification_date' => Carbon::now(),
             'user_rpe' => $request->user_rpe,
-            'reviser_id' => $reviser_rpe,
+            'reviser_id' => $reviser->reviser_id,
             'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
             'seen' => false,
             'pinned' => false
@@ -155,7 +164,7 @@ class RevisionEvidenciasController extends Controller
 
         return response()->json([
             'message' => "Evidencia marcada como {$estado}",
-            'status' => $status
+            'status' => $status->load('user')
         ], 200);
     }
 }
