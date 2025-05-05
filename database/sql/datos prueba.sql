@@ -107,9 +107,9 @@ VALUES (1, 'C01', 1, 'Acreditación de Ingeniería en Sistemas', '2025-01-01', '
 
 -- Insertar en la tabla statuses
 INSERT INTO statuses (status_id, status_description, user_rpe, evidence_id, status_date, feedback)
-VALUES (1, 'Aprobado', '10285', 1, '2025-04-22', 'Muy bueno'),
-(2, 'Desaprobado', '10285', 2, '2025-04-22', 'Malo'),
-(3, 'Pendiente', '10285', 3, '2025-04-22', null);
+VALUES (1, 'APROBADO', '10285', 1, '2025-04-22', 'Muy bueno'),
+(2, 'NO APROBADO', '10285', 2, '2025-04-22', 'Malo'),
+(3, 'PENDIENTE', '10285', 3, '2025-04-22', null);
 
 
 -- Insertar en la tabla files

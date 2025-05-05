@@ -8,94 +8,155 @@ use Illuminate\Support\Facades\DB;
 class EvidenciaEstadisticaController extends Controller
 {
     
-    public function estadisticasPorRPE($rpe){
+    public function estadisticasPorRPE($rpe, $frame_name, $career_name)
+    {
         $estadisticas = DB::select("
-        SELECT
-            c.career_name,
-            rf.frame_name,
-            COALESCE(SUM(CASE WHEN st.status_description = 'Aprobado' THEN 1 ELSE 0 END), 0) AS aprobadas,
-            COALESCE(SUM(CASE WHEN st.status_description = 'Desaprobado' THEN 1 ELSE 0 END), 0) AS desaprobadas,
-            (
-                SELECT COUNT(*)
-                FROM standards s
-                WHERE s.standard_id NOT IN (
-                    SELECT DISTINCT e.standard_id
-                    FROM evidences e
-                    JOIN revisers r ON r.evidence_id = e.evidence_id
-                    WHERE r.user_rpe = ?
-                )
-            ) AS sin_evidencia
-        FROM revisers r
-        JOIN evidences e ON r.evidence_id = e.evidence_id
-        JOIN standards s ON s.standard_id = e.standard_id
-        JOIN accreditation_processes ap ON ap.process_id = e.process_id
-        JOIN frames_of_reference rf ON rf.frame_id = ap.frame_id
-        JOIN careers c ON c.career_id = ap.career_id
-        LEFT JOIN (
-            SELECT DISTINCT ON (evidence_id) *
-            FROM statuses
-            ORDER BY evidence_id, status_date DESC
-        ) st ON st.evidence_id = e.evidence_id
-        WHERE r.user_rpe = ?
-        GROUP BY c.career_name, rf.frame_name
-        ORDER BY c.career_name, rf.frame_name
-    ", [$rpe, $rpe]);
-
-$resultado = [];
-foreach ($estadisticas as $e) {
-    $total = $e->aprobadas + $e->desaprobadas + $e->sin_evidencia;
-    $total = $total > 0 ? $total : 1; // evitar división entre 0
-
-    $resultado[] = [
-        'career_name' => $e->career_name,
-        'frame_name' => $e->frame_name,
-        'aprobado' => round(($e->aprobadas / $total) * 100, 2),
-        'desaprobado' => round(($e->desaprobadas / $total) * 100, 2),
-        'sin_evidencia' => round(($e->sin_evidencia / $total) * 100, 2),
-    ];
-}
-
-return response()->json($resultado);
-}
-
-
+            SELECT
+                c.career_name,
+                rf.frame_name,
+                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADO' THEN 1 ELSE 0 END), 0) AS aprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADO' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
+            FROM (
+                SELECT DISTINCT ON (e.evidence_id) st.*
+                FROM statuses st
+                JOIN evidences e ON e.evidence_id = st.evidence_id
+                ORDER BY e.evidence_id, st.status_date DESC
+            ) st
+            JOIN evidences e ON e.evidence_id = st.evidence_id
+            JOIN accreditation_processes ap ON ap.process_id = e.process_id
+            JOIN frames_of_reference rf ON rf.frame_id = ap.frame_id
+            JOIN careers c ON c.career_id = ap.career_id
+            WHERE st.user_rpe = ?
+            AND rf.frame_name = ?
+            AND c.career_name = ?
+            GROUP BY c.career_name, rf.frame_name
+        ", [$rpe, $frame_name, $career_name]);
+    
+        $resultado = [];
+        foreach ($estadisticas as $e) {
+            $total = $e->aprobadas + $e->desaprobadas + $e->pendientes;
+            $total = $total > 0 ? $total : 1;
+    
+            $resultado[] = [
+                'career_name' => $e->career_name,
+                'frame_name' => $e->frame_name,
+                'aprobado' => round(($e->aprobadas / $total) * 100, 2),
+                'desaprobado' => round(($e->desaprobadas / $total) * 100, 2),
+                'pendientes' => round(($e->pendientes / $total) * 100, 2),
+            ];
+        }
+    
+        return response()->json($resultado);
+    }
     public function resumenGeneralPorRPE($rpe)
     {
-        $datos = DB::select("
+        $estadisticas = DB::select("
             SELECT
-                COALESCE(SUM(CASE WHEN st.status_description = 'Aprobado' THEN 1 ELSE 0 END), 0) AS aprobadas,
-                COALESCE(SUM(CASE WHEN st.status_description = 'Desaprobado' THEN 1 ELSE 0 END), 0) AS desaprobadas,
-                (
-                    SELECT COUNT(*)
-                    FROM standards s
-                    WHERE s.standard_id NOT IN (
-                        SELECT DISTINCT e.standard_id
-                        FROM evidences e
-                        JOIN revisers r ON r.evidence_id = e.evidence_id
-                        WHERE r.user_rpe = ?
-                    )
-                ) AS sin_evidencia
-            FROM evidences e
-            JOIN revisers r ON r.evidence_id = e.evidence_id
-            LEFT JOIN (
-                SELECT DISTINCT ON (evidence_id) *
-                FROM statuses
-                ORDER BY evidence_id, status_date DESC
-            ) st ON st.evidence_id = e.evidence_id
-            WHERE r.user_rpe = ?
-        ", [$rpe, $rpe]);
+                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADO' THEN 1 ELSE 0 END), 0) AS aprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADO' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
+            FROM (
+                SELECT DISTINCT ON (e.evidence_id) st.*
+                FROM statuses st
+                JOIN evidences e ON e.evidence_id = st.evidence_id
+                ORDER BY e.evidence_id, st.status_date DESC
+            ) st
+            WHERE st.user_rpe = ?
+        ", [$rpe]);
+
+        $resultado = [];
+        foreach ($estadisticas as $e) {
+            $total = $e->aprobadas + $e->desaprobadas + $e->pendientes;
+            $total = $total > 0 ? $total : 1;
+
+            $resultado[] = [
+                'aprobado' => round(($e->aprobadas / $total) * 100, 2),
+                'desaprobado' => round(($e->desaprobadas / $total) * 100, 2),
+                'pendientes' => round(($e->pendientes / $total) * 100, 2),
+            ];
+        }
+
+        return response()->json($resultado);
+    }    
+
+    public function estadisticasPorAutor($rpe, $frame_name, $career_name)
+    {
+        $estadisticas = DB::select("
+            SELECT
+                c.career_name,
+                rf.frame_name,
+                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADO' THEN 1 ELSE 0 END), 0) AS aprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADO' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
+            FROM (
+                SELECT DISTINCT ON (e.evidence_id) st.*
+                FROM statuses st
+                JOIN evidences e ON e.evidence_id = st.evidence_id
+                ORDER BY e.evidence_id, st.status_date DESC
+            ) st
+            JOIN evidences e ON e.evidence_id = st.evidence_id
+            JOIN accreditation_processes ap ON ap.process_id = e.process_id
+            JOIN frames_of_reference rf ON rf.frame_id = ap.frame_id
+            JOIN careers c ON c.career_id = ap.career_id
+            WHERE e.user_rpe = ?
+            AND rf.frame_name = ?
+            AND c.career_name = ?
+            GROUP BY c.career_name, rf.frame_name
+        ", [$rpe, $frame_name, $career_name]);
     
-        $d = $datos[0];
+        $resultado = [];
+        foreach ($estadisticas as $e) {
+            $total = $e->aprobadas + $e->desaprobadas + $e->pendientes;
+            $total = $total > 0 ? $total : 1;
     
-        $total = $d->aprobadas + $d->desaprobadas + $d->sin_evidencia;
-        $total = $total > 0 ? $total : 1; // evitar división entre 0
+            $resultado[] = [
+                'career_name' => $e->career_name,
+                'frame_name' => $e->frame_name,
+                'aprobado' => round(($e->aprobadas / $total) * 100, 2),
+                'desaprobado' => round(($e->desaprobadas / $total) * 100, 2),
+                'pendientes' => round(($e->pendientes / $total) * 100, 2),
+            ];
+        }
     
-        return response()->json([
-            'aprobado' => round(($d->aprobadas / $total) * 100, 2),
-            'desaprobado' => round(($d->desaprobadas / $total) * 100, 2),
-            'sin_evidencia' => round(($d->sin_evidencia / $total) * 100, 2),
-        ]);
+        return response()->json($resultado);
     }
+
+
+    public function resumenGeneralPorRPEA($rpe)
+    {
+        $estadisticas = DB::select("
+            
+         SELECT
+            COALESCE(SUM(CASE WHEN st.status_description = 'APROBADO' THEN 1 ELSE 0 END), 0) AS aprobadas,
+            COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADO' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+            COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
+        FROM (
+            SELECT DISTINCT ON (e.evidence_id) e.evidence_id, st.*  -- Incluir e.evidence_id
+            FROM statuses st
+            JOIN evidences e ON e.evidence_id = st.evidence_id
+            JOIN users u ON u.user_rpe = e.user_rpe  -- Aseguramos la relación con users
+            WHERE u.user_rpe = ?  -- Filtramos por el RPE del usuario
+            ORDER BY e.evidence_id, st.status_date DESC
+        ) st
+        ", [$rpe]);
+
+        $resultado = [];
+        foreach ($estadisticas as $e) {
+            $total = $e->aprobadas + $e->desaprobadas + $e->pendientes;
+            $total = $total > 0 ? $total : 1;
+
+            $resultado[] = [
+                'aprobado' => round(($e->aprobadas / $total) * 100, 2),
+                'desaprobado' => round(($e->desaprobadas / $total) * 100, 2),
+                'pendientes' => round(($e->pendientes / $total) * 100, 2),
+            ];
+        }
+
+        return response()->json($resultado);
+    }    
+
+    
     
 
     public function notificacionesNoVistas($rpe)

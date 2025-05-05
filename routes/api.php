@@ -146,8 +146,10 @@ Route::middleware([
 
 
 
-Route::get('/estadisticas/{rpe}', [EvidenciaEstadisticaController::class, 'estadisticasPorRPE']);
+Route::get('/estadisticas/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorRPE']);
 Route::get('/estadisticas/resumen/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPE']);
+Route::get('/estadisticas/por-autor/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorAutor']);
+Route::get('/estadisticas/autor/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPEA']);
 Route::get('/estadisticas/no-vistas/{rpe}', [EvidenciaEstadisticaController::class, 'notificacionesNoVistas']);
 Route::get('/cv/ultima-actualizacion/{rpe}', [EvidenciaEstadisticaController::class, 'ultimaActualizacionCV']);
 
