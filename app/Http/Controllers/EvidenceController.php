@@ -60,8 +60,8 @@ class EvidenceController extends Controller
 
             if ($user->user_role === 'JEFE DE AREA') {
                 if ($evidenceCareer->user_rpe == $user->user_rpe) {
-                    $nextRevisor = User::where('user_role', 'DIRECTIVO')->pluck('user_rpe');
-                    //$nextRevisor = User::where('user_role', 'ADMINISTRADOR')->first();
+                    //$nextRevisor = User::where('user_role', 'DIRECTIVO')->pluck('user_rpe');
+                    $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->first();
                 }
             }
 
@@ -79,12 +79,15 @@ class EvidenceController extends Controller
 
                 $nextRevisor = [$evidenceCareer->user_rpe];
             }
+            if ($user->user_role === 'ADMINISTRADOR') {
+                $nextRevisor = [];
+            }
         }
         return $nextRevisor;
     }
     public function allEvidence(Request $request)
     {
-        error_log('llega aquí al evidence');
+
         $user = auth()->user();
         $role = $user->user_role;
 
@@ -125,7 +128,7 @@ class EvidenceController extends Controller
             });
         }
 
-        if ($request->has('search')) {
+        /*if ($request->has('search')) {
             $search = $request->input('search');
 
             $query->where(function ($q) use ($search) {
@@ -145,9 +148,10 @@ class EvidenceController extends Controller
             if (in_array($column, $allowedColumns)) {
                 $query->orderBy($column, $direction);
             }
-        }
+        }*/
 
-        $evidences = $query->orderBy('evidence_id')->cursorPaginate(10);
+        //CAmbiat
+        $evidences = $query->orderBy('evidence_id')->get();
 
 
         $evidences->each(function ($evidence) {

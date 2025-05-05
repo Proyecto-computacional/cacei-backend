@@ -5,6 +5,7 @@ use App\Models\Evidence;
 use App\Models\Status;
 use App\Models\Notification;
 use App\Models\User;
+use DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +16,7 @@ class RevisionEvidenciasController extends Controller
     {
 
         return $this->actualizarEstado($request, 'APROBADA');
+
 
     }
 
@@ -74,20 +76,67 @@ class RevisionEvidenciasController extends Controller
                 $evidence = Evidence::where('evidence_id', $request->evidence_id)->first();
                 $user = User::where('user_rpe', $reviser_rpe)->first();
 
-                $nextRevisors = (new EvidenceController)->nextRevisor($user, $evidence);
-
-                if ($nextRevisors && count($nextRevisors) > 0) {
-                    foreach ($nextRevisors as $nextRpe) {
-                        Status::create([
+                if ($user->user_role === "ADMINISTRADOR") {
+                    // Primero, aprobar el propio status del administrador
+                    Status::updateOrCreate(
+                        [
                             'evidence_id' => $evidence->evidence_id,
-                            'user_rpe' => $nextRpe,
-                            'status_description' => 'PENDIENTE',
-                            'feedback' => '',
-                            'status_date' => now()
-                        ]);
-                    }
-                }
+                            'user_rpe' => $user->user_rpe
+                        ],
+                        [
+                            'status_description' => 'APROBADA',
+                            'status_date' => now(),
+                            'feedback' => $feedback
+                        ]
+                    );
 
+                    // Iniciar desde el responsable de la evidencia
+                    /*$currentUser = User::where('user_rpe', $evidence->user_rpe)->first();
+
+                    // Ir subiendo por la jerarquía hasta llegar al administrador
+                    while ($currentUser && $currentUser->user_role !== 'ADMINISTRADOR') {
+                        $nextRpes = (new EvidenceController)->nextRevisor($currentUser, $evidence);
+
+                        if (!$nextRpes || count($nextRpes) === 0) {
+                            break; // Por seguridad, detener si no hay siguiente
+                        }
+
+                        foreach ($nextRpes as $nextRpe) {
+                            // Evitar generar duplicados o sobreescribir un status ya aprobado
+                            LOG::debug($nextRpe);
+                            Status::create(
+                                [
+                                    'evidence_id' => $evidence->evidence_id,
+                                    'user_rpe' => $nextRpe,
+                                    'status_description' => 'APROBADA',
+                                    'status_date' => now(),
+                                    'feedback' => 'Aprobado por administrador'
+                                ]
+                            );
+
+                            $nextUser = User::where('user_rpe', $nextRpe)->first();
+                            if ($nextUser->user_role === 'ADMINISTRADOR') {
+                                break 2; // Salir del ciclo while y foreach
+                            }
+                            $currentUser = $nextUser;
+                        }
+                    }*/
+                } else {
+                    $nextRevisors = (new EvidenceController)->nextRevisor($user, $evidence);
+
+                    if ($nextRevisors && count($nextRevisors) > 0) {
+                        foreach ($nextRevisors as $nextRpe) {
+                            Status::create([
+                                'evidence_id' => $evidence->evidence_id,
+                                'user_rpe' => $nextRpe,
+                                'status_description' => 'PENDIENTE',
+                                'feedback' => '',
+                                'status_date' => now()
+                            ]);
+                        }
+                    }
+
+                }
             }
 
         }
