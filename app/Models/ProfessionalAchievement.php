@@ -14,6 +14,7 @@ class ProfessionalAchievement extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'achievement_id',
         'cv_id',
         'description',
     ];

@@ -31,6 +31,7 @@ class AuthController extends Controller
             'Content-Type' => 'application/json',
         ])->post($endpoint, $payload);
 
+        error_log($responseApi->body()); 
         if ($responseApi->successful()) {
 
             $responseApi = $responseApi->json();
@@ -51,12 +52,12 @@ class AuthController extends Controller
                         ]);
                     }
                 } else {
-                    // Si el usuario no existe, lo crea
                     $user = User::create([
                         'user_rpe' => $data['rpe'],
                         'user_mail' => $data['correo'],
                         'user_role' => $data['cargo'],
-                    ]);
+                        'user_name' => $data['nombre']
+                    ]);                  
                 }
 
                 $token = $user->createToken('auth_token');

@@ -9,10 +9,11 @@ class ReviserController extends Controller
     public function index()
     {
         $revisers = Reviser::with([
-            'evidence.standard.section.category'
+            'evidence.standard.section.category',
+            'user'
         ])->get()->map(function ($reviser) {
             return [
-                'user_rpe' => $reviser->user_rpe,
+                'user_name' => $reviser->user->user_name,
                 'evidence_id' => $reviser->evidence_id,
                 'due_date' => $reviser->evidence->due_date,
                 'standard_name' => $reviser->evidence->standard->standard_name,

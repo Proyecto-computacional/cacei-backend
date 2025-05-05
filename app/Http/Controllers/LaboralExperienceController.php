@@ -15,20 +15,20 @@ class LaboralExperienceController extends Controller
 
     public function store(Request $request, $cv_id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'company_name' => 'required|string|max:50',
             'position' => 'required|string|max:50',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
         ]);
 
-        $laboralExperience = LaboralExperience::create([
-            'cv_id' => $cv_id,
-            'company_name' => $request->company_name,
-            'position' => $request->position,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+        $laboralExperience = LaboralExperience::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'position' => $validated['position']
+            ],
+            $validated
+        );
 
         return response()->json($laboralExperience, 201);
     }

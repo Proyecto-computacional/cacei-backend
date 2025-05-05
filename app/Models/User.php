@@ -20,6 +20,8 @@ class User extends Authenticatable
         'user_rpe',
         'user_mail',
         'user_role',
+        'user_name',
+        'cv_id'
     ];
 
 
@@ -47,5 +49,15 @@ class User extends Authenticatable
     public function sentNotification()
     {
         return $this->hasMany(Notification::class, 'user_rpe');
+    }
+
+    public function revisers()
+    {
+        return $this->hasMany(Reviser::class, 'user_rpe', 'user_rpe');
+    }
+
+    public function cvs()
+    {
+        return $this->hasOne(Cv::class, 'cv_id', 'cv_id');
     }
 }
