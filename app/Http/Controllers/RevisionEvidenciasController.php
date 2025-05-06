@@ -5,15 +5,9 @@ use App\Models\Evidence;
 use App\Models\Status;
 use App\Models\Notification;
 use App\Models\User;
-use DB;
-use App\Models\Reviser;
-use App\Models\File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
-use App\Jobs\BackupJob;
+
 
 class RevisionEvidenciasController extends Controller
 {
@@ -98,22 +92,17 @@ class RevisionEvidenciasController extends Controller
                     // Ir subiendo por la jerarquía hasta llegar al administrador
                     while ($currentUser && $currentUser->user_role !== 'ADMINISTRADOR') {
                         $nextRpes = (new EvidenceController)->nextRevisor($currentUser, $evidence);
-                        Log::debug($nextRpes);
                         if (!$nextRpes || count($nextRpes) === 0) {
                             break; // Por seguridad, detener si no hay siguiente
                         }
 
-
-
                         foreach ($nextRpes as $nextRpe) {
                             // Evitar generar duplicados o sobreescribir un status ya aprobado
 
-                            Status::updateOrCreate(
+                            Status::create(
                                 [
                                     'evidence_id' => $evidence->evidence_id,
                                     'user_rpe' => $nextRpe,
-                                ],
-                                [
                                     'status_description' => 'APROBADA',
                                     'status_date' => now(),
                                     'feedback' => 'Aprobado por administrador'
@@ -146,7 +135,7 @@ class RevisionEvidenciasController extends Controller
             }
 
         }
- 
+
         // Generar un ID único
         do {
             $randomId = rand(1, 100);
@@ -160,7 +149,7 @@ class RevisionEvidenciasController extends Controller
             'evidence_id' => $request->evidence_id,
             'notification_date' => Carbon::now(),
             'user_rpe' => $request->user_rpe,
-            'reviser_id' => $reviser->reviser_id,
+            'reviser_id' => $reviser_rpe,
             'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
             'seen' => false,
             'pinned' => false

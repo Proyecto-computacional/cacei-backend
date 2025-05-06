@@ -8,7 +8,7 @@ use App\Models\Evidence;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+
 
 
 class EvidenceController extends Controller
@@ -64,7 +64,6 @@ class EvidenceController extends Controller
                 if ($evidenceArea->user_rpe == $user->user_rpe) {
                     //$nextRevisor = User::where('user_role', 'DIRECTIVO')->pluck('user_rpe');
                     $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
-                    Log::debug("Caso jefe de area", [$user->user_name, ' ', $nextRevisor]);
                 }
             }
 
@@ -86,7 +85,6 @@ class EvidenceController extends Controller
                 $nextRevisor = [];
             }
         }
-        Log::debug('', ["user ", $user, 'revisor ', $nextRevisor]);
         return $nextRevisor;
     }
     public function allEvidence(Request $request)
@@ -97,7 +95,7 @@ class EvidenceController extends Controller
 
         $query = Evidence::query()
             ->leftJoin('standards', 'evidences.standard_id', '=', 'standards.standard_id')
-            ->leftJoin('sections', 'standards.section_id', '=', 'sections.section_id') // 
+            ->leftJoin('sections', 'standards.section_id', '=', 'sections.section_id')
             ->leftJoin('categories', 'sections.category_id', '=', 'categories.category_id')
             ->leftJoin('users as evidence_owner', 'evidences.user_rpe', '=', 'evidence_owner.user_rpe')
             ->leftJoin('accreditation_processes', 'evidences.process_id', '=', 'accreditation_processes.process_id')->leftJoin('careers', 'accreditation_processes.career_id', '=', 'careers.career_id')
