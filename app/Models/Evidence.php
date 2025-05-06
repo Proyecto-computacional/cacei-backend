@@ -70,4 +70,9 @@ class Evidence extends Model
     {
         return $this->hasMany(Reviser::class, 'evidence_id');
     }
+
+        public function status()
+    {
+        return $this->hasMany(Status::class, 'evidence_id');
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Evidence;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +13,10 @@ class UserController extends Controller
         $query = User::query();
         if ($request->has('search')) {
             $search = $request->input('search');
-    
+
             $query->where(function ($q) use ($search) {
                 $q->where('user_mail', 'LIKE', "%$search%")
-                  ->orWhere('user_rpe', 'LIKE' , "%$search%");
+                    ->orWhere('user_rpe', 'LIKE', "%$search%");
             });
         }
         return response()->json([
@@ -47,32 +48,59 @@ class UserController extends Controller
             return response()->json(['error' => 'Datos inválidos', 'detalles' => $e->errors()], 422);
         }
     }
+
+
+    public function myAssignments()
+    {
+        $user = auth()->user();
+
+        $assignments = Evidence::with([
+            'standard:standard_id,standard_name', // Traemos el criterio (nombre del standard)
+            'status' => function ($query) {
+                $query->orderByDesc('status_date')->limit(1); // Solo el último estado
+            }
+        ])
+            ->where('user_rpe', $user->user_rpe)
+            ->select('evidence_id', 'standard_id') // Solo traemos lo necesario
+            ->get()
+            ->map(function ($evidence) {
+                return [
+                    'evidence_id' => $evidence->evidence_id,
+                    'criterio' => $evidence->standard?->standard_name,
+                    'estado' => $evidence->status->first()?->status_description ?? 'PENDIENTE', // El nombre del estado más reciente
+                ];
+            });
+
+        return response()->json($assignments);
+    }
+
     public function validateUser(Request $request)
-{
-    $validated = $request->validate([
-        'rpe' => 'required|string'
-    ]);
-
-    $endpoint = 'https://servicios.ing.uaslp.mx/ws_cacei/ValidaUsuario.php';
-    $payload = [
-        'key' => 'B3E06D96-1562-4713-BCD7-7F762A87F205',
-        'rpe' => $validated['rpe'],
-        'contra' => 'Cacei#FI@2025'
-    ];
-
-    $client = new \GuzzleHttp\Client();
-    try {
-        $response = $client->post($endpoint, [
-            'json' => $payload,
-            'verify' => false // Solo para desarrollo, en producción deberías tener certificados válidos
+    {
+        $validated = $request->validate([
+            'rpe' => 'required|string'
         ]);
 
-        return response()->json(json_decode($response->getBody(), true));
-    } catch (\Exception $e) {
-        return response()->json([
-            'correcto' => false,
-            'mensaje' => 'Error al validar el usuario: ' . $e->getMessage()
-        ], 500);
+        $endpoint = 'https://servicios.ing.uaslp.mx/ws_cacei/ValidaUsuario.php';
+        $payload = [
+            'key' => 'B3E06D96-1562-4713-BCD7-7F762A87F205',
+            'rpe' => $validated['rpe'],
+            'contra' => 'Cacei#FI@2025'
+        ];
+
+        $client = new \GuzzleHttp\Client();
+        try {
+            $response = $client->post($endpoint, [
+                'json' => $payload,
+                'verify' => false // Solo para desarrollo, en producción deberías tener certificados válidos
+            ]);
+
+            return response()->json(json_decode($response->getBody(), true));
+        } catch (\Exception $e) {
+            return response()->json([
+                'correcto' => false,
+                'mensaje' => 'Error al validar el usuario: ' . $e->getMessage()
+            ], 500);
+        }
     }
-}
+
 }

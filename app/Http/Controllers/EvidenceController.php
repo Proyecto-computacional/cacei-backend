@@ -2,22 +2,100 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Career;
 use App\Models\Evidence;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
+
 class EvidenceController extends Controller
 {
+    public function show($id)
+    {
+        $evidence = Evidence::with([
+            'process:process_id,process_name,career_id',
+            'standard:standard_id,standard_name,section_id,help,is_transversal',
+            'standard.section:section_id,section_name,category_id',
+            'standard.section.category:category_id,category_name',
+            'files:file_id,evidence_id,file_url,upload_date,file_name,justification',
+            'status' => function ($query) {
+                $query->orderByDesc('status_date')
+                    ->orderByDesc('status_id');
+            },
+            'status.user:user_rpe,user_name,user_role' // 
+        ])
+            ->where('evidence_id', $id)
+            ->first();
+
+
+        if (!$evidence) {
+            return response()->json(['message' => 'Evidencia no encontrada'], 404);
+        }
+
+        $responsable = User::where('user_rpe', $evidence->user_rpe)->first();
+
+        $primerRevisor = EvidenceController::nextRevisor($responsable, $evidence);
+
+        return response()->json([
+            'evidence' => $evidence,
+            'first_revisor' => $primerRevisor
+        ]);
+    }
+
+    public function nextRevisor($user, $evidence)
+    {
+        $nextRevisor = null;
+        if ($evidence->standard->is_transversal === true) {
+            $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
+        } else {
+            $evidenceCareer = $evidence->process->career;
+            $evidenceArea = $evidenceCareer->area;
+
+            if ($user->user_role === 'COORDINADOR') {
+                if ($evidenceCareer->user_rpe == $user->user_rpe) {
+                    $nextRevisor = [$evidenceCareer->area->user_rpe];
+                }
+            }
+
+            if ($user->user_role === 'JEFE DE AREA') {
+                if ($evidenceArea->user_rpe == $user->user_rpe) {
+                    //$nextRevisor = User::where('user_role', 'DIRECTIVO')->pluck('user_rpe');
+                    $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
+                }
+            }
+
+            if ($user->user_role === 'DIRECTIVO') {
+                if ($evidenceCareer->user_rpe == $user->user_rpe) {
+                    $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
+                }
+            }
+
+            if (
+                $user->user_role === 'PROFESOR' ||
+                $user->user_role === 'DEPARTAMENTO UNIVERSITARIO' ||
+                $nextRevisor === null
+            ) {
+
+                $nextRevisor = [$evidenceCareer->user_rpe];
+            }
+            if ($user->user_role === 'ADMINISTRADOR') {
+                $nextRevisor = [];
+            }
+        }
+        return $nextRevisor;
+    }
     public function allEvidence(Request $request)
     {
-        error_log('llega aquí al evidence');
+
         $user = auth()->user();
         $role = $user->user_role;
 
         $query = Evidence::query()
             ->leftJoin('standards', 'evidences.standard_id', '=', 'standards.standard_id')
-            ->leftJoin('sections', 'standards.section_id', '=', 'sections.section_id') // 
+            ->leftJoin('sections', 'standards.section_id', '=', 'sections.section_id')
             ->leftJoin('categories', 'sections.category_id', '=', 'categories.category_id')
             ->leftJoin('users as evidence_owner', 'evidences.user_rpe', '=', 'evidence_owner.user_rpe')
             ->leftJoin('accreditation_processes', 'evidences.process_id', '=', 'accreditation_processes.process_id')->leftJoin('careers', 'accreditation_processes.career_id', '=', 'careers.career_id')
@@ -42,7 +120,7 @@ class EvidenceController extends Controller
             // Todas las evidencias (sin filtro adicional)
         } elseif ($role === 'JEFE DE AREA') {
             $query->where('area_manager.user_rpe', $user->user_rpe);
-        } elseif ($role == 'COORDINADOR DE CARRERA') {
+        } elseif ($role == 'COORDINADOR') {
             $query->where('career_coordinator.user_rpe', $user->user_rpe);
         } elseif ($role == 'PROFESOR') {
             $query->where(function ($q) use ($user) {
@@ -56,7 +134,7 @@ class EvidenceController extends Controller
             });
         }
 
-        if ($request->has('search')) {
+        /*if ($request->has('search')) {
             $search = $request->input('search');
 
             $query->where(function ($q) use ($search) {
@@ -76,10 +154,11 @@ class EvidenceController extends Controller
             if (in_array($column, $allowedColumns)) {
                 $query->orderBy($column, $direction);
             }
-        }
+        }*/
 
-        $evidences = $query->orderBy('evidence_id')->cursorPaginate(10);
-        
+        //CAmbiat
+        $evidences = $query->orderBy('evidence_id')->get();
+
 
         $evidences->each(function ($evidence) {
             $evidence->files = DB::table('files')
@@ -103,7 +182,7 @@ class EvidenceController extends Controller
 
         return response()->json([
             'evidencias' => $evidences,
-            'estatus' => ['APROBADO', 'NO APROBADO', 'PENDIENTE'],
+            'estatus' => ['APROBADA', 'NO APROBADA', 'PENDIENTE'],
             'Rol' => $role
         ]);
     }

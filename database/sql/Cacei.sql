@@ -273,7 +273,7 @@ CREATE TABLE files (
     file_url VARCHAR(255) NOT NULL,
     upload_date DATE NOT NULL,
     evidence_id INT NOT NULL,
-    justification VARCHAR(255),
+    justification VARCHAR(1024),
     file_name VARCHAR(50),
     PRIMARY KEY (file_id),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)

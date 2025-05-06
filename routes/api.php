@@ -70,6 +70,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
     Route::post('/userToken', [AuthController::class, 'getUserToken']);
     Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
+    Route::get('/my-assignments', [UserController::class, 'myAssignments']);
+    Route::get('/user',function () {
+        return auth()->user();
+    });
+
 });
 
 //2. Menu prinicipal
@@ -95,6 +100,8 @@ Route::middleware([
 });
 
 //4. Subir evidencia
+Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
+
 //REPETIDA CON CV
 Route::middleware([
     'auth:sanctum',
@@ -119,6 +126,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/file/{file_id}', [FileController::class, 'update']);
     });
     Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
+    Route::delete('/file/{id}', [EvidenceController::class, 'deleteFile']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
