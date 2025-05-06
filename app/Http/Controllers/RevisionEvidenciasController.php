@@ -62,11 +62,23 @@ class RevisionEvidenciasController extends Controller
                 ->where('evidence_id', $request->evidence_id)
                 ->where('status_description', 'PENDIENTE');
 
-            $status->update([
-                'status_description' => $estado,
-                'feedback' => $feedback,
-                'status_date' => now()
-            ]);
+            if ($status) {
+                $status->update([
+                    'status_description' => $estado,
+                    'feedback' => $feedback,
+                    'status_date' => now()
+                ]);
+            } else {
+                Status::create(
+                    [
+                        'evidence_id' => $request->evidence_id,
+                        'user_rpe' => $reviser_rpe,
+                        'status_description' => 'APROBADA',
+                        'status_date' => now(),
+                        'feedback' => 'Aprobado por administrador'
+                    ]
+                );
+            }
 
             if ($estado === 'APROBADA') {
                 $evidence = Evidence::where('evidence_id', $request->evidence_id)->first();
@@ -157,7 +169,7 @@ class RevisionEvidenciasController extends Controller
 
         return response()->json([
             'message' => "Evidencia marcada como {$estado}",
-            'status' => $status->load('user')
+            //'status' => $status->load('user')
         ], 200);
     }
 }
