@@ -93,23 +93,27 @@ class RevisionEvidenciasController extends Controller
                     );
 
                     // Iniciar desde el responsable de la evidencia
-                    /*$currentUser = User::where('user_rpe', $evidence->user_rpe)->first();
+                    $currentUser = User::where('user_rpe', $evidence->user_rpe)->first();
 
                     // Ir subiendo por la jerarquía hasta llegar al administrador
                     while ($currentUser && $currentUser->user_role !== 'ADMINISTRADOR') {
                         $nextRpes = (new EvidenceController)->nextRevisor($currentUser, $evidence);
-
+                        Log::debug($nextRpes);
                         if (!$nextRpes || count($nextRpes) === 0) {
                             break; // Por seguridad, detener si no hay siguiente
                         }
 
+
+
                         foreach ($nextRpes as $nextRpe) {
                             // Evitar generar duplicados o sobreescribir un status ya aprobado
-                            LOG::debug($nextRpe);
-                            Status::create(
+
+                            Status::updateOrCreate(
                                 [
                                     'evidence_id' => $evidence->evidence_id,
                                     'user_rpe' => $nextRpe,
+                                ],
+                                [
                                     'status_description' => 'APROBADA',
                                     'status_date' => now(),
                                     'feedback' => 'Aprobado por administrador'
@@ -117,12 +121,12 @@ class RevisionEvidenciasController extends Controller
                             );
 
                             $nextUser = User::where('user_rpe', $nextRpe)->first();
-                            if ($nextUser->user_role === 'ADMINISTRADOR') {
+                            if ($nextUser->user_role === 'ADMINISTRADOR' || $nextUser == $currentUser) {
                                 break 2; // Salir del ciclo while y foreach
                             }
                             $currentUser = $nextUser;
                         }
-                    }*/
+                    }
                 } else {
                     $nextRevisors = (new EvidenceController)->nextRevisor($user, $evidence);
 

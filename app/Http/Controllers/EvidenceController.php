@@ -8,6 +8,7 @@ use App\Models\Evidence;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class EvidenceController extends Controller
@@ -51,17 +52,19 @@ class EvidenceController extends Controller
             $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
         } else {
             $evidenceCareer = $evidence->process->career;
+            $evidenceArea = $evidenceCareer->area;
 
-            if ($user->user_role === 'COORDINADOR DE CARRERA') {
+            if ($user->user_role === 'COORDINADOR') {
                 if ($evidenceCareer->user_rpe == $user->user_rpe) {
                     $nextRevisor = [$evidenceCareer->area->user_rpe];
                 }
             }
 
             if ($user->user_role === 'JEFE DE AREA') {
-                if ($evidenceCareer->user_rpe == $user->user_rpe) {
+                if ($evidenceArea->user_rpe == $user->user_rpe) {
                     //$nextRevisor = User::where('user_role', 'DIRECTIVO')->pluck('user_rpe');
-                    $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->first();
+                    $nextRevisor = User::where('user_role', 'ADMINISTRADOR')->pluck('user_rpe');
+                    Log::debug("Caso jefe de area", [$user->user_name, ' ', $nextRevisor]);
                 }
             }
 
@@ -83,6 +86,7 @@ class EvidenceController extends Controller
                 $nextRevisor = [];
             }
         }
+        Log::debug('', ["user ", $user, 'revisor ', $nextRevisor]);
         return $nextRevisor;
     }
     public function allEvidence(Request $request)
@@ -118,7 +122,7 @@ class EvidenceController extends Controller
             // Todas las evidencias (sin filtro adicional)
         } elseif ($role === 'JEFE DE AREA') {
             $query->where('area_manager.user_rpe', $user->user_rpe);
-        } elseif ($role == 'COORDINADOR DE CARRERA') {
+        } elseif ($role == 'COORDINADOR') {
             $query->where('career_coordinator.user_rpe', $user->user_rpe);
         } elseif ($role == 'PROFESOR') {
             $query->where(function ($q) use ($user) {
