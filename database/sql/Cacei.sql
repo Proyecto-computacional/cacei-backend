@@ -41,7 +41,7 @@ CREATE TABLE role_permissions (
 
 CREATE TABLE frames_of_reference (
     frame_id INT NOT NULL,
-    frame_name VARCHAR(50) NOT NULL,
+    frame_name VARCHAR(100) NOT NULL,
     PRIMARY KEY (frame_id)
 );
 
