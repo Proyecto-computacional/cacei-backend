@@ -87,7 +87,7 @@ Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $req
 //3. Confitguracion personal
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, PERSONAL DE APOYO, DIRECTIVO'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE, PERSONAL DE APOYO, DIRECTIVO'
 ])->get('/personalInfo', function () {
     return response()->json(['message' => 'Informacion personal']);
 });
@@ -95,7 +95,7 @@ Route::middleware([
 // 3.a cv
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE',
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE',
     'token.expired'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Cv de profesor']);
@@ -107,7 +107,7 @@ Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceContr
 //REPETIDA CON CV
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Subir evidencia']);
 });
@@ -115,7 +115,7 @@ Route::middleware([
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
+    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR'
 ])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence']);
 
 // 5.a. Revisar archivos
@@ -149,7 +149,7 @@ Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
 // 8.Gestion Evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR RESPONSABLE'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR RESPONSABLE'
 ])->get('/GestionEvidencias', function () {
     return response()->json(['message' => 'Gestionar evidencias']);
 });
