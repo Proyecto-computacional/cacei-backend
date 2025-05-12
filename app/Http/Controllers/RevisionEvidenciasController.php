@@ -20,7 +20,7 @@ class RevisionEvidenciasController extends Controller
     {
         return $this->actualizarEstado($request, 'NO APROBADA');
     }
-    //Es para regresarla a pendiente si es por defaul o como opcion para un boton de pendiente
+    //Es para regresarla a pendiente si es por default o como opcion para un boton de pendiente
     public function marcarPendiente(Request $request)
     {
         return $this->actualizarEstado($request, 'PENDIENTE');
@@ -29,6 +29,8 @@ class RevisionEvidenciasController extends Controller
 
     private function actualizarEstado(Request $request, $estado)
     {
+        error_log('llega a actualizar estado: ' . json_encode($request->all()) . ' estado: ' . $estado);
+
         $request->validate([
             'evidence_id' => 'required|integer',
             'user_rpe' => 'required|string',

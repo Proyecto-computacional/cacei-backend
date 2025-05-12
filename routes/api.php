@@ -174,6 +174,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
     });
 });
 Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
+Route::get('/processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
 
 
 
