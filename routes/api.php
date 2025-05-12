@@ -60,8 +60,11 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
 */
 
 
-Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
-Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
+    Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
+    Route::get('/processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
+});
 
 //1. Login
 Route::post('/login', [AuthController::class, 'login']);
@@ -85,7 +88,7 @@ Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $req
 //3. Confitguracion personal
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, PERSONAL DE APOYO, DIRECTIVO'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE, PERSONAL DE APOYO, DIRECTIVO'
 ])->get('/personalInfo', function () {
     return response()->json(['message' => 'Informacion personal']);
 });
@@ -93,7 +96,7 @@ Route::middleware([
 // 3.a cv
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE',
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE',
     'token.expired'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Cv de profesor']);
@@ -105,7 +108,7 @@ Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceContr
 //REPETIDA CON CV
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PROFESOR RESPONSABLE, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Subir evidencia']);
 });
@@ -113,7 +116,7 @@ Route::middleware([
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR'
+    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR'
 ])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence']);
 
 // 5.a. Revisar archivos
@@ -147,19 +150,20 @@ Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
 // 8.Gestion Evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR RESPONSABLE'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR RESPONSABLE'
 ])->get('/GestionEvidencias', function () {
     return response()->json(['message' => 'Gestionar evidencias']);
 });
 
 
-
-Route::get('/estadisticas/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorRPE']);
-Route::get('/estadisticas/resumen/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPE']);
-Route::get('/estadisticas/por-autor/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorAutor']);
-Route::get('/estadisticas/autor/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPEA']);
-Route::get('/estadisticas/no-vistas/{rpe}', [EvidenciaEstadisticaController::class, 'notificacionesNoVistas']);
-Route::get('/cv/ultima-actualizacion/{rpe}', [EvidenciaEstadisticaController::class, 'ultimaActualizacionCV']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/estadisticas/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorRPE']);
+    Route::get('/estadisticas/resumen/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPE']);
+    Route::get('/estadisticas/por-autor/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorAutor']);
+    Route::get('/estadisticas/autor/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPEA']);
+    Route::get('/estadisticas/no-vistas/{rpe}', [EvidenciaEstadisticaController::class, 'notificacionesNoVistas']);
+    Route::get('/cv/ultima-actualizacion/{rpe}', [EvidenciaEstadisticaController::class, 'ultimaActualizacionCV']);
+});
 
 
 //Exclusivos de administrador 
@@ -172,12 +176,8 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
     Route::get('/GestionFormato', function () {
         return response()->json(['message' => 'Gestion de formatos']);
     });
+    Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
 });
-Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
-Route::get('/processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
-
-
-
 
 // 10. Notificaciones
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -212,54 +212,56 @@ Route::middleware(
     );
 
 // 12.CV de un usuario
-Route::post('/cvs', [CvController::class, 'index']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/cvs', [CvController::class, 'index']);
 
-// 13. Información adicional de un CV
-Route::prefix('additionalInfo/{cv_id}')->group(function () {
+    // 13. Información adicional de un CV
+    Route::prefix('additionalInfo/{cv_id}')->group(function () {
 
-    // Rutas para educaciones
-    Route::get('educations', [EducationController::class, 'index']);
-    Route::post('educations', [EducationController::class, 'store']);
+        // Rutas para educaciones
+        Route::get('educations', [EducationController::class, 'index']);
+        Route::post('educations', [EducationController::class, 'store']);
 
-    // Rutas para formaciones docentes
-    Route::get('teacher-trainings', [TeacherTrainingController::class, 'index']);
-    Route::post('teacher-trainings', [TeacherTrainingController::class, 'store']);
+        // Rutas para formaciones docentes
+        Route::get('teacher-trainings', [TeacherTrainingController::class, 'index']);
+        Route::post('teacher-trainings', [TeacherTrainingController::class, 'store']);
 
-    // Rutas para actualizaciones disciplinarias
-    Route::get('disciplinary-updates', [DisciplinaryUpdateController::class, 'index']);
-    Route::post('disciplinary-updates', [DisciplinaryUpdateController::class, 'store']);
+        // Rutas para actualizaciones disciplinarias
+        Route::get('disciplinary-updates', [DisciplinaryUpdateController::class, 'index']);
+        Route::post('disciplinary-updates', [DisciplinaryUpdateController::class, 'store']);
 
-    // Rutas para gestiones académicas
-    Route::get('academic-managements', [AcademicManagementController::class, 'index']);
-    Route::post('academic-managements', [AcademicManagementController::class, 'store']);
+        // Rutas para gestiones académicas
+        Route::get('academic-managements', [AcademicManagementController::class, 'index']);
+        Route::post('academic-managements', [AcademicManagementController::class, 'store']);
 
-    // Rutas para productos académicos
-    Route::get('academic-products', [AcademicProductController::class, 'index']);
-    Route::post('academic-products', [AcademicProductController::class, 'store']);
+        // Rutas para productos académicos
+        Route::get('academic-products', [AcademicProductController::class, 'index']);
+        Route::post('academic-products', [AcademicProductController::class, 'store']);
 
-    // Rutas para experiencias laborales
-    Route::get('laboral-experiences', [LaboralExperienceController::class, 'index']);
-    Route::post('laboral-experiences', [LaboralExperienceController::class, 'store']);
+        // Rutas para experiencias laborales
+        Route::get('laboral-experiences', [LaboralExperienceController::class, 'index']);
+        Route::post('laboral-experiences', [LaboralExperienceController::class, 'store']);
 
-    // Rutas para diseños de ingeniería
-    Route::get('engineering-designs', [EngineeringDesignController::class, 'index']);
-    Route::post('engineering-designs', [EngineeringDesignController::class, 'store']);
+        // Rutas para diseños de ingeniería
+        Route::get('engineering-designs', [EngineeringDesignController::class, 'index']);
+        Route::post('engineering-designs', [EngineeringDesignController::class, 'store']);
 
-    // Rutas para logros profesionales
-    Route::get('professional-achievements', [ProfessionalAchievementController::class, 'index']);
-    Route::post('professional-achievements', [ProfessionalAchievementController::class, 'store']);
+        // Rutas para logros profesionales
+        Route::get('professional-achievements', [ProfessionalAchievementController::class, 'index']);
+        Route::post('professional-achievements', [ProfessionalAchievementController::class, 'store']);
 
-    // Rutas para participaciones
-    Route::get('participations', [ParticipationController::class, 'index']);
-    Route::post('participations', [ParticipationController::class, 'store']);
+        // Rutas para participaciones
+        Route::get('participations', [ParticipationController::class, 'index']);
+        Route::post('participations', [ParticipationController::class, 'store']);
 
-    // Rutas para premios
-    Route::get('awards', [AwardController::class, 'index']);
-    Route::post('awards', [AwardController::class, 'store']);
+        // Rutas para premios
+        Route::get('awards', [AwardController::class, 'index']);
+        Route::post('awards', [AwardController::class, 'store']);
 
-    // Rutas para contribuciones al PE
-    Route::get('contributions-to-pe', [ContributionToPEController::class, 'index']);
-    Route::post('contributions-to-pe', [ContributionToPEController::class, 'store']);
+        // Rutas para contribuciones al PE
+        Route::get('contributions-to-pe', [ContributionToPEController::class, 'index']);
+        Route::post('contributions-to-pe', [ContributionToPEController::class, 'store']);
+    });
 });
 
 
@@ -267,20 +269,22 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 //Rutas hechas en la rama de asignarTareas
-Route::get('/revisers', [ReviserController::class, 'index']);
-Route::post('/reviser', [ReviserController::class, 'store']);
-Route::post('/evidence', [EvidenceController::class, 'store']);
-Route::post('/categories', [CategoryController::class, 'getByFrame']);
-Route::post('/category',[CategoryController::class, 'store']);
-Route::put('/category-update',[CategoryController::class, 'update']);
-Route::post('/sections', [SectionController::class, 'getByCategory']);
-Route::post('/section', [SectionController::class, 'store']);
-Route::put('/section-update', [SectionController::class, 'update']);
-Route::post('/standards', [StandardController::class, 'getBySection']);
-Route::post('/standard', [StandardController::class, 'store']);
-Route::put('/standard-update', [StandardController::class, 'update']);
-Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
-Route::get('/frames-of-references', [FrameOfReferenceController::class, 'index']);
-Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
-Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
-Route::post('/validate-user', [UserController::class, 'validateUser']);
+Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'])->group(function () {
+    Route::get('/revisers', [ReviserController::class, 'index']);
+    Route::post('/reviser', [ReviserController::class, 'store']);
+    Route::post('/evidence', [EvidenceController::class, 'store']);
+    Route::post('/categories', [CategoryController::class, 'getByFrame']);
+    Route::post('/category',[CategoryController::class, 'store']);
+    Route::put('/category-update',[CategoryController::class, 'update']);
+    Route::post('/sections', [SectionController::class, 'getByCategory']);
+    Route::post('/section', [SectionController::class, 'store']);
+    Route::put('/section-update', [SectionController::class, 'update']);
+    Route::post('/standards', [StandardController::class, 'getBySection']);
+    Route::post('/standard', [StandardController::class, 'store']);
+    Route::put('/standard-update', [StandardController::class, 'update']);
+    Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
+    Route::get('/frames-of-references', [FrameOfReferenceController::class, 'index']);
+    Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
+    Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
+    Route::post('/validate-user', [UserController::class, 'validateUser']);
+});
