@@ -60,9 +60,10 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
 */
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
     Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
+    Route::get('/processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
 });
 
 //1. Login
@@ -177,9 +178,6 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
     });
     Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
 });
-
-
-
 
 // 10. Notificaciones
 Route::middleware(['auth:sanctum'])->group(function () {

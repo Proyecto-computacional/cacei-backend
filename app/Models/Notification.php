@@ -21,7 +21,7 @@ class Notification extends Model
         'evidence_id',
         'notification_date',
         'user_rpe',
-        'reviser_id',
+        //'reviser_id',
         'description',
         'seen',
         'pinned',
