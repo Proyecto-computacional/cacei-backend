@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Accreditation_Process;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\GenerateAcreditacionZip;
@@ -9,6 +10,38 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AccreditationProcessController extends Controller
 {
+    public function store(Request $request)
+    {
+        $request->validate([
+            'career_id' => 'required|string|exists:careers,career_id',
+            'frame_id' => 'nullable|integer|exists:frames_of_reference,frame_id',
+            'process_name' => 'required|string|max:150',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'due_date' => 'required|date|after:start_date|before_or_equal:end_date'
+        ]);
+
+        // Generate a unique process_id
+        do {
+            $processId = rand(1, 1000);
+        } while (Accreditation_Process::where('process_id', $processId)->exists());
+
+        $process = Accreditation_Process::create([
+            'process_id' => $processId,
+            'career_id' => $request->career_id,
+            'frame_id' => $request->frame_id,
+            'process_name' => $request->process_name,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'due_date' => $request->due_date
+        ]);
+
+        return response()->json([
+            'message' => 'Proceso de acreditación creado exitosamente',
+            'process' => $process
+        ], 201);
+    }
+
     /* obtener los procesos de acreditación asociados a un usuario */
     public function getProcessesByUser(Request $request)
     {
