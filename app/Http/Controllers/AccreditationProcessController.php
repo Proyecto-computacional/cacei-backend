@@ -55,4 +55,23 @@ class AccreditationProcessController extends Controller
         error_log('no genera el zip');
         return response()->json(['error' => 'No se pudo generar el archivo ZIP.'], 500);
     }
+
+    public function getProcessById($processId)
+    {
+        $process = DB::select("
+            SELECT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, 
+                   c.career_name, a.area_name, fr.frame_name
+            FROM accreditation_processes ap
+            JOIN careers c ON ap.career_id = c.career_id
+            JOIN areas a ON c.area_id = a.area_id
+            LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
+            WHERE ap.process_id = ?
+        ", [$processId]);
+
+        if (empty($process)) {
+            return response()->json(['message' => 'Proceso no encontrado.'], 404);
+        }
+
+        return response()->json($process[0]);
+    }
 }
