@@ -6,12 +6,22 @@ use Illuminate\Http\Request;
 use App\Models\Reviser;
 class ReviserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $revisers = Reviser::with([
+        $processId = $request->query('process_id');
+
+        $query = Reviser::with([
             'evidence.standard.section.category',
             'user'
-        ])->get()->map(function ($reviser) {
+        ]);
+
+        if ($processId) {
+            $query->whereHas('evidence', function($q) use ($processId) {
+                $q->where('process_id', $processId);
+            });
+        }
+
+        $revisers = $query->get()->map(function ($reviser) {
             return [
                 'user_name' => $reviser->user->user_name,
                 'evidence_id' => $reviser->evidence_id,
@@ -19,6 +29,7 @@ class ReviserController extends Controller
                 'standard_name' => $reviser->evidence->standard->standard_name,
                 'section_name' => $reviser->evidence->standard->section->section_name,
                 'category_name' => $reviser->evidence->standard->section->category->category_name,
+                'process_id' => $reviser->evidence->process_id
             ];
         });
 

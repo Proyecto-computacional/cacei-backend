@@ -78,6 +78,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return auth()->user();
     });
 
+    // Accreditation Process routes
+    Route::post('/accreditation-processes', [AccreditationProcessController::class, 'store']);
+    Route::get('/accreditation-processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
+    Route::get('/accreditation-processes/user', [AccreditationProcessController::class, 'getProcessesByUser']);
+    Route::get('/accreditation-processes/{processId}/download', [AccreditationProcessController::class, 'downloadProcess']);
 });
 
 //2. Menu prinicipal
@@ -276,6 +281,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/categories', [CategoryController::class, 'getByFrame']);
     Route::post('/category',[CategoryController::class, 'store']);
     Route::put('/category-update',[CategoryController::class, 'update']);
+    Route::get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);
     Route::post('/sections', [SectionController::class, 'getByCategory']);
     Route::post('/section', [SectionController::class, 'store']);
     Route::put('/section-update', [SectionController::class, 'update']);
@@ -287,4 +293,5 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
     Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
     Route::post('/validate-user', [UserController::class, 'validateUser']);
+    Route::get('/processes', [AccreditationProcessController::class, 'getAllProcesses']);
 });

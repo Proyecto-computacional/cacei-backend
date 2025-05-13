@@ -14,8 +14,8 @@ class EvidenciaEstadisticaController extends Controller
             SELECT
                 c.career_name,
                 rf.frame_name,
-                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADO' THEN 1 ELSE 0 END), 0) AS aprobadas,
-                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADO' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADA' THEN 1 ELSE 0 END), 0) AS aprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADA' THEN 1 ELSE 0 END), 0) AS desaprobadas,
                 COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
             FROM (
                 SELECT DISTINCT ON (e.evidence_id) st.*
@@ -53,8 +53,8 @@ class EvidenciaEstadisticaController extends Controller
     {
         $estadisticas = DB::select("
             SELECT
-                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADO' THEN 1 ELSE 0 END), 0) AS aprobadas,
-                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADO' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADA' THEN 1 ELSE 0 END), 0) AS aprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADA' THEN 1 ELSE 0 END), 0) AS desaprobadas,
                 COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
             FROM (
                 SELECT DISTINCT ON (e.evidence_id) st.*
@@ -82,12 +82,13 @@ class EvidenciaEstadisticaController extends Controller
 
     public function estadisticasPorAutor($rpe, $frame_name, $career_name)
     {
+        error_log('llega a estadisticasPorAutor: ' . $rpe . ' ' . $frame_name . ' ' . $career_name);
         $estadisticas = DB::select("
             SELECT
                 c.career_name,
                 rf.frame_name,
-                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADO' THEN 1 ELSE 0 END), 0) AS aprobadas,
-                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADO' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADA' THEN 1 ELSE 0 END), 0) AS aprobadas,
+                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADA' THEN 1 ELSE 0 END), 0) AS desaprobadas,
                 COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
             FROM (
                 SELECT DISTINCT ON (e.evidence_id) st.*
@@ -106,6 +107,8 @@ class EvidenciaEstadisticaController extends Controller
         ", [$rpe, $frame_name, $career_name]);
     
         $resultado = [];
+
+        error_log('estadisticasPorAutor: ' . json_encode($estadisticas));
         foreach ($estadisticas as $e) {
             $total = $e->aprobadas + $e->desaprobadas + $e->pendientes;
             $total = $total > 0 ? $total : 1;
@@ -128,8 +131,8 @@ class EvidenciaEstadisticaController extends Controller
         $estadisticas = DB::select("
             
          SELECT
-            COALESCE(SUM(CASE WHEN st.status_description = 'APROBADO' THEN 1 ELSE 0 END), 0) AS aprobadas,
-            COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADO' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+            COALESCE(SUM(CASE WHEN st.status_description = 'APROBADA' THEN 1 ELSE 0 END), 0) AS aprobadas,
+            COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADA' THEN 1 ELSE 0 END), 0) AS desaprobadas,
             COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
         FROM (
             SELECT DISTINCT ON (e.evidence_id) e.evidence_id, st.*  -- Incluir e.evidence_id

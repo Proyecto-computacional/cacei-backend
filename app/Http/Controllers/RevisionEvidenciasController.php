@@ -7,7 +7,7 @@ use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Log;
 
 class RevisionEvidenciasController extends Controller
 {
@@ -37,6 +37,8 @@ class RevisionEvidenciasController extends Controller
             'feedback' => 'nullable|string|max:1048', //puede ser null
             'reviser_rpe' => 'nullable|string'
         ]);
+
+        $reviser_rpe;
 
         if ($request->reviser_rpe == NULL) {
             $user = auth()->user();
@@ -144,10 +146,24 @@ class RevisionEvidenciasController extends Controller
                             ]);
                         }
                     }
-
                 }
+            } else if ($estado === 'NO APROBADA') {
+                $evidence = Evidence::where('evidence_id', $request->evidence_id)->first();
+                $user = User::where('user_rpe', $reviser_rpe)->first();
+                Status::updateOrCreate(
+                    [
+                        'evidence_id' => $evidence->evidence_id,
+                        'user_rpe' => $user->user_rpe
+                    ],
+                    [
+                        'status_description' => 'NO APROBADA',
+                        'status_date' => now(),
+                        'feedback' => $feedback
+                    ]
+                    );
+               
+                
             }
-
         }
 
         // Generar un ID único
@@ -155,7 +171,7 @@ class RevisionEvidenciasController extends Controller
             $randomId = rand(1, 100);
         } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
 
-
+        Log::info('reviser_rpe: ' . $reviser_rpe);
         //crea la notificacion y carga el comentario..
         Notification::create([
             'notification_id' => $randomId,
@@ -163,7 +179,7 @@ class RevisionEvidenciasController extends Controller
             'evidence_id' => $request->evidence_id,
             'notification_date' => Carbon::now(),
             'user_rpe' => $request->user_rpe,
-            //'reviser_id' => $reviser_rpe,
+            'reviser_id' => $reviser_rpe,
             'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
             'seen' => false,
             'pinned' => false
