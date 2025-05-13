@@ -209,7 +209,7 @@ CREATE TABLE contributions_to_pe (
 CREATE TABLE areas (
     area_id VARCHAR(20) NOT NULL,
     area_name VARCHAR(50) NOT NULL,
-    user_rpe VARCHAR(20) UNIQUE NOT NULL,
+    user_rpe VARCHAR(20),
     PRIMARY KEY (area_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
 );
@@ -218,7 +218,7 @@ CREATE TABLE careers (
     career_id VARCHAR(20) NOT NULL,
     area_id VARCHAR(20) NOT NULL,
     career_name VARCHAR(50) NOT NULL,
-    user_rpe VARCHAR(20) UNIQUE NOT NULL,
+    user_rpe VARCHAR(20),
     PRIMARY KEY (career_id),
     FOREIGN KEY (area_id) REFERENCES areas(area_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
@@ -296,3 +296,26 @@ CREATE TABLE notifications (
     FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
 );
 
+INSERT INTO areas (area_id, area_name, user_rpe) VALUES
+('AR01', 'Área Agroindustrial'),
+('AR02', 'Área de Ciencias de la Computación'),
+('AR03', 'Área de Ciencias de la Tierra'),
+('AR04', 'Área Civil'),
+('AR05', 'Área Mecánica y Eléctrica'),
+('AR06', 'Área de Metalurgia y Materiales');
+
+INSERT INTO careers (career_id, area_id, career_name, user_rpe) VALUES
+('CA01', 'AR01', 'Ingeniería Agroindustrial'),
+('CA02', 'AR03', 'Ingeniería Ambiental'),
+('CA03', 'AR04', 'Ingeniería Civil'),
+('CA04', 'AR02', 'Ingeniería en Computación'),
+('CA05', 'AR05', 'Ingeniería en Electricidad y Automatización'),
+('CA06', 'AR03', 'Ingeniería en Geología'),
+('CA07', 'AR02', 'Ingeniería en Sistemas Inteligentes'),
+('CA08', 'AR04', 'Ingeniería en Topografía y Construcción'),
+('CA09', 'AR05', 'Ingeniería Mecánica'),
+('CA10', 'AR05', 'Ingeniería Mecánica Administrativa'),
+('CA11', 'AR05', 'Ingeniería Mecánica Eléctrica'),
+('CA12', 'AR05', 'Ingeniería Mecatrónica'),
+('CA13', 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
+('CA14', 'AR04', 'Ingeniería Geoinformática');
