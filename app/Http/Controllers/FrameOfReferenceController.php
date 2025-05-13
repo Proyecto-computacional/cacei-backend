@@ -18,7 +18,7 @@ class FrameOfReferenceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'frame_name' => 'required|string|max:20',
+            'frame_name' => 'required|string|max:60',
         ]);
 
         // Generar un ID único
