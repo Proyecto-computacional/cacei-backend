@@ -10,12 +10,18 @@ class Accreditation_Process extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'frame_id',
         'process_id',
         'career_id',
+        'frame_id',
+        'process_name',
+        'start_date',
+        'end_date',
+        'due_date'
     ];
     public $timestamps = false;
     protected $primaryKey = 'process_id';
+    public $incrementing = false;
+    protected $keyType = 'int';
 
     protected $table = 'accreditation_processes';
 
@@ -27,5 +33,10 @@ class Accreditation_Process extends Model
     public function frame()
     {
         return $this->belongsTo(FrameOfReference::class, 'frame_id', 'frame_id');
+    }
+
+    public function evidences()
+    {
+        return $this->hasMany(Evidence::class, 'process_id', 'process_id');
     }
 }
