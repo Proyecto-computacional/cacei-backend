@@ -76,7 +76,7 @@ class NotificationController extends Controller
             'evidence_id' => $request->evidence_id,
             'notification_date' => $request->notification_date,
             'user_rpe' => $request->user_rpe,
-            //'reviser_id' => $request->reviser_id,
+            'reviser_id' => $request->reviser_id,
             'description' => $request->description,
             'seen' => false,
             'pinned' => false,
