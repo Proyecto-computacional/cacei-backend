@@ -2,10 +2,10 @@ CREATE TABLE cvs (
     cv_id BIGSERIAL NOT NULL,
     professor_number INT UNIQUE,
     update_date DATE,
-    professor_name VARCHAR(25),
+    professor_name VARCHAR(50),
     age INT,
     birth_date DATE,
-    actual_position VARCHAR(20),
+    actual_position VARCHAR(25),
     duration INT,
     PRIMARY KEY (cv_id)
 );
@@ -24,14 +24,14 @@ CREATE TABLE users (
     user_role VARCHAR(30) NOT NULL,
     user_name VARCHAR(150) NOT NULL,
     cv_id BIGINT,
-    situacion VARCHAR(20),--agregar situacion jubilado o trabajan varchar...
+    situation VARCHAR(20),
     PRIMARY KEY (user_rpe),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 
 CREATE TABLE role_permissions (
    
-    user_rpe VARCHAR(30) NOT NULL,
+    user_rpe VARCHAR(20) NOT NULL,
     permission_id INT NOT NULL,
     is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (user_rpe, permission_id),
@@ -41,13 +41,13 @@ CREATE TABLE role_permissions (
 
 CREATE TABLE frames_of_reference (
     frame_id INT NOT NULL,
-    frame_name VARCHAR(50) NOT NULL,
+    frame_name VARCHAR(60) NOT NULL,
     PRIMARY KEY (frame_id)
 );
 
 CREATE TABLE categories (
     category_id INT NOT NULL,
-    category_name VARCHAR(50) NOT NULL,
+    category_name VARCHAR(60) NOT NULL,
     frame_id INT NOT NULL,
     indice INT NOT NULL, 
     PRIMARY KEY (category_id),
@@ -57,10 +57,10 @@ CREATE TABLE categories (
 CREATE TABLE sections (
     section_id INT NOT NULL,
     category_id INT NOT NULL,
-    section_name VARCHAR(25) NOT NULL,
-    section_description VARCHAR(50) NOT NULL,
+    section_name VARCHAR(50) NOT NULL,
+    section_description VARCHAR(150) NOT NULL,
     indice INT NOT NULL,
-    is_Standard BOOL NOT NULL,
+    is_standard BOOL,
     PRIMARY KEY (section_id),
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
@@ -68,8 +68,8 @@ CREATE TABLE sections (
 CREATE TABLE standards (
     standard_id INT NOT NULL,
     section_id INT NOT NULL,
-    standard_name VARCHAR(25) NOT NULL,
-    standard_description VARCHAR(50) NOT NULL,
+    standard_name VARCHAR(50) NOT NULL,
+    standard_description VARCHAR(150) NOT NULL,
     is_transversal BOOL NOT NULL,
     help VARCHAR(255),
     indice INT NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE evidences (
     evidence_id INT NOT NULL,
     standard_id INT NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    group_id INT NOT NULL,
+    group_id INT,
     process_id INT NOT NULL,
     due_date DATE NOT NULL,
     PRIMARY KEY (evidence_id),
@@ -103,7 +103,7 @@ CREATE TABLE educations (
     institution VARCHAR(30),
     degree_obtained VARCHAR(1),
     obtained_year INT,
-    professional_license VARCHAR(8),
+    professional_license VARCHAR(30),
     degree_name VARCHAR(100),
     PRIMARY KEY (education_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
@@ -154,8 +154,8 @@ CREATE TABLE academic_products (
 CREATE TABLE laboral_experiences (
     laboral_experience_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    company_name VARCHAR(50),
-    position VARCHAR(50),
+    company_name VARCHAR(60),
+    position VARCHAR(60),
     start_date DATE,
     end_date DATE,
     PRIMARY KEY (laboral_experience_id),
@@ -175,7 +175,7 @@ CREATE TABLE engineering_designs (
 CREATE TABLE professional_achievements (
     achievement_id INT NOT NULL,
     cv_id BIGINT,
-    description VARCHAR(255),
+    description VARCHAR(500),
     PRIMARY KEY (achievement_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -201,14 +201,14 @@ CREATE TABLE awards (
 CREATE TABLE contributions_to_pe (
     contribution_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    description VARCHAR(255),
+    description VARCHAR(500),
     PRIMARY KEY (contribution_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 
 CREATE TABLE areas (
     area_id VARCHAR(20) NOT NULL,
-    area_name VARCHAR(50) NOT NULL,
+    area_name VARCHAR(60) NOT NULL,
     user_rpe VARCHAR(20),
     PRIMARY KEY (area_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
@@ -217,7 +217,7 @@ CREATE TABLE areas (
 CREATE TABLE careers (
     career_id VARCHAR(20) NOT NULL,
     area_id VARCHAR(20) NOT NULL,
-    career_name VARCHAR(50) NOT NULL,
+    career_name VARCHAR(60) NOT NULL,
     user_rpe VARCHAR(20),
     PRIMARY KEY (career_id),
     FOREIGN KEY (area_id) REFERENCES areas(area_id),
@@ -258,7 +258,7 @@ CREATE TABLE groups (
 
 CREATE TABLE statuses (
     status_id BIGSERIAL NOT NULL,
-    status_description VARCHAR(15) NOT NULL,
+    status_description VARCHAR(30) NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
     evidence_id INT NOT NULL,
     status_date DATE NOT NULL,
@@ -285,7 +285,7 @@ CREATE TABLE notifications (
     evidence_id INT,
     notification_date DATE NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    reviser_id BIGSERIAL NOT NULL, 
+    reviser_id VARCHAR(20) NOT NULL, 
     description VARCHAR(255),
     seen BOOL NOT NULL,
     pinned BOOL NOT NULL DEFAULT FALSE,
@@ -293,10 +293,10 @@ CREATE TABLE notifications (
     PRIMARY KEY (notification_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
-    FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
+    FOREIGN KEY (reviser_id) REFERENCES users(user_rpe)
 );
 
-INSERT INTO areas (area_id, area_name, user_rpe) VALUES
+INSERT INTO areas (area_id, area_name) VALUES
 ('AR01', 'Área Agroindustrial'),
 ('AR02', 'Área de Ciencias de la Computación'),
 ('AR03', 'Área de Ciencias de la Tierra'),
@@ -304,7 +304,7 @@ INSERT INTO areas (area_id, area_name, user_rpe) VALUES
 ('AR05', 'Área Mecánica y Eléctrica'),
 ('AR06', 'Área de Metalurgia y Materiales');
 
-INSERT INTO careers (career_id, area_id, career_name, user_rpe) VALUES
+INSERT INTO careers (career_id, area_id, career_name) VALUES
 ('CA01', 'AR01', 'Ingeniería Agroindustrial'),
 ('CA02', 'AR03', 'Ingeniería Ambiental'),
 ('CA03', 'AR04', 'Ingeniería Civil'),

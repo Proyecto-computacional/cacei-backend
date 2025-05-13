@@ -58,7 +58,7 @@ class AccreditationProcessController extends Controller
         }
         // consultar a la base de datos
         $processes = DB::select(" 
-            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name
+            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id
             FROM users u
             JOIN evidences e ON u.user_rpe = e.user_rpe
             JOIN accreditation_processes ap ON e.process_id = ap.process_id
@@ -67,6 +67,8 @@ class AccreditationProcessController extends Controller
             LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
             WHERE u.user_rpe = ?
         ", [$userRpe]);
+
+        error_log('procesos: ' . json_encode($processes));
 
         // verificar si hay procesos
         if (empty($processes)) {
@@ -99,7 +101,7 @@ class AccreditationProcessController extends Controller
     {
         $process = DB::select("
             SELECT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, 
-                   c.career_name, a.area_name, fr.frame_name
+                   c.career_name, a.area_name, fr.frame_name, ap.frame_id
             FROM accreditation_processes ap
             JOIN careers c ON ap.career_id = c.career_id
             JOIN areas a ON c.area_id = a.area_id
@@ -126,6 +128,7 @@ class AccreditationProcessController extends Controller
                 c.career_name,
                 a.area_name,
                 fr.frame_name,
+                fr.frame_id,
                 CONCAT('/api/process/', ap.process_id) as process_path
             FROM accreditation_processes ap
             JOIN careers c ON ap.career_id = c.career_id
