@@ -292,4 +292,5 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
     Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
     Route::post('/validate-user', [UserController::class, 'validateUser']);
+    Route::get('/processes', [AccreditationProcessController::class, 'getAllProcesses']);
 });

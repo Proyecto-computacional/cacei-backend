@@ -21,10 +21,14 @@ class AccreditationProcessController extends Controller
             'due_date' => 'required|date|after:start_date|before_or_equal:end_date'
         ]);
 
+        error_log('llega el requestt: ' . json_encode($request->all()));
+
         // Generate a unique process_id
         do {
             $processId = rand(1, 1000);
         } while (Accreditation_Process::where('process_id', $processId)->exists());
+
+        error_log('se genera el proceso: ' . json_encode($processId));
 
         $process = Accreditation_Process::create([
             'process_id' => $processId,
@@ -35,6 +39,8 @@ class AccreditationProcessController extends Controller
             'end_date' => $request->end_date,
             'due_date' => $request->due_date
         ]);
+
+        error_log('se crea el proceso: ' . json_encode($process));
 
         return response()->json([
             'message' => 'Proceso de acreditación creado exitosamente',
@@ -106,5 +112,32 @@ class AccreditationProcessController extends Controller
         }
 
         return response()->json($process[0]);
+    }
+
+    public function getAllProcesses()
+    {
+        $processes = DB::select("
+            SELECT 
+                ap.process_id,
+                ap.process_name,
+                ap.start_date,
+                ap.end_date,
+                ap.due_date,
+                c.career_name,
+                a.area_name,
+                fr.frame_name,
+                CONCAT('/api/process/', ap.process_id) as process_path
+            FROM accreditation_processes ap
+            JOIN careers c ON ap.career_id = c.career_id
+            JOIN areas a ON c.area_id = a.area_id
+            LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
+            ORDER BY ap.start_date DESC
+        ");
+
+        if (empty($processes)) {
+            return response()->json(['message' => 'No se encontraron procesos de acreditación.'], 200);
+        }
+
+        return response()->json($processes);
     }
 }
