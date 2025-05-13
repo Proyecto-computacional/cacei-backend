@@ -165,7 +165,7 @@ class EvidenceController extends Controller
                 ->where('evidence_id', $evidence->evidence_id)
                 ->get()
                 ->map(function ($file) {
-                    $file->file_url = url($file->file_url); // Agregar URL completa
+                    $file->file_url = asset('storage/' . $file->file_url); // Use asset() helper to generate correct public URL
                     return $file;
                 });
         });
