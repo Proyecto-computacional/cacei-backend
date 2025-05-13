@@ -89,12 +89,10 @@ class AccreditationProcessController extends Controller
 
         // Si el archivo existe, lo devolvemos para descarga
         if (file_exists($zipPath)) {
-            error_log('genera el zip');
-            return response()->download($zipPath)/*->deleteFileAfterSend(true)*/;
+            return response()->download($zipPath)->deleteFileAfterSend(true);
         }
 
-        error_log('no genera el zip');
-        return response()->json(['error' => 'No se pudo generar el archivo ZIP.'], 500);
+        return response()->json(['error' => 'No se encontraron archivos para este proceso.'], 404);
     }
 
     public function getProcessById($processId)

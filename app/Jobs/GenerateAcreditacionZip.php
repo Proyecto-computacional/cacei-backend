@@ -45,6 +45,7 @@ class GenerateAcreditacionZip implements ShouldQueue
             mkdir($tempPath, 0777, true);
         }
 
+        $filesAdded = 0;
         foreach ($evidencias as $evidencia) {
             // Paso 2: Obtener archivos relacionados con la evidencia
             $archivos = DB::table('files')
@@ -72,6 +73,7 @@ class GenerateAcreditacionZip implements ShouldQueue
 
                     // Paso 4: Copiar archivo a la carpeta organizada
                     copy($filePath, "$destino/{$nombreArchivo}");
+                    $filesAdded++;
                 }
             }
         }
@@ -104,7 +106,12 @@ class GenerateAcreditacionZip implements ShouldQueue
         // Paso 6: Eliminar carpeta temporal
         File::deleteDirectory($tempPath);
 
-        // Paso 7: Devolver el ZIP para descarga
-        return response()->download($zipPath)/*->deleteFileAfterSend(true)*/;
+        // No return response, just create the file
+        if ($filesAdded === 0) {
+            // If no files were added, delete the empty zip
+            if (file_exists($zipPath)) {
+                unlink($zipPath);
+            }
+        }
     }
 }
