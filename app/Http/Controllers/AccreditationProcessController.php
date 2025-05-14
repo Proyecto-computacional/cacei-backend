@@ -60,15 +60,29 @@ class AccreditationProcessController extends Controller
         $processes = DB::select(" 
             SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id
             FROM users u
-            JOIN evidences e ON u.user_rpe = e.user_rpe
-            JOIN accreditation_processes ap ON e.process_id = ap.process_id
-            JOIN careers c ON ap.career_id = c.career_id
+            LEFT JOIN evidences e ON u.user_rpe = e.user_rpe
+            LEFT JOIN accreditation_processes ap ON e.process_id = ap.process_id
+            LEFT JOIN careers c ON ap.career_id = c.career_id
+            LEFT JOIN areas a ON c.area_id = a.area_id
+            LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
+            WHERE u.user_rpe = ? AND ap.process_id IS NOT NULL
+            UNION
+            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id
+            FROM users u
+            JOIN careers c ON u.user_rpe = c.user_rpe
+            JOIN accreditation_processes ap ON c.career_id = ap.career_id
             JOIN areas a ON c.area_id = a.area_id
             LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
             WHERE u.user_rpe = ?
-        ", [$userRpe]);
-
-        error_log('procesos: ' . json_encode($processes));
+            UNION
+            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id
+            FROM users u
+            JOIN areas a ON u.user_rpe = a.user_rpe
+            JOIN careers c ON a.area_id = c.area_id
+            JOIN accreditation_processes ap ON c.career_id = ap.career_id
+            LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
+            WHERE u.user_rpe = ?
+        ", [$userRpe, $userRpe, $userRpe]);
 
         // verificar si hay procesos
         if (empty($processes)) {

@@ -281,7 +281,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/categories', [CategoryController::class, 'getByFrame']);
     Route::post('/category',[CategoryController::class, 'store']);
     Route::put('/category-update',[CategoryController::class, 'update']);
-    Route::get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);
+    
     Route::post('/sections', [SectionController::class, 'getByCategory']);
     Route::post('/section', [SectionController::class, 'store']);
     Route::put('/section-update', [SectionController::class, 'update']);
@@ -295,3 +295,5 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/validate-user', [UserController::class, 'validateUser']);
     Route::get('/processes', [AccreditationProcessController::class, 'getAllProcesses']);
 });
+
+Route::get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);
