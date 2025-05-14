@@ -37,7 +37,8 @@ class AccreditationProcessController extends Controller
             'process_name' => $request->process_name,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'due_date' => $request->due_date
+            'due_date' => $request->due_date,
+            'finished' => false
         ]);
 
         error_log('se crea el proceso: ' . json_encode($process));
@@ -58,7 +59,7 @@ class AccreditationProcessController extends Controller
         }
         // consultar a la base de datos
         $processes = DB::select(" 
-            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
             FROM users u
             LEFT JOIN evidences e ON u.user_rpe = e.user_rpe
             LEFT JOIN accreditation_processes ap ON e.process_id = ap.process_id
@@ -67,7 +68,7 @@ class AccreditationProcessController extends Controller
             LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
             WHERE u.user_rpe = ? AND ap.process_id IS NOT NULL
             UNION
-            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
             FROM users u
             JOIN careers c ON u.user_rpe = c.user_rpe
             JOIN accreditation_processes ap ON c.career_id = ap.career_id
@@ -75,7 +76,7 @@ class AccreditationProcessController extends Controller
             LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
             WHERE u.user_rpe = ?
             UNION
-            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
             FROM users u
             JOIN areas a ON u.user_rpe = a.user_rpe
             JOIN careers c ON a.area_id = c.area_id
@@ -113,7 +114,7 @@ class AccreditationProcessController extends Controller
     {
         $process = DB::select("
             SELECT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, 
-                   c.career_name, a.area_name, fr.frame_name, ap.frame_id
+                   c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
             FROM accreditation_processes ap
             JOIN careers c ON ap.career_id = c.career_id
             JOIN areas a ON c.area_id = a.area_id
@@ -141,6 +142,7 @@ class AccreditationProcessController extends Controller
                 a.area_name,
                 fr.frame_name,
                 fr.frame_id,
+                ap.finished,
                 CONCAT('/api/process/', ap.process_id) as process_path
             FROM accreditation_processes ap
             JOIN careers c ON ap.career_id = c.career_id
@@ -154,5 +156,14 @@ class AccreditationProcessController extends Controller
         }
 
         return response()->json($processes);
+    }
+
+    public function toggleFinished(Request $request)
+    {
+        $process = Accreditation_Process::findOrFail($request->process_id);  // Busca la notificación por su ID o lanza error si no se encuentra
+        $process->finished = !$process->finished;  // Cambia el valor del campo 'favorite' (true/false)
+        $process->save();  // Guarda el cambio en la base de datos
+
+        return response()->json(['message' => 'Estado de proceso actualizado']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de favorito
     }
 }

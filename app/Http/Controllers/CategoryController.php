@@ -116,8 +116,6 @@ class CategoryController extends Controller
             GROUP BY c.category_id, c.category_name
         ", [$processId, $processId]);
 
-        error_log('categories: ' . json_encode($categories));
-
         $result = [];
         foreach ($categories as $category) {
             $total = $category->total_evidences;
