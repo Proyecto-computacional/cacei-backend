@@ -32,7 +32,7 @@ class FileController extends Controller
     {
         $request->validate([
             'evidence_id' => 'required|exists:evidences,evidence_id',
-            'files.*' => 'required|file',
+            'files.*' => 'file',
             'justification' => 'nullable|string'
         ]);
     
@@ -42,38 +42,44 @@ class FileController extends Controller
         $group_id = $evidence->group_id;
     
         $savedFiles = [];
-    
-        foreach ($request->file('files') as $file) {
-            // Generar un ID único por archivo
-            //porque no autoincremento?
-            do {
-                $randomId = rand(1, 1000000);
-            } while (File::where('file_id', $randomId)->exists());
-    
-            // Preparar nuevo nombre y path
-            $extension = $file->getClientOriginalExtension();
-            $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '-' . $randomId . '.' . $extension;
-            $path_name = 'uploads/' . $evidence_id;
-    
-            // Guardar archivo
-            $path = $file->storeAs($path_name, $newName, 'public');
-    
-            // Crear registro
-            $newFile = File::create([
-                'file_id' => $randomId,
-                'file_url' => $path,
-                'upload_date' => now(),
-                'evidence_id' => $evidence_id,
-                'justification' => FacadesPurifier::clean($request->justification),
-                'file_name' => $file->getClientOriginalName()
-            ]);
-    
-            $savedFiles[] = $newFile;
+        
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                // Generar un ID único por archivo
+                //porque no autoincremento?
+                do {
+                    $randomId = rand(1, 1000000);
+                } while (File::where('file_id', $randomId)->exists());
+        
+                // Preparar nuevo nombre y path
+                $extension = $file->getClientOriginalExtension();
+                $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '-' . $randomId . '.' . $extension;
+                $path_name = 'uploads/' . $evidence_id;
+        
+                // Guardar archivo
+                $path = $file->storeAs($path_name, $newName, 'public');
+        
+                // Crear registro
+                $newFile = File::create([
+                    'file_id' => $randomId,
+                    'file_url' => $path,
+                    'upload_date' => now(),
+                    'evidence_id' => $evidence_id,
+                    'justification' => FacadesPurifier::clean($request->justification),
+                    'file_name' => $file->getClientOriginalName()
+                ]);
+        
+                $savedFiles[] = $newFile;
+            }
+        
+            BackupJob::dispatch();
+        
+            return response()->json($savedFiles, 201); // Retornar todos los archivos subidos
         }
+
+        return response()->json(['message' => 'No se han subido archivos'], 201);
     
-        BackupJob::dispatch();
-    
-        return response()->json($savedFiles, 201); // Retornar todos los archivos subidos
+
     }
 
     //Actualizar un archivo
