@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\BackupJob;
 use Mews\Purifier\Facades\Purifier as FacadesPurifier;
-use Purifier;
 
 class FileController extends Controller
 {
