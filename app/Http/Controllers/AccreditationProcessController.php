@@ -59,7 +59,7 @@ class AccreditationProcessController extends Controller
         }
         // consultar a la base de datos
         $processes = DB::select(" 
-            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
             FROM users u
             LEFT JOIN evidences e ON u.user_rpe = e.user_rpe
             LEFT JOIN accreditation_processes ap ON e.process_id = ap.process_id
@@ -68,7 +68,7 @@ class AccreditationProcessController extends Controller
             LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
             WHERE u.user_rpe = ? AND ap.process_id IS NOT NULL
             UNION
-            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
             FROM users u
             JOIN careers c ON u.user_rpe = c.user_rpe
             JOIN accreditation_processes ap ON c.career_id = ap.career_id
@@ -76,7 +76,7 @@ class AccreditationProcessController extends Controller
             LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
             WHERE u.user_rpe = ?
             UNION
-            SELECT DISTINCT ap.process_id, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
             FROM users u
             JOIN areas a ON u.user_rpe = a.user_rpe
             JOIN careers c ON a.area_id = c.area_id
