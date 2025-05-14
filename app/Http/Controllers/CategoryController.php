@@ -116,6 +116,8 @@ class CategoryController extends Controller
             GROUP BY c.category_id, c.category_name
         ", [$processId, $processId]);
 
+        error_log('categories: ' . json_encode($categories));
+
         $result = [];
         foreach ($categories as $category) {
             $total = $category->total_evidences;
@@ -141,7 +143,9 @@ class CategoryController extends Controller
                 )
                 SELECT 
                     e.evidence_id,
-                    st.standard_name as name,
+                    c.category_name,
+                    s.section_name,
+                    st.standard_name,
                     u.user_name as responsible,
                     CONCAT(s.section_name, ' - ', st.standard_name) as info,
                     COALESCE(f.file_name, 'No file uploaded') as file,
