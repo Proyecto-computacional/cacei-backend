@@ -11,27 +11,31 @@ class EvidenciaEstadisticaController extends Controller
     public function estadisticasPorRPE($rpe, $frame_name, $career_name)
     {
         $estadisticas = DB::select("
+            WITH latest_admin_status AS (
+                SELECT 
+                    e.evidence_id,
+                    s.status_description,
+                    ROW_NUMBER() OVER (PARTITION BY e.evidence_id ORDER BY s.status_date DESC) as rn
+                FROM evidences e
+                JOIN statuses s ON e.evidence_id = s.evidence_id
+                JOIN users u ON s.user_rpe = u.user_rpe
+                WHERE u.user_role = 'ADMINISTRADOR'
+            )
             SELECT
                 c.career_name,
                 rf.frame_name,
-                COALESCE(SUM(CASE WHEN st.status_description = 'APROBADA' THEN 1 ELSE 0 END), 0) AS aprobadas,
-                COALESCE(SUM(CASE WHEN st.status_description = 'NO APROBADA' THEN 1 ELSE 0 END), 0) AS desaprobadas,
-                COALESCE(SUM(CASE WHEN st.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
-            FROM (
-                SELECT DISTINCT ON (e.evidence_id) st.*
-                FROM statuses st
-                JOIN evidences e ON e.evidence_id = st.evidence_id
-                ORDER BY e.evidence_id, st.status_date DESC
-            ) st
-            JOIN evidences e ON e.evidence_id = st.evidence_id
+                COALESCE(SUM(CASE WHEN las.status_description = 'APROBADA' THEN 1 ELSE 0 END), 0) AS aprobadas,
+                COALESCE(SUM(CASE WHEN las.status_description = 'NO APROBADA' THEN 1 ELSE 0 END), 0) AS desaprobadas,
+                COALESCE(SUM(CASE WHEN las.status_description IS NULL OR las.status_description = 'PENDIENTE' THEN 1 ELSE 0 END), 0) AS pendientes
+            FROM evidences e
             JOIN accreditation_processes ap ON ap.process_id = e.process_id
             JOIN frames_of_reference rf ON rf.frame_id = ap.frame_id
             JOIN careers c ON c.career_id = ap.career_id
-            WHERE st.user_rpe = ?
-            AND rf.frame_name = ?
+            LEFT JOIN latest_admin_status las ON e.evidence_id = las.evidence_id AND las.rn = 1
+            WHERE rf.frame_name = ?
             AND c.career_name = ?
             GROUP BY c.career_name, rf.frame_name
-        ", [$rpe, $frame_name, $career_name]);
+        ", [$frame_name, $career_name]);
     
         $resultado = [];
         foreach ($estadisticas as $e) {
