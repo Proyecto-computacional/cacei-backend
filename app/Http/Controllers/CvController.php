@@ -148,9 +148,28 @@ class CvController extends Controller
         } else {
             $template->setValue("capacitacionId", '');
             $template->setValue("insC", '');
-            $template->setValue("paisC", '');
+            //$template->setValue("paisC", '');
             $template->setValue("obtC", '');
             $template->setValue("horasC", '');
+        }
+
+        if ($disciplinary_update->isNotEmpty()) {
+            $template->cloneRow('actualizacionId', $disciplinary_update->count());
+        
+            foreach ($disciplinary_update->values() as $i => $update) {
+                $index = $i + 1;
+        
+                $template->setValue("actualizacionId#$index", $update->title_certification);
+                $template->setValue("insA#$index", $update->institution_country ?? '');
+                $template->setValue("obtA#$index", $update->year_certification);
+                $template->setValue("horasA#$index", $update->hours);
+            }
+        } else {
+            $template->setValue("actualizacionId", '');
+            $template->setValue("insA", '');
+            //$template->setValue("paisA", '');
+            $template->setValue("obtA", '');
+            $template->setValue("horasA", '');
         }
 
         // Guardar el documento generado temporalmente
