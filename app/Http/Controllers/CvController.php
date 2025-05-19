@@ -78,7 +78,7 @@ class CvController extends Controller
         $professional_achievement = ProfessionalAchievement::where('cv_id', $cv->cv_id)->get();
         $participation = Participation::where('cv_id', $cv->cv_id)->get();
         $award = Award::where('cv_id', $cv->cv_id)->get();
-        $contribution_to_pe = ContributionToPe::where('cv_id', $cv->cv_id)->get();
+        $contribution_to_pe = ContributionToPe::where('cv_id', $cv->cv_id)->get()->first();
 
         // Cargar plantilla
         $templatePath = storage_path('app/templates/Cedula_CV.docx');
@@ -285,6 +285,11 @@ class CvController extends Controller
         } else {
             $template->setValue("premioId", '');
             //$template->setValue("fechaP", '');
+        }
+        if ($contribution_to_pe) {
+            $template->setValue('aportacionId', $contribution_to_pe->description);
+        } else {
+            $template->setValue("aportacionId", '');
         }
         
 
