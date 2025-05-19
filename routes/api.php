@@ -74,7 +74,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/userToken', [AuthController::class, 'getUserToken']);
     Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
     Route::get('/my-assignments', [UserController::class, 'myAssignments']);
-    Route::get('/user',function () {
+    Route::get('/user', function () {
         return auth()->user();
     });
 
@@ -274,9 +274,9 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/reviser', [ReviserController::class, 'store']);
     Route::post('/evidence', [EvidenceController::class, 'store']);
     Route::post('/categories', [CategoryController::class, 'getByFrame']);
-    Route::post('/category',[CategoryController::class, 'store']);
-    Route::put('/category-update',[CategoryController::class, 'update']);
-    
+    Route::post('/category', [CategoryController::class, 'store']);
+    Route::put('/category-update', [CategoryController::class, 'update']);
+
     Route::post('/sections', [SectionController::class, 'getByCategory']);
     Route::post('/section', [SectionController::class, 'store']);
     Route::put('/section-update', [SectionController::class, 'update']);
