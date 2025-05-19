@@ -226,6 +226,23 @@ class CvController extends Controller
             $template->setValue("aA", '');
         }
 
+        if ($engineering_design->isNotEmpty()) {
+            $template->cloneRow('experienciaId', $engineering_design->count());
+        
+            foreach ($engineering_design->values() as $i => $design) {
+                $index = $i + 1;
+                $template->setValue("experienciaId#$index", $design->institution);
+                $template->setValue("periE#$index", $design->period);
+                $template->setValue("nivelE#$index", $design->level_experience);
+
+            }
+        } else {
+            $template->setValue("periE", '');
+            $template->setValue("nivelE", '');
+        }
+
+        
+
         // Guardar el documento generado temporalmente
         $filename = 'CV_' . $cv->cv_id . '.docx';
         $outputPath = storage_path('app/public/' . $filename);
