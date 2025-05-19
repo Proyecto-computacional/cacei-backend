@@ -6,7 +6,16 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Cv;
 use App\Models\Education;
-use App\Models\Experience;
+use App\Models\TeacherTraining;
+use App\Models\DisciplinaryUpdate;
+use App\Models\AcademicManagement;
+use App\Models\AcademicProduct;
+use App\Models\LaboralExperience;
+use App\Models\EngineeringDesign;
+use App\Models\ProfessionalAchievement;
+use App\Models\Participation;
+use App\Models\Award;
+use App\Models\ContributionToPe;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
@@ -59,7 +68,7 @@ class CvController extends Controller
             return response()->json(['message' => 'CV no encontrado'], 404);
         }
 
-        $education = Education::where('cv_id', $cv->cv_id)->get();
+        $educations = Education::where('cv_id', $cv->cv_id)->get();
         $teacher_training = TeacherTraining::where('cv_id', $cv->cv_id)->get();
         $disciplinary_update = DisciplinaryUpdate::where('cv_id', $cv->cv_id)->get();
         $academic_management = AcademicManagement::where('cv_id', $cv->cv_id)->get();
@@ -114,6 +123,16 @@ class CvController extends Controller
         }
         $template->setValue('nombramiento', $nomb);
         $template->setValue('anti', $cv->duration);
+
+        $licenciaturas = $educations->where('degree_obtained', 'L');
+        $especialidades = $educations->where('degree_obtained', 'E');
+        $maestrias = $educations->where('degree_obtained', 'M');
+        $doctorados = $educations->where('degree_obtained', 'D');
+
+        EducationController::fillEducationSection($template, 'L', 'lic', $licenciaturas);
+        EducationController::fillEducationSection($template, 'E', 'esp', $especialidades);
+        EducationController::fillEducationSection($template, 'M', 'mas', $maestrias);
+        EducationController::fillEducationSection($template, 'D', 'doc', $doctorados);
 
 
         // Guardar el documento generado temporalmente
