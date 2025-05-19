@@ -69,7 +69,7 @@ class CvController extends Controller
         }
 
         $educations = Education::where('cv_id', $cv->cv_id)->get();
-        $teacher_training = TeacherTraining::where('cv_id', $cv->cv_id)->get();
+        $teacher_training = TeacherTraining::where('cv_id', $cv->cv_id)->orderByDesc('obtained_year')->get();
         $disciplinary_update = DisciplinaryUpdate::where('cv_id', $cv->cv_id)->get();
         $academic_management = AcademicManagement::where('cv_id', $cv->cv_id)->get();
         $academic_product = AcademicProduct::where('cv_id', $cv->cv_id)->get();
@@ -134,6 +134,24 @@ class CvController extends Controller
         EducationController::fillEducationSection($template, 'M', 'mas', $maestrias);
         EducationController::fillEducationSection($template, 'D', 'doc', $doctorados);
 
+        if ($teacher_training->isNotEmpty()) {
+            $template->cloneRow('capacitacionId', $teacher_training->count());
+        
+            foreach ($teacher_training->values() as $i => $training) {
+                $index = $i + 1;
+        
+                $template->setValue("capacitacionId#$index", $training->title_certification);
+                $template->setValue("insC#$index", $training->institution_country ?? '');
+                $template->setValue("obtC#$index", $training->obtained_year);
+                $template->setValue("horasC#$index", $training->hours);
+            }
+        } else {
+            $template->setValue("capacitacionId", '');
+            $template->setValue("insC", '');
+            $template->setValue("paisC", '');
+            $template->setValue("obtC", '');
+            $template->setValue("horasC", '');
+        }
 
         // Guardar el documento generado temporalmente
         $filename = 'CV_' . $cv->cv_id . '.docx';
