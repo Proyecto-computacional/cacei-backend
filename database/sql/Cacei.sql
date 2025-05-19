@@ -136,8 +136,8 @@ CREATE TABLE academic_managements (
     cv_id BIGINT,
     job_position VARCHAR(100),
     institution VARCHAR(50),
-    start_date DATE,
-    end_date DATE,
+    start_date VARCHAR(7),
+    end_date VARCHAR(7),
     PRIMARY KEY (academic_management_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );

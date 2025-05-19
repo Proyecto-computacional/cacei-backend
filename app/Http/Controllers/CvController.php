@@ -172,6 +172,24 @@ class CvController extends Controller
             $template->setValue("horasA", '');
         }
 
+        if ($academic_management->isNotEmpty()) {
+            $template->cloneRow('gestionId', $academic_management->count());
+        
+            foreach ($academic_management->values() as $i => $management) {
+                $index = $i + 1;
+        
+                $template->setValue("gestionId#$index", $management->job_position);
+                $template->setValue("insG#$index", $management->institution ?? '');
+                $template->setValue("deG#$index", $management->start_date);
+                $template->setValue("aG#$index", $management->end_date);
+            }
+        } else {
+            $template->setValue("gestionId", '');
+            $template->setValue("insG", '');
+            $template->setValue("deG", '');
+            $template->setValue("aG", '');
+        }
+
         // Guardar el documento generado temporalmente
         $filename = 'CV_' . $cv->cv_id . '.docx';
         $outputPath = storage_path('app/public/' . $filename);
