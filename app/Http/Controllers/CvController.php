@@ -202,6 +202,7 @@ class CvController extends Controller
                 //El template original valida que haya un año
             }
         } else {
+            $template->setValue("userId", '');
             $template->setValue("productoId", '');
             $template->setValue("des", '');
             //$template->setValue("periP", '');
@@ -237,6 +238,7 @@ class CvController extends Controller
 
             }
         } else {
+            $template->setValue("experienciaId", '');
             $template->setValue("periE", '');
             $template->setValue("nivelE", '');
         }
@@ -253,7 +255,7 @@ class CvController extends Controller
 
             }
         } else {
-            $template->setValue("experienciaId", '');
+            $template->setValue("descriptionId", '');
         }
 
         if ($participation->isNotEmpty()) {
