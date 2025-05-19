@@ -273,6 +273,19 @@ class CvController extends Controller
         }
         
 
+        if ($award->isNotEmpty()) {
+            $template->cloneRow('premioId', $award->count());
+        
+            foreach ($award->values() as $i => $award) {
+                $index = $i + 1;
+                $template->setValue("premioId#$index", $award->description);
+                //$template->setValue("fechaP#$index", $award->obtained_year);
+
+            }
+        } else {
+            $template->setValue("premioId", '');
+            //$template->setValue("fechaP", '');
+        }
         
 
         // Guardar el documento generado temporalmente
