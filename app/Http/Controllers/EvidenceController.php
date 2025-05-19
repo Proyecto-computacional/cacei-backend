@@ -174,6 +174,7 @@ class EvidenceController extends Controller
                 ->join('users', 'statuses.user_rpe', '=', 'users.user_rpe')
                 ->where('evidence_id', $evidence->evidence_id)
                 ->select('statuses.*', 'users.user_role', 'users.user_name')
+                ->orderBy('statuses.status_date', 'desc')
                 ->get()
                 ->map(callback: function ($status) {
                     return $status;
