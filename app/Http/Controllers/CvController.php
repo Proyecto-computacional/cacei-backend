@@ -190,6 +190,23 @@ class CvController extends Controller
             $template->setValue("aG", '');
         }
 
+        if ($academic_product->isNotEmpty()) {
+            $template->cloneRow('userId', $academic_product->count());
+        
+            foreach ($academic_product->values() as $i => $product) {
+                $index = $i + 1;
+        
+                $template->setValue("userId#$index", $product->academic_product_number);
+                $template->setValue("des#$index", $product->description);
+                //$template->setValue("periP#$index", $product->period);
+                //El template original valida que haya un año
+            }
+        } else {
+            $template->setValue("productoId", '');
+            $template->setValue("des", '');
+            //$template->setValue("periP", '');
+        }
+
         // Guardar el documento generado temporalmente
         $filename = 'CV_' . $cv->cv_id . '.docx';
         $outputPath = storage_path('app/public/' . $filename);
