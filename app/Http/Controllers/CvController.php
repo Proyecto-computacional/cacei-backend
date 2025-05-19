@@ -68,12 +68,12 @@ class CvController extends Controller
             return response()->json(['message' => 'CV no encontrado'], 404);
         }
 
-        $educations = Education::where('cv_id', $cv->cv_id)->get();
+        $educations = Education::where('cv_id', $cv->cv_id)->orderByDesc('obtained_year')->get();
         $teacher_training = TeacherTraining::where('cv_id', $cv->cv_id)->orderByDesc('obtained_year')->get();
-        $disciplinary_update = DisciplinaryUpdate::where('cv_id', $cv->cv_id)->get();
-        $academic_management = AcademicManagement::where('cv_id', $cv->cv_id)->get();
-        $academic_product = AcademicProduct::where('cv_id', $cv->cv_id)->get();
-        $laboral_experience = LaboralExperience::where('cv_id', $cv->cv_id)->get();
+        $disciplinary_update = DisciplinaryUpdate::where('cv_id', $cv->cv_id)->orderByDesc('year_certification')->get();
+        $academic_management = AcademicManagement::where('cv_id', $cv->cv_id)->orderByDesc('start_date')->get();
+        $academic_product = AcademicProduct::where('cv_id', $cv->cv_id)->orderByDesc('academic_product_number')->get();
+        $laboral_experience = LaboralExperience::where('cv_id', $cv->cv_id)->orderByDesc('start_date')->get();
         $engineering_design = EngineeringDesign::where('cv_id', $cv->cv_id)->get();
         $professional_achievement = ProfessionalAchievement::where('cv_id', $cv->cv_id)->get();
         $participation = Participation::where('cv_id', $cv->cv_id)->get();
@@ -205,6 +205,25 @@ class CvController extends Controller
             $template->setValue("productoId", '');
             $template->setValue("des", '');
             //$template->setValue("periP", '');
+        }
+
+        if ($laboral_experience->isNotEmpty()) {
+            $template->cloneRow('actividadId', $laboral_experience->count());
+        
+            foreach ($laboral_experience->values() as $i => $experience) {
+                $index = $i + 1;
+        
+                $template->setValue("actividadId#$index", $experience->position);
+                $template->setValue("orgA#$index", $experience->company_name);
+                $template->setValue("deA#$index", $experience->start_date);
+                $template->setValue("aA#$index", $experience->end_date);
+
+            }
+        } else {
+            $template->setValue("actividadId", '');
+            $template->setValue("orgA", '');
+            $template->setValue("deA", '');
+            $template->setValue("aA", '');
         }
 
         // Guardar el documento generado temporalmente
