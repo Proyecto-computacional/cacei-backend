@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Cv;
+use App\Models\Education;
+use App\Models\Experience;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
@@ -56,6 +58,18 @@ class CvController extends Controller
         if (!$cv) {
             return response()->json(['message' => 'CV no encontrado'], 404);
         }
+
+        $education = Education::where('cv_id', $cv->cv_id)->get();
+        $teacher_training = TeacherTraining::where('cv_id', $cv->cv_id)->get();
+        $disciplinary_update = DisciplinaryUpdate::where('cv_id', $cv->cv_id)->get();
+        $academic_management = AcademicManagement::where('cv_id', $cv->cv_id)->get();
+        $academic_product = AcademicProduct::where('cv_id', $cv->cv_id)->get();
+        $laboral_experience = LaboralExperience::where('cv_id', $cv->cv_id)->get();
+        $engineering_design = EngineeringDesign::where('cv_id', $cv->cv_id)->get();
+        $professional_achievement = ProfessionalAchievement::where('cv_id', $cv->cv_id)->get();
+        $participation = Participation::where('cv_id', $cv->cv_id)->get();
+        $award = Award::where('cv_id', $cv->cv_id)->get();
+        $contribution_to_pe = ContributionToPe::where('cv_id', $cv->cv_id)->get();
 
         // Cargar plantilla
         $templatePath = storage_path('app/templates/Cedula_CV.docx');
