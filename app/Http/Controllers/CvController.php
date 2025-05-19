@@ -296,7 +296,7 @@ class CvController extends Controller
         
 
         // Guardar el documento generado temporalmente
-        $filename = 'CV_' . $cv->cv_id . '.docx';
+        $filename = 'CV_' . $cv->professor_name . '.docx';
         $outputPath = storage_path('app/public/' . $filename);
         $template->saveAs($outputPath);
 

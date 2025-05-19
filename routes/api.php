@@ -59,7 +59,6 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
 });
 */
 
-Route::get('/cv/word/{user_rpe}', [CvController::class, 'generateWord']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
@@ -100,13 +99,7 @@ Route::middleware([
 });
 
 // 3.a cv
-Route::middleware([
-    'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE',
-    'token.expired'
-])->get('/cv', function () {
-    return response()->json(['message' => 'Cv de profesor']);
-});
+Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::class, 'generateWord']);
 
 //4. Subir evidencia
 Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
