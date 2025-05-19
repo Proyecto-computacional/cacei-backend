@@ -59,6 +59,7 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
 });
 */
 
+Route::get('/cv/word/{user_rpe}', [CvController::class, 'generateWord']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
