@@ -242,6 +242,21 @@ class CvController extends Controller
         }
 
         
+        if ($professional_achievement->isNotEmpty()) {
+
+            //Estrcutura original ${logroId} con el nombre de ${nombreL} con una relevancia de ${relevanciaL} creado por:  ${autoresL} en ${lugarL}
+            $template->cloneRow('descriptionId', $professional_achievement->count());
+        
+            foreach ($professional_achievement->values() as $i => $achievement) {
+                $index = $i + 1;
+                $template->setValue("descriptionId#$index", $achievement->description);
+
+            }
+        } else {
+            $template->setValue("experienciaId", '');
+        }
+
+        
 
         // Guardar el documento generado temporalmente
         $filename = 'CV_' . $cv->cv_id . '.docx';
