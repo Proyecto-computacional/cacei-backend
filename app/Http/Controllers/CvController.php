@@ -256,6 +256,23 @@ class CvController extends Controller
             $template->setValue("experienciaId", '');
         }
 
+        if ($participation->isNotEmpty()) {
+            $template->cloneRow('participacionId', $participation->count());
+        
+            foreach ($participation->values() as $i => $participation) {
+                $index = $i + 1;
+                $template->setValue("participacionId#$index", $participation->institution);
+                $template->setValue("periP#$index", $participation->period);
+                $template->setValue("nivelP#$index", $participation->level_participation);
+
+            }
+        } else {
+            $template->setValue("participacionId", '');
+            $template->setValue("periP", '');
+            $template->setValue("nivelP", '');
+        }
+        
+
         
 
         // Guardar el documento generado temporalmente
