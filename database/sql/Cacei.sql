@@ -105,7 +105,6 @@ CREATE TABLE educations (
     obtained_year INT,
     professional_license VARCHAR(30),
     degree_name VARCHAR(100),
-    country VARCHAR(50),
     PRIMARY KEY (education_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );

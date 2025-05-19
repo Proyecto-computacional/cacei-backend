@@ -20,7 +20,7 @@ class Education extends Model
         'obtained_year',
         'professional_license',
         'degree_name',
-        'country',
+        //'country',
     ];
 
     public function cv()
