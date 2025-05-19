@@ -55,4 +55,27 @@ class EducationController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public static function fillEducationSection($template, $label, $prefix, $entries) {
+        if ($entries->isNotEmpty()) {
+            $template->cloneRow("id$label", $entries->count());
+    
+            foreach ($entries->values() as $i => $edu) {
+                $index = $i + 1;
+                $template->setValue("id$label#$index", $label);
+                $template->setValue("$prefix#$index", $edu->degree_name);
+                $template->setValue("ins$label#$index", $edu->institution);
+              //  $template->setValue("pais$label#$index", $edu->country);
+                $template->setValue("obt$label#$index", $edu->obtained_year);
+                $template->setValue("cedu$label#$index", $edu->professional_license);
+            }
+        } else {
+            $template->setValue("id$label", $label);
+            $template->setValue("$prefix", '');
+            $template->setValue("ins$label", '');
+            //$template->setValue("pais$label", '');
+            $template->setValue("obt$label", '');
+            $template->setValue("cedu$label", '');
+        }
+    }
 }
