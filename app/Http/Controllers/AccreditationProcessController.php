@@ -88,7 +88,7 @@ class AccreditationProcessController extends Controller
         // verificar si hay procesos
         if (empty($processes)) {
             return response()->json(['processes' => [], 'message' => 'No se encontraron procesos para este usuario.'], 200);
-        }        
+        }
 
         // retornar la respuesta JSON con los procesos encontrados
         return response()->json($processes);
@@ -113,12 +113,37 @@ class AccreditationProcessController extends Controller
     public function getProcessById($processId)
     {
         $process = DB::select("
-            SELECT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, 
-                   c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
+            SELECT 
+                ap.process_id,
+                ap.process_name,
+                ap.start_date,
+                ap.end_date,
+                ap.due_date,
+
+                c.career_name,
+                u_career.user_name   AS career_owner,
+
+                a.area_name,
+                u_area.user_name     AS area_owner,
+
+                fr.frame_name,
+                ap.frame_id,
+                ap.finished
             FROM accreditation_processes ap
-            JOIN careers c ON ap.career_id = c.career_id
-            JOIN areas a ON c.area_id = a.area_id
-            LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
+
+            JOIN careers c
+            ON ap.career_id = c.career_id
+            JOIN users u_career
+            ON c.user_rpe = u_career.user_rpe
+
+            JOIN areas a
+            ON c.area_id = a.area_id
+            JOIN users u_area
+            ON a.user_rpe = u_area.user_rpe
+
+            LEFT JOIN frames_of_reference fr
+            ON ap.frame_id = fr.frame_id
+
             WHERE ap.process_id = ?
         ", [$processId]);
 
