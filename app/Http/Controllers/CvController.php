@@ -74,6 +74,34 @@ class CvController extends Controller
         $template->setValue('edad', $cv->age);
         $template->setValue('fecha', $cv->birth_date);
 
+        if ($cv->actual_position=="PTC")
+		{
+			$nomb="Profesor de Tiempo Completo";
+		}
+		else if ($cv->actual_position=="PMT")
+		{
+			$nomb="Profesor de Medio Tiempo";
+		}
+		else if ($cv->actual_position=="PHC")
+		{
+			 $nomb="Profesor Hora Clase";
+		}
+		else if ($cv->actual_position=="TA")
+		{
+			$nomb="Técnico Académico";
+		}
+		else if ($cv->actual_position=="LAB")
+		{
+			$nomb="Laboratorista";
+		}
+    else
+        {
+            $nomb = $cv->actual_position;
+        }
+        $template->setValue('nombramiento', $nomb);
+        $template->setValue('anti', $cv->duration);
+
+
         // Guardar el documento generado temporalmente
         $filename = 'CV_' . $cv->cv_id . '.docx';
         $outputPath = storage_path('app/public/' . $filename);
