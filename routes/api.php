@@ -28,6 +28,7 @@ use App\Http\Controllers\StandardController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameOfReferenceController;
 use App\Http\Controllers\EvidenciaEstadisticaController;
+use App\Http\Controllers\GroupController;
 
 use App\Http\Middleware\CorsMiddleware;
 
@@ -59,6 +60,7 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
 });
 */
 
+Route::get('getHorarios/{semester}/{area}', [GroupController::class, 'getGroupsByArea']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
