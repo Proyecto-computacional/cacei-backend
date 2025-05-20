@@ -173,8 +173,13 @@ class EvidenceController extends Controller
             $evidence->statuses = DB::table('statuses')
                 ->join('users', 'statuses.user_rpe', '=', 'users.user_rpe')
                 ->where('evidence_id', $evidence->evidence_id)
-                ->select('statuses.*', 'users.user_role', 'users.user_name')
-                ->orderBy('statuses.status_date', 'desc')
+                ->select(
+                    'statuses.*',
+                    'users.user_role',
+                    'users.user_name',
+                    DB::raw("statuses.status_date AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City' as status_date")
+                )
+                ->orderBy(DB::raw("statuses.status_date AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City'"), 'desc')
                 ->get()
                 ->map(callback: function ($status) {
                     return $status;

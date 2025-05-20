@@ -57,10 +57,32 @@ class RevisionEvidenciasController extends Controller
                     'evidence_id' => $request->evidence_id,
                     'user_rpe' => $reviser_rpe,
                     'status_description' => $estado,
-                    'status_date' => Carbon::now(),
+                    'status_date' => Carbon::now('America/Mexico_City'),
                     'feedback' => $feedback
                 ]
             );
+        
+            $status = Status::where('user_rpe', $reviser_rpe)
+                ->where('evidence_id', $request->evidence_id)
+                ->where('status_description', 'PENDIENTE');
+
+            if ($status) {
+                $status->update([
+                    'status_description' => $estado,
+                    'feedback' => $feedback,
+                    'status_date' => Carbon::now('America/Mexico_City')
+                ]);
+            } else {
+                Status::create(
+                    [
+                        'evidence_id' => $request->evidence_id,
+                        'user_rpe' => $reviser_rpe,
+                        'status_description' => 'APROBADA',
+                        'status_date' => Carbon::now('America/Mexico_City'),
+                        'feedback' => 'Aprobado por administrador'
+                    ]
+                );
+            }
         } else {
             $status = Status::where('user_rpe', $reviser_rpe)
                 ->where('evidence_id', $request->evidence_id)
@@ -70,7 +92,7 @@ class RevisionEvidenciasController extends Controller
                 $status->update([
                     'status_description' => $estado,
                     'feedback' => $feedback,
-                    'status_date' => now()
+                    'status_date' => Carbon::now('America/Mexico_City')
                 ]);
             } else {
                 Status::create(
@@ -78,7 +100,7 @@ class RevisionEvidenciasController extends Controller
                         'evidence_id' => $request->evidence_id,
                         'user_rpe' => $reviser_rpe,
                         'status_description' => 'APROBADA',
-                        'status_date' => now(),
+                        'status_date' => Carbon::now('America/Mexico_City'),
                         'feedback' => 'Aprobado por administrador'
                     ]
                 );
@@ -97,7 +119,7 @@ class RevisionEvidenciasController extends Controller
                         ],
                         [
                             'status_description' => 'APROBADA',
-                            'status_date' => now(),
+                            'status_date' => Carbon::now('America/Mexico_City'),
                             'feedback' => $feedback
                         ]
                     );
@@ -114,13 +136,12 @@ class RevisionEvidenciasController extends Controller
 
                         foreach ($nextRpes as $nextRpe) {
                             // Evitar generar duplicados o sobreescribir un status ya aprobado
-
                             Status::create(
                                 [
                                     'evidence_id' => $evidence->evidence_id,
                                     'user_rpe' => $nextRpe,
                                     'status_description' => 'APROBADA',
-                                    'status_date' => now(),
+                                    'status_date' => Carbon::now('America/Mexico_City'),
                                     'feedback' => 'Aprobado por administrador'
                                 ]
                             );
@@ -142,7 +163,7 @@ class RevisionEvidenciasController extends Controller
                                 'user_rpe' => $nextRpe,
                                 'status_description' => 'PENDIENTE',
                                 'feedback' => '',
-                                'status_date' => now()
+                                'status_date' => Carbon::now('America/Mexico_City')
                             ]);
                         }
                     }
@@ -157,12 +178,10 @@ class RevisionEvidenciasController extends Controller
                     ],
                     [
                         'status_description' => 'NO APROBADA',
-                        'status_date' => now(),
+                        'status_date' => Carbon::now('America/Mexico_City'),
                         'feedback' => $feedback
                     ]
-                    );
-               
-                
+                );
             }
         }
 
@@ -177,7 +196,7 @@ class RevisionEvidenciasController extends Controller
             'notification_id' => $randomId,
             'title' => "Evidencia {$estado}",
             'evidence_id' => $request->evidence_id,
-            'notification_date' => Carbon::now(),
+            'notification_date' => Carbon::now('America/Mexico_City'),
             'user_rpe' => $request->user_rpe,
             'reviser_id' => $reviser_rpe,
             'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
