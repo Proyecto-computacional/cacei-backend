@@ -35,6 +35,19 @@ class GenerateAcreditacionZip implements ShouldQueue
     public function handle()
     {
         $procesoId = $this->procesoId;
+        $proceso = Accreditation_Process::find($procesoId);
+        $area = $proceso->career->area->area_id;
+
+        $semester;
+        $dateProcess = $proceso->end_date;
+
+        if($dateProcess->month < 6){
+            $semester = ($dateProcess->year - 1) . "-" . $dateProcess->year . "/II";
+        }else{
+            $semester = $dateProcess->year . "-" . ($dateProcess->year + 1) . "/I";
+        }
+
+        $area_groups = GroupController::getGroupsByArea($semester, $area);
 
         // Paso 1: Obtener evidencias del proceso
         $evidencias = Evidence::where('process_id', $procesoId)->get();
