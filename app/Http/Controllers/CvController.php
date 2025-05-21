@@ -313,12 +313,13 @@ class CvController extends Controller
         $filePath = $this->generateWord($user_rpe, $outputPath);
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
-    public function saveCv($user_rpe, $outputPath) {
+    public static function saveCv($user_rpe, $outputPath) {
         $user = User::where('user_rpe', $user_rpe)->first();
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
-        $outputPath = $this->generateWord($user_rpe, $outputPath);
+        $controller = new self();
+        $outputPath = $controller->generateWord($user_rpe, $outputPath);
         return $outputPath;
     }
 }

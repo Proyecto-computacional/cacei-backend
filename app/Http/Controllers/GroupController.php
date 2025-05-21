@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class GroupController extends Controller
 {
-    public function getGroupsByArea($semester, $area)
+    public static function getGroupsByArea($semester, $area)
     {
         // Puedes usar valores por defecto o recibirlos desde el request
         $request = Request::create('https://servicios.ing.uaslp.mx/ws_cacei/Horario.php', 'POST');

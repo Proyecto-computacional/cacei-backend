@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\Storage;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ZipArchive;
-
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\CvController;
+use App\Http\Controllers\GroupController;
+use App\Models\Accreditation_Process;
 
 class GenerateAcreditacionZip implements ShouldQueue
 {
@@ -34,20 +37,27 @@ class GenerateAcreditacionZip implements ShouldQueue
      */
     public function handle()
     {
+        Log::info("procesoId: " . $this->procesoId);
         $procesoId = $this->procesoId;
         $proceso = Accreditation_Process::find($procesoId);
         $area = $proceso->career->area->area_id;
 
         $semester;
-        $dateProcess = $proceso->end_date;
+        $dateProcess = new \DateTime($proceso->end_date);
 
-        if($dateProcess->month < 6){
-            $semester = ($dateProcess->year - 1) . "-" . $dateProcess->year . "/II";
+        if($dateProcess->format('n') < 6){
+            $semester = ($dateProcess->format('Y') - 1) . "-" . $dateProcess->format('Y') . "/II";
         }else{
-            $semester = $dateProcess->year . "-" . ($dateProcess->year + 1) . "/I";
+            $semester = $dateProcess->format('Y') . "-" . ($dateProcess->format('Y') + 1) . "/I";
         }
 
         $area_groups = GroupController::getGroupsByArea($semester, $area);
+        $area_groups_data = json_decode($area_groups->getContent(), true);
+        
+        // Extract unique RPEs from the groups data
+        $unique_rpes = array_unique(array_column($area_groups_data['data']['datos'], 'rpe'));
+        Log::info("Unique RPEs: " . json_encode($unique_rpes));
+        //Log::info("semester: " . $semester. " area: " . $area);
 
         // Paso 1: Obtener evidencias del proceso
         $evidencias = Evidence::where('process_id', $procesoId)->get();
@@ -59,6 +69,12 @@ class GenerateAcreditacionZip implements ShouldQueue
         }
 
         $filesAdded = 0;
+        foreach($area_groups_data['data']['datos'] as $group){
+          $response = CvController::saveCv($group['rpe'], "$tempPath/cv");
+          Log::info("Response cv: " . $response);
+          $filesAdded++;
+        }
+
         foreach ($evidencias as $evidencia) {
             // Paso 2: Obtener archivos relacionados con la evidencia
             $archivos = DB::table('files')
