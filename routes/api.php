@@ -101,7 +101,7 @@ Route::middleware([
 });
 
 // 3.a cv
-Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::class, 'generateWord']);
+Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::class, 'downloadCv']);
 
 //4. Subir evidencia
 Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
