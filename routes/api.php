@@ -70,19 +70,25 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
     Route::post('/userToken', [AuthController::class, 'getUserToken']);
-    Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
     Route::get('/my-assignments', [UserController::class, 'myAssignments']);
     Route::get('/user', function () {
         return auth()->user();
     });
-
     // Accreditation Process routes
     Route::post('/accreditation-processes', [AccreditationProcessController::class, 'store']);
-    Route::get('/accreditation-processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
     Route::get('/accreditation-processes/user', [AccreditationProcessController::class, 'getProcessesByUser']);
-    Route::get('/accreditation-processes/{processId}/download', [AccreditationProcessController::class, 'downloadProcess']);
+
+    // Solo admin
+    Route::middleware([
+        'role:ADMINISTRADOR'
+    ])->group(function () {
+        Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+        Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
+        Route::get('/accreditation-processes/{processId}/download', [AccreditationProcessController::class, 'downloadProcess']);
+        Route::get('/accreditation-processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
+    });
+
 });
 
 //2. Menu prinicipal
@@ -119,7 +125,7 @@ Route::middleware([
 ])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence']);
 
 // 5.a. Revisar archivos
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum',])->group(function () {
 
     Route::get('/files/{evidence_id}', [FileController::class, 'index']);
     Route::get('/file/{file_id}', [FileController::class, 'show']);
@@ -131,7 +137,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/file/{id}', [EvidenceController::class, 'deleteFile']);
 });
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR'])->group(function () {
 
     Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
 
@@ -200,7 +206,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
-// 11. Procesos relacionados a un usuario
+// 11. Procesos relacionados a un usuario (SE REPITE)
 Route::middleware(
     'auth:sanctum'
 )->get(
@@ -264,10 +270,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 });
 
-
-Route::get('/mensaje', function () {
-    return response()->json(['mensaje' => '¡Hola desde Laravel!']);
-});
 //Rutas hechas en la rama de asignarTareas
 Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'])->group(function () {
     Route::get('/revisers', [ReviserController::class, 'index']);
