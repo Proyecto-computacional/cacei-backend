@@ -30,23 +30,33 @@ class FileController extends Controller
     //Subir archivos
     public function store(Request $request)
     {
+        error_log('store');
         $request->validate([
             'evidence_id' => 'required|exists:evidences,evidence_id',
-            'files.*' => 'file',
-            'justification' => 'nullable|string'
+            'files.*' => 'file'
         ]);
+
+        error_log('store2');
     
         $evidence = \App\Models\Evidence::where('evidence_id', $request->evidence_id)->first();
         $standard_id = $evidence->standard_id;
         $evidence_id = $evidence->evidence_id;
         $group_id = $evidence->group_id;
     
+        // Actualizar la justificación en la evidencia si se proporciona
+        if ($request->has('justification')) {
+            $evidence->justification = FacadesPurifier::clean($request->justification);
+            $evidence->save();
+        }
+    
         $savedFiles = [];
+
+        error_log('request: ' . $request);
         
         if ($request->hasFile('files')) {
+            error_log('store3');
             foreach ($request->file('files') as $file) {
                 // Generar un ID único por archivo
-                //porque no autoincremento?
                 do {
                     $randomId = rand(1, 1000000);
                 } while (File::where('file_id', $randomId)->exists());
@@ -65,27 +75,24 @@ class FileController extends Controller
                     'file_url' => $path,
                     'upload_date' => now(),
                     'evidence_id' => $evidence_id,
-                    'justification' => FacadesPurifier::clean($request->justification),
                     'file_name' => $file->getClientOriginalName()
                 ]);
         
                 $savedFiles[] = $newFile;
+                error_log('store4');
             }
-        
-            BackupJob::dispatch();
         
             return response()->json($savedFiles, 201); // Retornar todos los archivos subidos
         }
 
         return response()->json(['message' => 'No se han subido archivos'], 201);
-    
-
     }
 
     //Actualizar un archivo
-    public function update(Request $request, $file_id)
+    public function update(Request $request, $evidence_id)
     {
-        $file = File::find($file_id);
+        $file = File::where('evidence_id', $evidence_id)->first();
+
         if (!$file) {
             return response()->json(['message' => 'Archivo no encontrado'], 404);
         }
@@ -94,21 +101,21 @@ class FileController extends Controller
             'justification' => 'nullable|string',
         ]);
 
+        // Actualizar la justificación en la evidencia si se proporciona
+        if ($request->has('justification')) {
+            $evidence = \App\Models\Evidence::where('evidence_id', $evidence_id)->first();
+            $evidence->justification = FacadesPurifier::clean($request->justification);
+            $evidence->save();
+        }
+
         if ($request->hasFile('file')) {
             // Eliminar el archivo anterior (opcional)
             Storage::disk('public')->delete($file->file_url);
             // Guardar el nuevo archivo
             $file->file_url = $request->file('file')->store('uploads', 'public');
             $file->upload_date = now();
+            $file->save();
         }
-
-        if ($request->has('justification')) {
-            $file->justification = $request->justification;
-        }
-
-        $file->save();
-
-        BackupJob::dispatch();
 
         return response()->json($file);
     }

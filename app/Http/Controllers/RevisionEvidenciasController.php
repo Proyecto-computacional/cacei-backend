@@ -51,37 +51,27 @@ class RevisionEvidenciasController extends Controller
         $feedback = in_array($estado, ['APROBADA', 'NO APROBADA',]) ? $request->feedback : "";
 
         if ($estado === 'PENDIENTE') {
-            //Carga el estado a la base
-            $status = Status::create(
-                [
-                    'evidence_id' => $request->evidence_id,
-                    'user_rpe' => $reviser_rpe,
-                    'status_description' => $estado,
-                    'status_date' => Carbon::now('America/Mexico_City'),
-                    'feedback' => $feedback
-                ]
-            );
-        
-            $status = Status::where('user_rpe', $reviser_rpe)
+            // Buscar si ya existe un estado para este usuario y evidencia
+            $existingStatus = Status::where('user_rpe', $reviser_rpe)
                 ->where('evidence_id', $request->evidence_id)
-                ->where('status_description', 'PENDIENTE');
+                ->first();
 
-            if ($status) {
-                $status->update([
+            if ($existingStatus) {
+                // Si existe, actualizar el estado existente
+                $existingStatus->update([
                     'status_description' => $estado,
                     'feedback' => $feedback,
                     'status_date' => Carbon::now('America/Mexico_City')
                 ]);
             } else {
-                Status::create(
-                    [
-                        'evidence_id' => $request->evidence_id,
-                        'user_rpe' => $reviser_rpe,
-                        'status_description' => 'APROBADA',
-                        'status_date' => Carbon::now('America/Mexico_City'),
-                        'feedback' => 'Aprobado por administrador'
-                    ]
-                );
+                // Si no existe, crear uno nuevo
+                Status::create([
+                    'evidence_id' => $request->evidence_id,
+                    'user_rpe' => $reviser_rpe,
+                    'status_description' => $estado,
+                    'status_date' => Carbon::now('America/Mexico_City'),
+                    'feedback' => $feedback
+                ]);
             }
         } else {
             $status = Status::where('user_rpe', $reviser_rpe)

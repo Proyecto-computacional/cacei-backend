@@ -103,6 +103,7 @@ Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::c
 
 //4. Subir evidencia
 Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
+Route::middleware(['auth:sanctum'])->put('/evidences/{evidence_id}', [EvidenceController::class, 'update']);
 
 //REPETIDA CON CV
 Route::middleware([
@@ -120,11 +121,11 @@ Route::middleware([
 
 // 5.a. Revisar archivos
 Route::middleware(['auth:sanctum'])->group(function () {
-
+    Route::post('/file', [FileController::class, 'store']);
     Route::get('/files/{evidence_id}', [FileController::class, 'index']);
     Route::get('/file/{file_id}', [FileController::class, 'show']);
     Route::middleware(['file.correct'])->group(function () {
-        Route::post('/file', [FileController::class, 'store']);
+        
         Route::put('/file/{file_id}', [FileController::class, 'update']);
     });
     Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
