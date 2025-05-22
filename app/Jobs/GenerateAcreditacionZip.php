@@ -66,9 +66,9 @@ class GenerateAcreditacionZip implements ShouldQueue
         $filesAdded = 0;
         if(isset($area_groups_data['data']['datos'])){
             $unique_rpes = array_unique(array_column($area_groups_data['data']['datos'], 'rpe'));
+            mkdir("$tempPath/cv", 0777, true);
             foreach($unique_rpes as $rpe){
-            $response = CvController::saveCv($rpe, "$tempPath/cv");
-            Log::info("Response cv: " . $response);
+            $response = CvController::saveCv($rpe, "$tempPath/cv/");
             $filesAdded++;
             }
         }
