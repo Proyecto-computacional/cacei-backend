@@ -135,16 +135,21 @@ class RevisionEvidenciasController extends Controller
                         }
 
                         foreach ($nextRpes as $nextRpe) {
-                            // Evitar generar duplicados o sobreescribir un status ya aprobado
-                            Status::create(
-                                [
+                            // Verificar si ya existe un status para este usuario
+                            $existingStatus = Status::where('evidence_id', $evidence->evidence_id)
+                                ->where('user_rpe', $nextRpe)
+                                ->first();
+
+                            // Solo crear un nuevo status si no existe uno previo
+                            if (!$existingStatus) {
+                                Status::create([
                                     'evidence_id' => $evidence->evidence_id,
                                     'user_rpe' => $nextRpe,
                                     'status_description' => 'APROBADA',
                                     'status_date' => Carbon::now('America/Mexico_City'),
                                     'feedback' => 'Aprobado por administrador'
-                                ]
-                            );
+                                ]);
+                            }
 
                             $nextUser = User::where('user_rpe', $nextRpe)->first();
                             if ($nextUser->user_role === 'ADMINISTRADOR' || $nextUser == $currentUser) {
