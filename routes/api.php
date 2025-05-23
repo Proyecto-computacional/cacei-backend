@@ -293,4 +293,5 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::get('/processes', [AccreditationProcessController::class, 'getAllProcesses']);
 });
 
-Route::get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);
+// 13. Categorías relacionadas a un proceso dado el rol del usuario
+Route::middleware(['auth:sanctum'])->get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);

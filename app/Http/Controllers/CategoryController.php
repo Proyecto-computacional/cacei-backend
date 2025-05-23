@@ -76,7 +76,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function getProgressByProcess($processId)
+    public function getProgressByProcess($processId, Request $request)
     {
         // First verify the process exists
         $process = DB::table('accreditation_processes')
@@ -87,6 +87,16 @@ class CategoryController extends Controller
             return response()->json(['error' => 'Proceso no encontrado'], 404);
         }
 
+        $user = auth()->user();
+        $userRole = $user->user_role;
+        $userRpe = $user->user_rpe;
+
+        // Modificar la consulta base para incluir el filtro de usuario si es profesor
+        $evidenceFilter = $userRole === 'PROFESOR' ? "AND e.user_rpe = ?" : "";
+        $evidenceParams = $userRole === 'PROFESOR' 
+            ? [$processId, $userRpe, $processId, $userRpe] 
+            : [$processId, $processId];
+
         // Get all categories with their evidences for this process
         $categories = DB::select("
             WITH evidence_status AS (
@@ -96,7 +106,7 @@ class CategoryController extends Controller
                     ROW_NUMBER() OVER (PARTITION BY e.evidence_id ORDER BY s.status_date DESC) as rn
                 FROM evidences e
                 LEFT JOIN statuses s ON e.evidence_id = s.evidence_id
-                WHERE e.process_id = ?
+                WHERE e.process_id = ? $evidenceFilter
             )
             SELECT 
                 c.category_id,
@@ -111,10 +121,10 @@ class CategoryController extends Controller
             FROM categories c
             JOIN sections s ON c.category_id = s.category_id
             JOIN standards st ON s.section_id = st.section_id
-            LEFT JOIN evidences e ON st.standard_id = e.standard_id AND e.process_id = ?
+            LEFT JOIN evidences e ON st.standard_id = e.standard_id AND e.process_id = ? $evidenceFilter
             LEFT JOIN evidence_status es ON e.evidence_id = es.evidence_id AND es.rn = 1
             GROUP BY c.category_id, c.category_name
-        ", [$processId, $processId]);
+        ", $evidenceParams);
 
         $result = [];
         foreach ($categories as $category) {
@@ -128,7 +138,11 @@ class CategoryController extends Controller
                 $approved = $rejected = $pending = $not_uploaded = 0;
             }
 
-            // Get evidences for this category
+            // Modificar la consulta de evidencias para incluir el filtro de usuario si es profesor
+            $evidenceParams = $userRole === 'PROFESOR' 
+                ? [$processId, $userRpe, $processId, $category->category_id, $userRpe] 
+                : [$processId, $processId, $category->category_id];
+
             $evidences = DB::select("
                 WITH latest_status AS (
                     SELECT 
@@ -137,7 +151,7 @@ class CategoryController extends Controller
                         ROW_NUMBER() OVER (PARTITION BY e.evidence_id ORDER BY s.status_date DESC) as rn
                     FROM evidences e
                     LEFT JOIN statuses s ON e.evidence_id = s.evidence_id
-                    WHERE e.process_id = ?
+                    WHERE e.process_id = ? $evidenceFilter
                 )
                 SELECT 
                     e.evidence_id,
@@ -155,9 +169,9 @@ class CategoryController extends Controller
                 LEFT JOIN users u ON e.user_rpe = u.user_rpe
                 LEFT JOIN files f ON e.evidence_id = f.evidence_id
                 LEFT JOIN latest_status ls ON e.evidence_id = ls.evidence_id AND ls.rn = 1
-                WHERE c.category_id = ?
+                WHERE c.category_id = ? $evidenceFilter
                 ORDER BY s.section_name, st.standard_name
-            ", [$processId, $processId, $category->category_id]);
+            ", $evidenceParams);
 
             $result[] = [
                 'category_name' => $category->category_name,

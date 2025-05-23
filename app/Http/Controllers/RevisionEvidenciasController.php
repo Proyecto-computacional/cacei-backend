@@ -29,8 +29,6 @@ class RevisionEvidenciasController extends Controller
 
     private function actualizarEstado(Request $request, $estado)
     {
-        error_log('llega a actualizar estado: ' . json_encode($request->all()) . ' estado: ' . $estado);
-
         $request->validate([
             'evidence_id' => 'required|integer',
             'user_rpe' => 'required|string',

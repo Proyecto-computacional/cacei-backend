@@ -21,14 +21,10 @@ class AccreditationProcessController extends Controller
             'due_date' => 'required|date|after:start_date|before_or_equal:end_date'
         ]);
 
-        error_log('llega el requestt: ' . json_encode($request->all()));
-
         // Generate a unique process_id
         do {
             $processId = rand(1, 1000);
         } while (Accreditation_Process::where('process_id', $processId)->exists());
-
-        error_log('se genera el proceso: ' . json_encode($processId));
 
         $process = Accreditation_Process::create([
             'process_id' => $processId,
@@ -40,8 +36,6 @@ class AccreditationProcessController extends Controller
             'due_date' => $request->due_date,
             'finished' => false
         ]);
-
-        error_log('se crea el proceso: ' . json_encode($process));
 
         return response()->json([
             'message' => 'Proceso de acreditación creado exitosamente',

@@ -86,7 +86,6 @@ class EvidenciaEstadisticaController extends Controller
 
     public function estadisticasPorAutor($rpe, $frame_name, $career_name)
     {
-        error_log('llega a estadisticasPorAutor: ' . $rpe . ' ' . $frame_name . ' ' . $career_name);
         $estadisticas = DB::select("
             SELECT
                 c.career_name,
@@ -112,7 +111,6 @@ class EvidenciaEstadisticaController extends Controller
     
         $resultado = [];
 
-        error_log('estadisticasPorAutor: ' . json_encode($estadisticas));
         foreach ($estadisticas as $e) {
             $total = $e->aprobadas + $e->desaprobadas + $e->pendientes;
             $total = $total > 0 ? $total : 1;

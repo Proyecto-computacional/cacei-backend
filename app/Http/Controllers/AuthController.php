@@ -31,7 +31,6 @@ class AuthController extends Controller
             'Content-Type' => 'application/json',
         ])->post($endpoint, $payload);
 
-        error_log($responseApi->body()); 
         if ($responseApi->successful()) {
 
             $responseApi = $responseApi->json();

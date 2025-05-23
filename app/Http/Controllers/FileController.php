@@ -30,13 +30,10 @@ class FileController extends Controller
     //Subir archivos
     public function store(Request $request)
     {
-        error_log('store');
         $request->validate([
             'evidence_id' => 'required|exists:evidences,evidence_id',
             'files.*' => 'file'
         ]);
-
-        error_log('store2');
     
         $evidence = \App\Models\Evidence::where('evidence_id', $request->evidence_id)->first();
         $standard_id = $evidence->standard_id;
@@ -50,11 +47,8 @@ class FileController extends Controller
         }
     
         $savedFiles = [];
-
-        error_log('request: ' . $request);
         
         if ($request->hasFile('files')) {
-            error_log('store3');
             foreach ($request->file('files') as $file) {
                 // Generar un ID único por archivo
                 do {
@@ -79,7 +73,6 @@ class FileController extends Controller
                 ]);
         
                 $savedFiles[] = $newFile;
-                error_log('store4');
             }
         
             return response()->json($savedFiles, 201); // Retornar todos los archivos subidos
