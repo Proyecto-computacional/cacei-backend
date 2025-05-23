@@ -56,7 +56,7 @@ class CvController extends Controller
         return response()->json(['message' => 'Eliminado correctamente'], 200);
     }
 
-    public function generateWord($user_rpe)
+    public function generateWord($user_rpe, $outputPath)
     {
         $user = User::where('user_rpe', $user_rpe)->first();
         if (!$user) {
@@ -297,10 +297,29 @@ class CvController extends Controller
 
         // Guardar el documento generado temporalmente
         $filename = 'CV_' . $cv->professor_name . '.docx';
-        $outputPath = storage_path('app/public/' . $filename);
-        $template->saveAs($outputPath);
+        $fullPath = $outputPath . $filename;
+        $template->saveAs($fullPath);
 
         // Descargar el archivo
-        return response()->download($outputPath)->deleteFileAfterSend(true);
+        return $fullPath;
+    }
+
+    public function downloadCv($user_rpe) {
+        $user = User::where('user_rpe', $user_rpe)->first();
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+        $outputPath = storage_path('app/public/');
+        $filePath = $this->generateWord($user_rpe, $outputPath);
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+    public static function saveCv($user_rpe, $outputPath) {
+        $user = User::where('user_rpe', $user_rpe)->first();
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+        $controller = new self();
+        $outputPath = $controller->generateWord($user_rpe, $outputPath);
+        return $outputPath;
     }
 }

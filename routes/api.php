@@ -28,6 +28,7 @@ use App\Http\Controllers\StandardController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameOfReferenceController;
 use App\Http\Controllers\EvidenciaEstadisticaController;
+use App\Http\Controllers\GroupController;
 
 use App\Http\Middleware\CorsMiddleware;
 
@@ -99,7 +100,7 @@ Route::middleware([
 });
 
 // 3.a cv
-Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::class, 'generateWord']);
+Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::class, 'downloadCv']);
 
 //4. Subir evidencia
 Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
