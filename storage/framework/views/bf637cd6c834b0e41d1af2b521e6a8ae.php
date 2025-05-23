@@ -131,4 +131,4 @@
         </div>
     </body>
 </html>
-<?php /**PATH C:\Users\santi\OneDrive\Escritorio\Proyecto CACEI\cacei-backend\resources\views/welcome.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\redar\laragon\www\proyectoCACEI\resources\views/welcome.blade.php ENDPATH**/ ?>

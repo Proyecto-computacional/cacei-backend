@@ -84,6 +84,7 @@ CREATE TABLE evidences (
     group_id INT,
     process_id INT NOT NULL,
     due_date DATE NOT NULL,
+    justification VARCHAR(1024),
     PRIMARY KEY (evidence_id),
     FOREIGN KEY (standard_id) REFERENCES standards(standard_id)
 );
@@ -136,8 +137,8 @@ CREATE TABLE academic_managements (
     cv_id BIGINT,
     job_position VARCHAR(100),
     institution VARCHAR(50),
-    start_date DATE,
-    end_date DATE,
+    start_date VARCHAR(7),
+    end_date VARCHAR(7),
     PRIMARY KEY (academic_management_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -156,8 +157,8 @@ CREATE TABLE laboral_experiences (
     cv_id BIGINT,
     company_name VARCHAR(60),
     position VARCHAR(60),
-    start_date DATE,
-    end_date DATE,
+    start_date VARCHAR(7),
+    end_date VARCHAR(7),
     PRIMARY KEY (laboral_experience_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -232,6 +233,7 @@ CREATE TABLE accreditation_processes (
     start_date DATE,
     end_date DATE,
     due_date DATE,
+    finished BOOLEAN NOT NULL,
     PRIMARY KEY (process_id),
     FOREIGN KEY (career_id) REFERENCES careers(career_id),
     FOREIGN KEY (frame_id) REFERENCES frames_of_reference(frame_id)
@@ -273,7 +275,6 @@ CREATE TABLE files (
     file_url VARCHAR(255) NOT NULL,
     upload_date DATE NOT NULL,
     evidence_id INT NOT NULL,
-    justification VARCHAR(1024),
     file_name VARCHAR(50),
     PRIMARY KEY (file_id),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)

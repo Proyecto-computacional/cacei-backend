@@ -28,6 +28,7 @@ use App\Http\Controllers\StandardController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameOfReferenceController;
 use App\Http\Controllers\EvidenciaEstadisticaController;
+use App\Http\Controllers\GroupController;
 
 use App\Http\Middleware\CorsMiddleware;
 
@@ -74,7 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/userToken', [AuthController::class, 'getUserToken']);
     Route::post('/allTokens', [AuthController::class, 'getAllTokens']);
     Route::get('/my-assignments', [UserController::class, 'myAssignments']);
-    Route::get('/user',function () {
+    Route::get('/user', function () {
         return auth()->user();
     });
 
@@ -99,16 +100,11 @@ Route::middleware([
 });
 
 // 3.a cv
-Route::middleware([
-    'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE',
-    'token.expired'
-])->get('/cv', function () {
-    return response()->json(['message' => 'Cv de profesor']);
-});
+Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::class, 'downloadCv']);
 
 //4. Subir evidencia
 Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
+Route::middleware(['auth:sanctum'])->put('/evidences/{evidence_id}', [EvidenceController::class, 'update']);
 
 //REPETIDA CON CV
 Route::middleware([
@@ -126,11 +122,11 @@ Route::middleware([
 
 // 5.a. Revisar archivos
 Route::middleware(['auth:sanctum'])->group(function () {
-
+    Route::post('/file', [FileController::class, 'store']);
     Route::get('/files/{evidence_id}', [FileController::class, 'index']);
     Route::get('/file/{file_id}', [FileController::class, 'show']);
     Route::middleware(['file.correct'])->group(function () {
-        Route::post('/file', [FileController::class, 'store']);
+        
         Route::put('/file/{file_id}', [FileController::class, 'update']);
     });
     Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
@@ -182,6 +178,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
         return response()->json(['message' => 'Gestion de formatos']);
     });
     Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
+    Route::put('/processes/finished', [AccreditationProcessController::class, 'toggleFinished']);
 });
 
 // 10. Notificaciones
@@ -279,9 +276,9 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/reviser', [ReviserController::class, 'store']);
     Route::post('/evidence', [EvidenceController::class, 'store']);
     Route::post('/categories', [CategoryController::class, 'getByFrame']);
-    Route::post('/category',[CategoryController::class, 'store']);
-    Route::put('/category-update',[CategoryController::class, 'update']);
-    Route::get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);
+    Route::post('/category', [CategoryController::class, 'store']);
+    Route::put('/category-update', [CategoryController::class, 'update']);
+
     Route::post('/sections', [SectionController::class, 'getByCategory']);
     Route::post('/section', [SectionController::class, 'store']);
     Route::put('/section-update', [SectionController::class, 'update']);
@@ -295,3 +292,6 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/validate-user', [UserController::class, 'validateUser']);
     Route::get('/processes', [AccreditationProcessController::class, 'getAllProcesses']);
 });
+
+// 13. Categorías relacionadas a un proceso dado el rol del usuario
+Route::middleware(['auth:sanctum'])->get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);

@@ -8,8 +8,7 @@ use App\Models\Evidence;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
-
+use Mews\Purifier\Facades\Purifier as FacadesPurifier;
 
 class EvidenceController extends Controller
 {
@@ -175,7 +174,13 @@ class EvidenceController extends Controller
             $evidence->statuses = DB::table('statuses')
                 ->join('users', 'statuses.user_rpe', '=', 'users.user_rpe')
                 ->where('evidence_id', $evidence->evidence_id)
-                ->select('statuses.*', 'users.user_role', 'users.user_name')
+                ->select(
+                    'statuses.*',
+                    'users.user_role',
+                    'users.user_name',
+                    DB::raw("statuses.status_date AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City' as status_date")
+                )
+                ->orderBy(DB::raw("statuses.status_date AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City'"), 'desc')
                 ->get()
                 ->map(callback: function ($status) {
                     return $status;
@@ -220,6 +225,29 @@ class EvidenceController extends Controller
     {
         $evidences = Evidence::where('standard_id', $request->standard_id)->get();
         return response()->json($evidences);
+    }
+
+    public function update(Request $request, $evidence_id)
+    {
+        $request->validate([
+            'justification' => 'nullable|string'
+        ]);
+
+        $evidence = Evidence::where('evidence_id', $evidence_id)->first();
+        
+        if (!$evidence) {
+            return response()->json(['message' => 'Evidencia no encontrada'], 404);
+        }
+
+        if ($request->has('justification')) {
+            $evidence->justification = FacadesPurifier::clean($request->justification);
+            $evidence->save();
+        }
+
+        return response()->json([
+            'message' => 'Evidencia actualizada correctamente',
+            'evidence' => $evidence
+        ]);
     }
 
 }

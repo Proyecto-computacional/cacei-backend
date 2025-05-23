@@ -29,8 +29,6 @@ class RevisionEvidenciasController extends Controller
 
     private function actualizarEstado(Request $request, $estado)
     {
-        error_log('llega a actualizar estado: ' . json_encode($request->all()) . ' estado: ' . $estado);
-
         $request->validate([
             'evidence_id' => 'required|integer',
             'user_rpe' => 'required|string',
@@ -51,16 +49,28 @@ class RevisionEvidenciasController extends Controller
         $feedback = in_array($estado, ['APROBADA', 'NO APROBADA',]) ? $request->feedback : "";
 
         if ($estado === 'PENDIENTE') {
-            //Carga el estado a la base
-            $status = Status::create(
-                [
+            // Buscar si ya existe un estado para este usuario y evidencia
+            $existingStatus = Status::where('user_rpe', $reviser_rpe)
+                ->where('evidence_id', $request->evidence_id)
+                ->first();
+
+            if ($existingStatus) {
+                // Si existe, actualizar el estado existente
+                $existingStatus->update([
+                    'status_description' => $estado,
+                    'feedback' => $feedback,
+                    'status_date' => Carbon::now('America/Mexico_City')
+                ]);
+            } else {
+                // Si no existe, crear uno nuevo
+                Status::create([
                     'evidence_id' => $request->evidence_id,
                     'user_rpe' => $reviser_rpe,
                     'status_description' => $estado,
-                    'status_date' => Carbon::now(),
+                    'status_date' => Carbon::now('America/Mexico_City'),
                     'feedback' => $feedback
-                ]
-            );
+                ]);
+            }
         } else {
             $status = Status::where('user_rpe', $reviser_rpe)
                 ->where('evidence_id', $request->evidence_id)
@@ -70,7 +80,7 @@ class RevisionEvidenciasController extends Controller
                 $status->update([
                     'status_description' => $estado,
                     'feedback' => $feedback,
-                    'status_date' => now()
+                    'status_date' => Carbon::now('America/Mexico_City')
                 ]);
             } else {
                 Status::create(
@@ -78,7 +88,7 @@ class RevisionEvidenciasController extends Controller
                         'evidence_id' => $request->evidence_id,
                         'user_rpe' => $reviser_rpe,
                         'status_description' => 'APROBADA',
-                        'status_date' => now(),
+                        'status_date' => Carbon::now('America/Mexico_City'),
                         'feedback' => 'Aprobado por administrador'
                     ]
                 );
@@ -97,7 +107,7 @@ class RevisionEvidenciasController extends Controller
                         ],
                         [
                             'status_description' => 'APROBADA',
-                            'status_date' => now(),
+                            'status_date' => Carbon::now('America/Mexico_City'),
                             'feedback' => $feedback
                         ]
                     );
@@ -113,17 +123,21 @@ class RevisionEvidenciasController extends Controller
                         }
 
                         foreach ($nextRpes as $nextRpe) {
-                            // Evitar generar duplicados o sobreescribir un status ya aprobado
+                            // Verificar si ya existe un status para este usuario
+                            $existingStatus = Status::where('evidence_id', $evidence->evidence_id)
+                                ->where('user_rpe', $nextRpe)
+                                ->first();
 
-                            Status::create(
-                                [
+                            // Solo crear un nuevo status si no existe uno previo
+                            if (!$existingStatus) {
+                                Status::create([
                                     'evidence_id' => $evidence->evidence_id,
                                     'user_rpe' => $nextRpe,
                                     'status_description' => 'APROBADA',
-                                    'status_date' => now(),
+                                    'status_date' => Carbon::now('America/Mexico_City'),
                                     'feedback' => 'Aprobado por administrador'
-                                ]
-                            );
+                                ]);
+                            }
 
                             $nextUser = User::where('user_rpe', $nextRpe)->first();
                             if ($nextUser->user_role === 'ADMINISTRADOR' || $nextUser == $currentUser) {
@@ -142,7 +156,7 @@ class RevisionEvidenciasController extends Controller
                                 'user_rpe' => $nextRpe,
                                 'status_description' => 'PENDIENTE',
                                 'feedback' => '',
-                                'status_date' => now()
+                                'status_date' => Carbon::now('America/Mexico_City')
                             ]);
                         }
                     }
@@ -157,33 +171,34 @@ class RevisionEvidenciasController extends Controller
                     ],
                     [
                         'status_description' => 'NO APROBADA',
-                        'status_date' => now(),
+                        'status_date' => Carbon::now('America/Mexico_City'),
                         'feedback' => $feedback
                     ]
-                    );
-               
-                
+                );
             }
         }
 
-        // Generar un ID único
-        do {
-            $randomId = rand(1, 100);
-        } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
+        // Solo crear notificación si el estado no es PENDIENTE
+        if ($estado !== 'PENDIENTE') {
+            // Generar un ID único
+            do {
+                $randomId = rand(1, 100);
+            } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
 
-        Log::info('reviser_rpe: ' . $reviser_rpe);
-        //crea la notificacion y carga el comentario..
-        Notification::create([
-            'notification_id' => $randomId,
-            'title' => "Evidencia {$estado}",
-            'evidence_id' => $request->evidence_id,
-            'notification_date' => Carbon::now(),
-            'user_rpe' => $request->user_rpe,
-            'reviser_id' => $reviser_rpe,
-            'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
-            'seen' => false,
-            'pinned' => false
-        ]);
+            Log::info('reviser_rpe: ' . $reviser_rpe);
+            //crea la notificacion y carga el comentario..
+            Notification::create([
+                'notification_id' => $randomId,
+                'title' => "Evidencia {$estado}",
+                'evidence_id' => $request->evidence_id,
+                'notification_date' => Carbon::now('America/Mexico_City'),
+                'user_rpe' => $request->user_rpe,
+                'reviser_id' => $reviser_rpe,
+                'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
+                'seen' => false,
+                'pinned' => false
+            ]);
+        }
 
         return response()->json([
             'message' => "Evidencia marcada como {$estado}",
