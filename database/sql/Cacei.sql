@@ -84,6 +84,7 @@ CREATE TABLE evidences (
     group_id INT,
     process_id INT NOT NULL,
     due_date DATE NOT NULL,
+    justification VARCHAR(1024),
     PRIMARY KEY (evidence_id),
     FOREIGN KEY (standard_id) REFERENCES standards(standard_id)
 );
@@ -274,7 +275,6 @@ CREATE TABLE files (
     file_url VARCHAR(255) NOT NULL,
     upload_date DATE NOT NULL,
     evidence_id INT NOT NULL,
-    justification VARCHAR(1024),
     file_name VARCHAR(50),
     PRIMARY KEY (file_id),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)
