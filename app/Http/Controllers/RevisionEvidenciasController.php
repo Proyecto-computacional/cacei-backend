@@ -178,24 +178,27 @@ class RevisionEvidenciasController extends Controller
             }
         }
 
-        // Generar un ID único
-        do {
-            $randomId = rand(1, 100);
-        } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
+        // Solo crear notificación si el estado no es PENDIENTE
+        if ($estado !== 'PENDIENTE') {
+            // Generar un ID único
+            do {
+                $randomId = rand(1, 100);
+            } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
 
-        Log::info('reviser_rpe: ' . $reviser_rpe);
-        //crea la notificacion y carga el comentario..
-        Notification::create([
-            'notification_id' => $randomId,
-            'title' => "Evidencia {$estado}",
-            'evidence_id' => $request->evidence_id,
-            'notification_date' => Carbon::now('America/Mexico_City'),
-            'user_rpe' => $request->user_rpe,
-            'reviser_id' => $reviser_rpe,
-            'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
-            'seen' => false,
-            'pinned' => false
-        ]);
+            Log::info('reviser_rpe: ' . $reviser_rpe);
+            //crea la notificacion y carga el comentario..
+            Notification::create([
+                'notification_id' => $randomId,
+                'title' => "Evidencia {$estado}",
+                'evidence_id' => $request->evidence_id,
+                'notification_date' => Carbon::now('America/Mexico_City'),
+                'user_rpe' => $request->user_rpe,
+                'reviser_id' => $reviser_rpe,
+                'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
+                'seen' => false,
+                'pinned' => false
+            ]);
+        }
 
         return response()->json([
             'message' => "Evidencia marcada como {$estado}",
