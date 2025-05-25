@@ -30,12 +30,27 @@ class FileController extends Controller
     //Subir archivos
     public function store(Request $request)
     {
-        $request->validate([
-            'evidence_id' => 'required|exists:evidences,evidence_id',
-            'files.*' => 'file'
-        ]);
+        Log::info('Iniciando store de archivos');
+        Log::info('Request data:', $request->all());
+        Log::info('Files:', $request->hasFile('files') ? ['present' => true] : ['present' => false]);
+
+        try {
+            $request->validate([
+                'evidence_id' => 'required|exists:evidences,evidence_id',
+                'files.*' => 'required|file|max:10240' // Máximo 10MB por archivo
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Error de validación:', $e->errors());
+            throw $e;
+        }
     
         $evidence = \App\Models\Evidence::where('evidence_id', $request->evidence_id)->first();
+        Log::info('Evidence encontrada:', ['evidence_id' => $evidence ? $evidence->evidence_id : 'no encontrada']);
+        
+        if (!$evidence) {
+            return response()->json(['message' => 'Evidencia no encontrada'], 404);
+        }
+        
         $standard_id = $evidence->standard_id;
         $evidence_id = $evidence->evidence_id;
         $group_id = $evidence->group_id;
@@ -50,31 +65,63 @@ class FileController extends Controller
         
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
-                // Generar un ID único por archivo
-                do {
-                    $randomId = rand(1, 1000000);
-                } while (File::where('file_id', $randomId)->exists());
-        
-                // Preparar nuevo nombre y path
-                $extension = $file->getClientOriginalExtension();
-                $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '-' . $randomId . '.' . $extension;
-                $path_name = 'uploads/' . $evidence_id;
-        
-                // Guardar archivo
-                $path = $file->storeAs($path_name, $newName, 'public');
-        
-                // Crear registro
-                $newFile = File::create([
-                    'file_id' => $randomId,
-                    'file_url' => $path,
-                    'upload_date' => now(),
-                    'evidence_id' => $evidence_id,
-                    'file_name' => $file->getClientOriginalName()
-                ]);
-        
-                $savedFiles[] = $newFile;
+                try {
+                    // Verificar que el archivo es válido
+                    if (!$file->isValid()) {
+                        Log::error('Archivo inválido:', [
+                            'error' => $file->getErrorMessage(),
+                            'name' => $file->getClientOriginalName()
+                        ]);
+                        continue;
+                    }
+
+                    // Generar un ID único por archivo
+                    do {
+                        $randomId = rand(1, 1000000);
+                    } while (File::where('file_id', $randomId)->exists());
+            
+                    // Preparar nuevo nombre y path
+                    $extension = $file->getClientOriginalExtension();
+                    $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '-' . $randomId . '.' . $extension;
+                    $path_name = 'uploads/' . $evidence_id;
+            
+                    // Asegurarse de que el directorio existe
+                    if (!Storage::disk('public')->exists($path_name)) {
+                        Storage::disk('public')->makeDirectory($path_name);
+                    }
+            
+                    // Guardar archivo
+                    $path = $file->storeAs($path_name, $newName, 'public');
+            
+                    if (!$path) {
+                        Log::error('Error al guardar archivo:', [
+                            'name' => $file->getClientOriginalName()
+                        ]);
+                        continue;
+                    }
+            
+                    // Crear registro
+                    $newFile = File::create([
+                        'file_id' => $randomId,
+                        'file_url' => $path,
+                        'upload_date' => now(),
+                        'evidence_id' => $evidence_id,
+                        'file_name' => $file->getClientOriginalName()
+                    ]);
+            
+                    $savedFiles[] = $newFile;
+                } catch (\Exception $e) {
+                    Log::error('Error al procesar archivo:', [
+                        'error' => $e->getMessage(),
+                        'name' => $file->getClientOriginalName()
+                    ]);
+                }
             }
         
+            if (empty($savedFiles)) {
+                return response()->json(['message' => 'No se pudo subir ningún archivo'], 422);
+            }
+            
             return response()->json($savedFiles, 201); // Retornar todos los archivos subidos
         }
 
