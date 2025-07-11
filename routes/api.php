@@ -285,6 +285,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::post('/standards', [StandardController::class, 'getBySection']);
     Route::post('/standard', [StandardController::class, 'store']);
     Route::put('/standard-update', [StandardController::class, 'update']);
+    Route::delete('/standard/{id}', [StandardController::class, 'destroy']);
     Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
     Route::get('/frames-of-references', [FrameOfReferenceController::class, 'index']);
     Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
