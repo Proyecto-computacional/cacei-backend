@@ -64,9 +64,15 @@ class CvController extends Controller
 
     public function generateWord($user_rpe, $outputPath)
     {
+        
         $user = User::where('user_rpe', $user_rpe)->first();
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+        
+        $currentUser = auth()->user();
+        if($currentUser->user_rpe != $user->user_rpe && $currentUser->user_role != "ADMINISTRADOR"){
+            return response()->json(['error' => 'No se puede acceder a este CV'], 403);
         }
 
         $cv = Cv::where('cv_id', $user->cv_id)->first();
