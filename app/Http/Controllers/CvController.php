@@ -16,6 +16,7 @@ use App\Models\ProfessionalAchievement;
 use App\Models\Participation;
 use App\Models\Award;
 use App\Models\ContributionToPe;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
@@ -23,9 +24,14 @@ use Illuminate\Support\Facades\Response;
 class CvController extends Controller
 {
     public function index(Request $request) {
+        $currentUser = auth()->user();
         $user = User::where('user_rpe', $request->user_rpe)->first();
         if (!$user) {
             return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+        
+        if($currentUser->user_rpe != $user->user_rpe && $currentUser->user_role != "ADMINISTRADOR"){
+            return response()->json(['error' => 'No se puede acceder a este CV'], 403);
         }
         $cv = Cv::where('cv_id', $user->cv_id)->first();
         return response()->json($cv, 200);
