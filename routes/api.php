@@ -217,51 +217,56 @@ Route::middleware(
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/cvs', [CvController::class, 'index']);
 
-    // 13. Información adicional de un CV
+    // 13. Obtener información adicional de un CV
     Route::prefix('additionalInfo/{cv_id}')->group(function () {
 
         // Rutas para educaciones
         Route::get('educations', [EducationController::class, 'index']);
-        Route::post('educations', [EducationController::class, 'store']);
-
         // Rutas para formaciones docentes
         Route::get('teacher-trainings', [TeacherTrainingController::class, 'index']);
-        Route::post('teacher-trainings', [TeacherTrainingController::class, 'store']);
-
         // Rutas para actualizaciones disciplinarias
         Route::get('disciplinary-updates', [DisciplinaryUpdateController::class, 'index']);
-        Route::post('disciplinary-updates', [DisciplinaryUpdateController::class, 'store']);
-
         // Rutas para gestiones académicas
         Route::get('academic-managements', [AcademicManagementController::class, 'index']);
-        Route::post('academic-managements', [AcademicManagementController::class, 'store']);
-
         // Rutas para productos académicos
         Route::get('academic-products', [AcademicProductController::class, 'index']);
-        Route::post('academic-products', [AcademicProductController::class, 'store']);
-
         // Rutas para experiencias laborales
         Route::get('laboral-experiences', [LaboralExperienceController::class, 'index']);
-        Route::post('laboral-experiences', [LaboralExperienceController::class, 'store']);
-
         // Rutas para diseños de ingeniería
         Route::get('engineering-designs', [EngineeringDesignController::class, 'index']);
-        Route::post('engineering-designs', [EngineeringDesignController::class, 'store']);
-
         // Rutas para logros profesionales
         Route::get('professional-achievements', [ProfessionalAchievementController::class, 'index']);
-        Route::post('professional-achievements', [ProfessionalAchievementController::class, 'store']);
-
         // Rutas para participaciones
         Route::get('participations', [ParticipationController::class, 'index']);
-        Route::post('participations', [ParticipationController::class, 'store']);
-
         // Rutas para premios
         Route::get('awards', [AwardController::class, 'index']);
-        Route::post('awards', [AwardController::class, 'store']);
-
         // Rutas para contribuciones al PE
         Route::get('contributions-to-pe', [ContributionToPEController::class, 'index']);
+    });
+
+        // 13. Guardar información adicional de un CV
+    Route::prefix('additionalInfo/{cv_id}')->middleware('cv.owner')->group(function () {
+        // Rutas para educaciones
+        Route::post('educations', [EducationController::class, 'store']);
+        // Rutas para formaciones docentes
+        Route::post('teacher-trainings', [TeacherTrainingController::class, 'store']);
+        // Rutas para actualizaciones disciplinarias
+        Route::post('disciplinary-updates', [DisciplinaryUpdateController::class, 'store']);
+        // Rutas para gestiones académicas
+        Route::post('academic-managements', [AcademicManagementController::class, 'store']);
+        // Rutas para productos académicos
+        Route::post('academic-products', [AcademicProductController::class, 'store']);
+        // Rutas para experiencias laborales
+        Route::post('laboral-experiences', [LaboralExperienceController::class, 'store']);
+        // Rutas para diseños de ingeniería
+        Route::post('engineering-designs', [EngineeringDesignController::class, 'store']);
+        // Rutas para logros profesionales
+        Route::post('professional-achievements', [ProfessionalAchievementController::class, 'store']);
+        // Rutas para participaciones
+        Route::post('participations', [ParticipationController::class, 'store']);
+        // Rutas para premios
+        Route::post('awards', [AwardController::class, 'store']);
+        // Rutas para contribuciones al PE
         Route::post('contributions-to-pe', [ContributionToPEController::class, 'store']);
     });
 });
