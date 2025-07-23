@@ -29,7 +29,7 @@ use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameOfReferenceController;
 use App\Http\Controllers\EvidenciaEstadisticaController;
 use App\Http\Controllers\GroupController;
-
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Middleware\CorsMiddleware;
 
 /*
@@ -179,6 +179,11 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
     });
     Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
     Route::put('/processes/finished', [AccreditationProcessController::class, 'toggleFinished']);
+
+    // permisos de roles:
+    Route::get('/roles-permissions', [RolePermissionController::class, 'index']);
+    Route::put('/roles/{role}/permissions/{permission}', [RolePermissionController::class, 'updateEnable']);
+
 });
 
 // 10. Notificaciones
