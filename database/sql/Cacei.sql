@@ -29,6 +29,11 @@ CREATE TABLE users (
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 
+CREATE TABLE role(
+    role_id int PRIMARY KEY,
+    role_name varchar(30)
+);
+
 CREATE TABLE role_permissions (
    
     user_rpe VARCHAR(20) NOT NULL,
@@ -296,6 +301,14 @@ CREATE TABLE notifications (
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
     FOREIGN KEY (reviser_id) REFERENCES users(user_rpe)
 );
+
+INSERT INTO role(role_id, role_name)VALUES
+(1, 'ADMINISTRADOR'),
+(2, 'JEFE DE AREA'),
+(3, 'COORDINADOR'),
+(4, 'PROFESOR'),
+(5, 'DIRECTIVO'),
+(6, 'DEPARTAMENTO UNIVERSITARIO');
 
 INSERT INTO areas (area_id, area_name) VALUES
 ('AR01', 'Área Agroindustrial'),
