@@ -106,6 +106,7 @@ class EvidenceController extends Controller
             ->select(
                 'evidences.*',
                 'standards.standard_name as standard_name',
+                'standards.is_transversal as is_transversal',
                 'sections.section_name as section_name',
                 'categories.category_name as category_name',
                 'evidence_owner.user_name as evidence_owner_name',

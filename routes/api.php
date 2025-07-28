@@ -292,6 +292,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA,
     Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
     Route::post('/validate-user', [UserController::class, 'validateUser']);
     Route::get('/processes', [AccreditationProcessController::class, 'getAllProcesses']);
+    Route::post('/processes-by-frame', [AccreditationProcessController::class, 'getProcessesByFrameId']);
 });
 
 // 13. Categorías relacionadas a un proceso dado el rol del usuario
