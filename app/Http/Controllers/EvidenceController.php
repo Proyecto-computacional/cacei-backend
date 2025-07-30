@@ -249,4 +249,16 @@ class EvidenceController extends Controller
         ]);
     }
 
+    public function getByStandardUpload($standard_id)
+{
+    $evidences = Evidence::with([
+        'process:process_id,process_name,career_id',
+        'standard:standard_id,standard_name,section_id,help,is_transversal',
+        'files:file_id,evidence_id,file_url,upload_date,file_name,justification'
+    ])
+    ->where('standard_id', $standard_id)
+    ->get();
+
+    return response()->json($evidences);
+}
 }

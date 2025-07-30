@@ -105,6 +105,7 @@ Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::c
 //4. Subir evidencia
 Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
 Route::middleware(['auth:sanctum'])->put('/evidences/{evidence_id}', [EvidenceController::class, 'update']);
+Route::middleware(['auth:sanctum'])->get('/evidences/by-standard/{standard_id}', [EvidenceController::class, 'getByStandardUpload']);
 
 //REPETIDA CON CV
 Route::middleware([
