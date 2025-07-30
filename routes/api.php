@@ -122,15 +122,14 @@ Route::middleware([
 
 // 5.a. Revisar archivos
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/file', [FileController::class, 'store']);
-    Route::get('/files/{evidence_id}', [FileController::class, 'index']);
-    Route::get('/file/{file_id}', [FileController::class, 'show']);
+    Route::middleware(['permission:Descargar archivos'])->get('/files/{evidence_id}', [FileController::class, 'index']);
+    Route::middleware(['permission:Descargar archivos'])->get('/file/{file_id}', [FileController::class, 'show']);
     Route::middleware(['file.correct'])->group(function () {
-        
-        Route::put('/file/{file_id}', [FileController::class, 'update']);
+        Route::middleware(['permission:Subir archivos'])->post('/file', [FileController::class, 'store']);
+        Route::middleware(['permission:Actualizar archivos'])->put('/file/{file_id}', [FileController::class, 'update']);
     });
-    Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
-    Route::delete('/file/{id}', [EvidenceController::class, 'deleteFile']);
+    Route::middleware(['permission:Eliminar archivos'])->delete('/file/{file_id}', [FileController::class, 'destroy']);
+    Route::middleware(['permission:Eliminar archivos'])->delete('/file/{id}', [EvidenceController::class, 'deleteFile']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
