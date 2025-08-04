@@ -60,4 +60,20 @@ class User extends Authenticatable
     {
         return $this->hasOne(Cv::class, 'cv_id', 'cv_id');
     }
+
+    public function hasPermission($permisoNombre)
+    {
+        // Buscar el rol por el nombre almacenado en el usuario
+        $role = Role::where('role_name', $this->user_role)->first();
+
+        if (!$role) {
+            return false;
+        }
+
+        // Buscar si ese rol tiene el permiso habilitado
+        return $role->permissions()
+                    ->where('permission_name', $permisoNombre)
+                    ->wherePivot('is_enabled', true)
+                    ->exists();
+    }
 }

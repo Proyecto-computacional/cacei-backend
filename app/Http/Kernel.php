@@ -69,6 +69,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\CheckRole::class,
+        'permission' => \App\Http\Middleware\CheckPermission::class,
         'cv.owner' => \App\Http\Middleware\cvBelongsUser::class,
         'token.expired' => \App\Http\Middleware\EnsureTokenNotExpired::class,
         'file.correct' => \App\Http\Middleware\CheckFileMetadata::class,
