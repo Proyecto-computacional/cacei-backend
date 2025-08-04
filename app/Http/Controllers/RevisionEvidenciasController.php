@@ -36,7 +36,7 @@ class RevisionEvidenciasController extends Controller
             'reviser_rpe' => 'nullable|string'
         ]);
 
-        $reviser_rpe;
+        //$reviser_rpe;
 
         if ($request->reviser_rpe == NULL) {
             $user = auth()->user();

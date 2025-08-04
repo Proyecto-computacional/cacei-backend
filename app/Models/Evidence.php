@@ -22,7 +22,8 @@ class Evidence extends Model
         'user_rpe',
         'group_id',
         'process_id',
-        'due_date'
+        'due_date',
+        'justification'
     ];
 
 

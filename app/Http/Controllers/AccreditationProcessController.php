@@ -177,6 +177,35 @@ class AccreditationProcessController extends Controller
         return response()->json($processes);
     }
 
+    public function getProcessesByFrameId(Request $request)
+    {
+        $request->validate([
+            'frame_id' => 'required|int'
+        ]);
+
+        $processes = DB::select("
+            SELECT 
+                ap.process_id,
+                ap.process_name,
+                ap.start_date,
+                ap.end_date,
+                ap.due_date,
+                c.career_name,
+                a.area_name,
+                fr.frame_name,
+                fr.frame_id,
+                ap.finished
+            FROM accreditation_processes ap
+            JOIN careers c ON ap.career_id = c.career_id
+            JOIN areas a ON c.area_id = a.area_id
+            LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
+            WHERE ap.frame_id = ?
+            ORDER BY ap.start_date DESC
+        ", [$request->frame_id]);
+
+        return response()->json($processes);
+    }
+
     public function toggleFinished(Request $request)
     {
         $process = Accreditation_Process::findOrFail($request->process_id);  // Busca la notificación por su ID o lanza error si no se encuentra
