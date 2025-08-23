@@ -94,7 +94,7 @@ Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $req
 //3. Confitguracion personal
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE, PERSONAL DE APOYO, DIRECTIVO'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PERSONAL DE APOYO, DIRECTIVO'
 ])->get('/personalInfo', function () {
     return response()->json(['message' => 'Informacion personal']);
 });
@@ -105,11 +105,12 @@ Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::c
 //4. Subir evidencia
 Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
 Route::middleware(['auth:sanctum'])->put('/evidences/{evidence_id}', [EvidenceController::class, 'update']);
+Route::middleware(['auth:sanctum'])->get('/evidences/by-standard/{standard_id}', [EvidenceController::class, 'getByStandardUpload']);
 
 //REPETIDA CON CV
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PROFESOR RESPONSABLE, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, DIRECTIVO, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Subir evidencia']);
 });
@@ -117,7 +118,7 @@ Route::middleware([
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR'
+    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR,DIRECTIVO'
 ])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence']);
 
 // 5.a. Revisar archivos
@@ -151,7 +152,7 @@ Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
 // 8.Gestion Evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR RESPONSABLE'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR'
 ])->get('/GestionEvidencias', function () {
     return response()->json(['message' => 'Gestionar evidencias']);
 });
@@ -168,7 +169,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 //Exclusivos de administrador 
-Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,DIRECTIVO'])->group(function () {
     //6. Administracion de usuarios
     Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
     Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
@@ -276,7 +277,7 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 //Rutas hechas en la rama de asignarTareas
-Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA,DIRECTIVO'])->group(function () {
     Route::get('/revisers', [ReviserController::class, 'index']);
     Route::post('/reviser', [ReviserController::class, 'store']);
     Route::post('/evidence', [EvidenceController::class, 'store']);
@@ -297,6 +298,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA'
     Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
     Route::post('/validate-user', [UserController::class, 'validateUser']);
     Route::get('/processes', [AccreditationProcessController::class, 'getAllProcesses']);
+    Route::post('/processes-by-frame', [AccreditationProcessController::class, 'getProcessesByFrameId']);
 });
 
 // 13. Categorías relacionadas a un proceso dado el rol del usuario
