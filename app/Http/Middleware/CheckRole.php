@@ -19,6 +19,7 @@ class CheckRole
         'PROFESOR',
         'DIRECTIVO',
         'DEPARTAMENTO UNIVERSITARIO',
+        'PERSONAL DE APOYO'
     ];
 
     /**

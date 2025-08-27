@@ -106,6 +106,7 @@ class EvidenceController extends Controller
             ->select(
                 'evidences.*',
                 'standards.standard_name as standard_name',
+                'standards.is_transversal as is_transversal',
                 'sections.section_name as section_name',
                 'categories.category_name as category_name',
                 'evidence_owner.user_name as evidence_owner_name',
@@ -248,4 +249,16 @@ class EvidenceController extends Controller
         ]);
     }
 
+    public function getByStandardUpload($standard_id)
+{
+    $evidences = Evidence::with([
+        'process:process_id,process_name,career_id',
+        'standard:standard_id,standard_name,section_id,help,is_transversal',
+        'files:file_id,evidence_id,file_url,upload_date,file_name,justification'
+    ])
+    ->where('standard_id', $standard_id)
+    ->get();
+
+    return response()->json($evidences);
+}
 }
