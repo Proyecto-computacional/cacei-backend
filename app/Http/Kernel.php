@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\cvBelongsUser;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -69,6 +70,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\CheckRole::class,
         'permission' => \App\Http\Middleware\CheckPermission::class,
+        'cv.owner' => \App\Http\Middleware\cvBelongsUser::class,
         'token.expired' => \App\Http\Middleware\EnsureTokenNotExpired::class,
         'file.correct' => \App\Http\Middleware\CheckFileMetadata::class,
         'cors' => \App\Http\Middleware\CorsMiddleware::class,

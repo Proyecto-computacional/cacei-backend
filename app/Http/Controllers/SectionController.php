@@ -17,7 +17,8 @@ class SectionController extends Controller
         $request->validate([
             'category_id' => 'required|int',
             'section_name' => 'required|string|max:25',
-            'section_description' => 'required|string|max:50'
+            'section_description' => 'required|string|max:50',
+            'is_standard' => 'required|boolean'
         ]);
 
         // Generar un ID único
@@ -35,6 +36,7 @@ class SectionController extends Controller
         $section->section_name = $request->input('section_name');
         $section->section_description = $request->input('section_description');
         $section->indice = $indice;
+        $section->is_standard = $request->input('is_standard');
 
         $section->save();
 
@@ -49,7 +51,8 @@ class SectionController extends Controller
         $request->validate([
             'section_id' => 'required|int',
             'section_name' => 'nullable|string|max:25',
-            'section_description' => 'nullable|string|max:50'
+            'section_description' => 'nullable|string|max:50',
+            'is_standard' => 'required|boolean'
         ]);
 
         $section = Section::find($request->section_id);
@@ -62,12 +65,13 @@ class SectionController extends Controller
 
         $section->section_name = $request->input('section_name');
         $section->section_description = $request->input('section_description');
+        $section->is_standard = $request->input('is_standard');
 
         $section->save();
 
         return response()->json([
             'message' => 'Registro actualizado correctamente.',
             'data' => $section
-        ]);
+        ],201);
     }
 }
