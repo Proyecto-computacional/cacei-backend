@@ -302,21 +302,21 @@ CREATE TABLE notifications (
 
 INSERT INTO areas (area_id, area_name) VALUES
 ('AR01', 'Área Agroindustrial'),
-('AR02', 'Área de Ciencias de la Computación'),
+('2', 'Área de Ciencias de la Computación'),
 ('AR03', 'Área de Ciencias de la Tierra'),
-('AR04', 'Área Civil'),
+('3', 'Área Civil'),
 ('AR05', 'Área Mecánica y Eléctrica'),
 ('AR06', 'Área de Metalurgia y Materiales');
 
 INSERT INTO careers (career_id, area_id, career_name) VALUES
 ('CA01', 'AR01', 'Ingeniería Agroindustrial'),
 ('CA02', 'AR03', 'Ingeniería Ambiental'),
-('CA03', 'AR04', 'Ingeniería Civil'),
-('CA04', 'AR02', 'Ingeniería en Computación'),
+('CA03', '3', 'Ingeniería Civil'),
+('CA04', '2', 'Ingeniería en Computación'),
 ('CA05', 'AR05', 'Ingeniería en Electricidad y Automatización'),
 ('CA06', 'AR03', 'Ingeniería en Geología'),
-('CA07', 'AR02', 'Ingeniería en Sistemas Inteligentes'),
-('CA08', 'AR04', 'Ingeniería en Topografía y Construcción'),
+('CA07', '2', 'Ingeniería en Sistemas Inteligentes'),
+('CA08', '3', 'Ingeniería en Topografía y Construcción'),
 ('CA09', 'AR05', 'Ingeniería Mecánica'),
 ('CA10', 'AR05', 'Ingeniería Mecánica Administrativa'),
 ('CA11', 'AR05', 'Ingeniería Mecánica Eléctrica'),
