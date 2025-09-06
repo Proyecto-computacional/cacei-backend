@@ -308,6 +308,7 @@ INSERT INTO role(role_id, role_name)VALUES
 (4, 'PROFESOR'),
 (5, 'DIRECTIVO'),
 (6, 'DEPARTAMENTO UNIVERSITARIO');
+(7, 'PERSONAL DE APOYO');
 
 INSERT INTO permissions(permission_id, permission_name)VALUES
 (1, 'Subir archivos'),
@@ -345,7 +346,12 @@ INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
 (6, 1, true),
 (6, 2, true),
 (6, 3, true),
-(6, 4, true);
+(6, 4, true).
+
+(7, 1, true),
+(7, 2, true),
+(7, 3, true),
+(7, 4, true);
 
 
 
