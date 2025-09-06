@@ -21,6 +21,7 @@ class User extends Authenticatable
         'user_mail',
         'user_role',
         'user_name',
+        'user_area',
         'cv_id'
     ];
 
@@ -56,8 +57,14 @@ class User extends Authenticatable
         return $this->hasMany(Reviser::class, 'user_rpe', 'user_rpe');
     }
 
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'user_area', 'area_id');
+    }
+
     public function cvs()
     {
         return $this->hasOne(Cv::class, 'cv_id', 'cv_id');
     }
+
 }

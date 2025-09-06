@@ -18,17 +18,6 @@ CREATE TABLE permissions (
 );
 
 
-CREATE TABLE users (
-    user_rpe VARCHAR(20) NOT NULL,
-    user_mail VARCHAR(100) UNIQUE NOT NULL,
-    user_role VARCHAR(30) NOT NULL,
-    user_name VARCHAR(150) NOT NULL,
-    cv_id BIGINT,
-    situation VARCHAR(20),
-    PRIMARY KEY (user_rpe),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
-);
-
 CREATE TABLE role_permissions (
    
     user_rpe VARCHAR(20) NOT NULL,
@@ -213,6 +202,20 @@ CREATE TABLE areas (
     user_rpe VARCHAR(20),
     PRIMARY KEY (area_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
+);
+
+
+CREATE TABLE users (
+    user_rpe VARCHAR(20) NOT NULL,
+    user_mail VARCHAR(100) UNIQUE NOT NULL,
+    user_role VARCHAR(30) NOT NULL,
+    user_name VARCHAR(150) NOT NULL,
+    user_area VARCHAR(20) NOT NULL,
+    cv_id BIGINT,
+    situation VARCHAR(20),
+    PRIMARY KEY (user_rpe),
+    FOREIGN KEY (user_area) REFERENCES areas(area_id),
+    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 
 CREATE TABLE careers (
