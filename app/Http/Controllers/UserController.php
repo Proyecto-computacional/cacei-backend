@@ -12,7 +12,7 @@ class UserController extends Controller
     {
         $query = User::with('area');
 
-        if ($request->has('search')) {
+        /*if ($request->has('search')) {
             $search = $request->input('search');
 
             $query->where(function ($q) use ($search) {
@@ -22,10 +22,10 @@ class UserController extends Controller
                     $q2->where('nombre', 'LIKE', "%$search%"); // Ajusta el campo de área
                 });
             });
-        }
+        }*/
         
         return response()->json([
-            'usuarios' => $query->cursorPaginate(10), 
+            'usuarios' => $query->get(),
             'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO', 'ADMINISTRADOR']
         ]);
     }
