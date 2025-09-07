@@ -15,12 +15,19 @@ class Area extends Model
     ];
     public $timestamps = false;
     protected $primaryKey = 'area_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $table = 'areas';
 
     public function manager()
     {
         return $this->belongsTo(User::class, 'admin_rpe', 'user_rpe');
+    }
+
+    public function usuarios()
+    {
+        return $this->hasMany(User::class, 'user_area', 'area_id');
     }
 
 }
