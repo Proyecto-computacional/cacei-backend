@@ -21,7 +21,7 @@ class UserController extends Controller
         }
         return response()->json([
             'usuarios' => $query->cursorPaginate(10), // Pagina los resultados si hay muchos
-            'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'TUTOR ACADEMICO', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO', 'ADMINISTRADOR']
+            'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO', 'ADMINISTRADOR']
         ]);
     }
 
@@ -31,7 +31,7 @@ class UserController extends Controller
         try {
             $validado = $request->validate([
                 'user_id' => 'required|exists:users,user_rpe',
-                'rol' => 'required|string|in:DIRECTIVO,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR RESPONSABLE,PROFESOR,TUTOR ACADEMICO,DEPARTAMENTO UNIVERSITARIO,PERSONAL DE APOYO,ADMINISTRADOR',
+                'rol' => 'required|string|in:DIRECTIVO,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR,DEPARTAMENTO UNIVERSITARIO,PERSONAL DE APOYO,ADMINISTRADOR',
             ]);
 
             Log::debug("Datos validados correctamente:", $validado);
