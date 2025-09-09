@@ -29,7 +29,7 @@ use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\FrameOfReferenceController;
 use App\Http\Controllers\EvidenciaEstadisticaController;
 use App\Http\Controllers\GroupController;
-
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Middleware\CorsMiddleware;
 
 /*
@@ -123,15 +123,16 @@ Route::middleware([
 
 // 5.a. Revisar archivos. El middleware para revisar los archivos CheckFileMetadata
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/file', [FileController::class, 'store']);
-    Route::get('/files/{evidence_id}', [FileController::class, 'index']);
-    Route::get('/file/{file_id}', [FileController::class, 'show']);
+    Route::middleware(['permission:Descargar archivos'])->get('/files/{evidence_id}', [FileController::class, 'index']);
+    Route::middleware(['permission:Descargar archivos'])->get('/file/{file_id}', [FileController::class, 'show']);
     Route::middleware(['file.correct'])->group(function () {
 
         Route::put('/file/{file_id}', [FileController::class, 'update']);
+        Route::middleware(['permission:Subir archivos'])->post('/file', [FileController::class, 'store']);
+        Route::middleware(['permission:Actualizar archivos'])->put('/file/{file_id}', [FileController::class, 'update']);
     });
-    Route::delete('/file/{file_id}', [FileController::class, 'destroy']);
-    Route::delete('/file/{id}', [EvidenceController::class, 'deleteFile']);
+    Route::middleware(['permission:Eliminar archivos'])->delete('/file/{file_id}', [FileController::class, 'destroy']);
+    Route::middleware(['permission:Eliminar archivos'])->delete('/file/{id}', [EvidenceController::class, 'deleteFile']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -180,6 +181,11 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,DIRECTIVO'])->group(funct
     });
     Route::get('/procesos/{id}/descargar-evidencias', [AccreditationProcessController::class, 'downloadProcess']);
     Route::put('/processes/finished', [AccreditationProcessController::class, 'toggleFinished']);
+
+    // permisos de roles:
+    Route::get('/roles-permissions', [RolePermissionController::class, 'index']);
+    Route::put('/roles/{role}/permissions/{permission}', [RolePermissionController::class, 'updateEnable']);
+
 });
 
 // 10. Notificaciones
