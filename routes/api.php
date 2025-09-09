@@ -12,6 +12,7 @@ use App\Http\Controllers\TeacherTrainingController;
 use App\Http\Controllers\DisciplinaryUpdateController;
 use App\Http\Controllers\AcademicManagementController;
 use App\Http\Controllers\AcademicProductController;
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\LaboralExperienceController;
 use App\Http\Controllers\EngineeringDesignController;
 use App\Http\Controllers\ProfessionalAchievementController;
@@ -171,6 +172,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,DIRECTIVO'])->group(function () {
     //6. Administracion de usuarios
     Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
+    Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
     Route::post('/usersadmin/actualizar-rol', [UserController::class, 'actualizarRol'])
         ->name('usuarios.actualizarRol');
     //9. Gestion de formato
