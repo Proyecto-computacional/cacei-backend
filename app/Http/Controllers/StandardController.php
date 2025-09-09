@@ -79,6 +79,24 @@ class StandardController extends Controller
         return response()->json([
             'message' => 'Registro actualizado correctamente.',
             'data' => $standard
-        ]);
+        ],201);
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $standard = Standard::findOrFail($id);
+            $standard->delete();
+
+            return response()->json([
+                'message' => 'Criterio eliminado correctamente',
+                'data' => $standard
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar el criterio',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
