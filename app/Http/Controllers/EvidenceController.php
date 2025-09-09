@@ -19,7 +19,7 @@ class EvidenceController extends Controller
             'standard:standard_id,standard_name,section_id,help,is_transversal',
             'standard.section:section_id,section_name,category_id',
             'standard.section.category:category_id,category_name',
-            'files:file_id,evidence_id,file_url,upload_date,file_name,justification',
+            'files:file_id,evidence_id,file_url,upload_date,file_name',
             'status' => function ($query) {
                 $query->orderByDesc('status_date')
                     ->orderByDesc('status_id');
@@ -233,7 +233,7 @@ class EvidenceController extends Controller
         ]);
 
         $evidence = Evidence::where('evidence_id', $evidence_id)->first();
-        
+
         if (!$evidence) {
             return response()->json(['message' => 'Evidencia no encontrada'], 404);
         }
@@ -250,15 +250,15 @@ class EvidenceController extends Controller
     }
 
     public function getByStandardUpload($standard_id)
-{
-    $evidences = Evidence::with([
-        'process:process_id,process_name,career_id',
-        'standard:standard_id,standard_name,section_id,help,is_transversal',
-        'files:file_id,evidence_id,file_url,upload_date,file_name,justification'
-    ])
-    ->where('standard_id', $standard_id)
-    ->get();
+    {
+        $evidences = Evidence::with([
+            'process:process_id,process_name,career_id',
+            'standard:standard_id,standard_name,section_id,help,is_transversal',
+            'files:file_id,evidence_id,file_url,upload_date,file_name'
+        ])
+            ->where('standard_id', $standard_id)
+            ->get();
 
-    return response()->json($evidences);
-}
+        return response()->json($evidences);
+    }
 }
