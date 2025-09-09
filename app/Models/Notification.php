@@ -13,7 +13,7 @@ class Notification extends Model
     protected $primaryKey = 'notification_id';
     public $timestamps = false;
     public $incrementing = false;//Define que el Notification_id es autoincremental.
-    
+
     //Lista de campos que puedes llenar automáticamente cuando creas o actualizas una notificación.
     protected $fillable = [
         'notification_id',
@@ -27,6 +27,11 @@ class Notification extends Model
         'pinned',
         'starred'
     ];
+
+
+
+    // ¿¡Esto todavía se usa!? ↓↓↓
+
     //Una relacion inversa belongsTo(User::class) indica que cada notificación pertenece a un solo 
     // usuario y User_rpe es de la tabla notification y  user_rpe  es de la tabla user_t (PK).
     public function user()
@@ -38,4 +43,14 @@ class Notification extends Model
         return $this->belongsTo(Reviser::class, 'reviser_id', 'reviser_id');
     }
 
+    // Para obtener info de los usuarios y criterios
+    public function reviser()
+    {
+        return $this->belongsTo(User::class, 'reviser_id', 'user_rpe');
+    }
+
+    public function evidence()
+    {
+        return $this->belongsTo(Evidence::class, 'evidence_id', 'evidence_id');
+    }
 }
