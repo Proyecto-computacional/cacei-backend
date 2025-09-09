@@ -17,23 +17,6 @@ CREATE TABLE permissions (
     permission_name VARCHAR(50) UNIQUE NOT NULL
 );
 
-
-CREATE TABLE users (
-    user_rpe VARCHAR(20) NOT NULL,
-    user_mail VARCHAR(100) UNIQUE NOT NULL,
-    user_role VARCHAR(30) NOT NULL,
-    user_name VARCHAR(150) NOT NULL,
-    cv_id BIGINT,
-    situation VARCHAR(20),
-    PRIMARY KEY (user_rpe),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
-);
-
-CREATE TABLE role(
-    role_id int PRIMARY KEY,
-    role_name varchar(30)
-);
-
 CREATE TABLE role_permissions (
     role_id int NOT NULL,
     permission_id INT NOT NULL,
@@ -219,6 +202,20 @@ CREATE TABLE areas (
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
 );
 
+
+CREATE TABLE users (
+    user_rpe VARCHAR(20) NOT NULL,
+    user_mail VARCHAR(100) UNIQUE NOT NULL,
+    user_role VARCHAR(30) NOT NULL,
+    user_name VARCHAR(150) NOT NULL,
+    user_area VARCHAR(20) NOT NULL,
+    cv_id BIGINT,
+    situation VARCHAR(20),
+    PRIMARY KEY (user_rpe),
+    FOREIGN KEY (user_area) REFERENCES areas(area_id),
+    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+);
+
 CREATE TABLE careers (
     career_id VARCHAR(20) NOT NULL,
     area_id VARCHAR(20) NOT NULL,
@@ -357,21 +354,21 @@ INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
 
 INSERT INTO areas (area_id, area_name) VALUES
 ('AR01', 'Área Agroindustrial'),
-('AR02', 'Área de Ciencias de la Computación'),
+('2', 'Área de Ciencias de la Computación'),
 ('AR03', 'Área de Ciencias de la Tierra'),
-('AR04', 'Área Civil'),
+('3', 'Área Civil'),
 ('AR05', 'Área Mecánica y Eléctrica'),
 ('AR06', 'Área de Metalurgia y Materiales');
 
 INSERT INTO careers (career_id, area_id, career_name) VALUES
 ('CA01', 'AR01', 'Ingeniería Agroindustrial'),
 ('CA02', 'AR03', 'Ingeniería Ambiental'),
-('CA03', 'AR04', 'Ingeniería Civil'),
-('CA04', 'AR02', 'Ingeniería en Computación'),
+('CA03', '3', 'Ingeniería Civil'),
+('CA04', '2', 'Ingeniería en Computación'),
 ('CA05', 'AR05', 'Ingeniería en Electricidad y Automatización'),
 ('CA06', 'AR03', 'Ingeniería en Geología'),
-('CA07', 'AR02', 'Ingeniería en Sistemas Inteligentes'),
-('CA08', 'AR04', 'Ingeniería en Topografía y Construcción'),
+('CA07', '2', 'Ingeniería en Sistemas Inteligentes'),
+('CA08', '3', 'Ingeniería en Topografía y Construcción'),
 ('CA09', 'AR05', 'Ingeniería Mecánica'),
 ('CA10', 'AR05', 'Ingeniería Mecánica Administrativa'),
 ('CA11', 'AR05', 'Ingeniería Mecánica Eléctrica'),
