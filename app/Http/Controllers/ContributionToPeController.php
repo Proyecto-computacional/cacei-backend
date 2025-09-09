@@ -19,13 +19,10 @@ class ContributionToPeController extends Controller
             'description' => 'required|string|max:255',
         ]);
 
-        $contribution = ContributionToPe::updateOrCreate(
-            [
-                'cv_id' => $cv_id,
-                'description' => $validated['description']
-            ],
-            $validated
-        );
+         $contribution = ContributionToPe::updateOrCreate(
+        ['cv_id' => $cv_id],
+        ['description' => $validated['description']]
+    );
 
         return response()->json($contribution, 201);
     }
