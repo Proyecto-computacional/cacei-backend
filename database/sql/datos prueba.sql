@@ -1,9 +1,13 @@
 INSERT INTO cvs (cv_id, professor_number, update_date, professor_name, age, birth_date, actual_position, duration)
-VALUES (1, 10285, '2025-03-15', 'Alberto', 40, '1985-03-15', 'Profesor', 10);
+VALUES (1, 10285, '2025-03-15', 'Alberto', 40, '1985-03-15', 'Profesor', 10),
+(2, 10286, '0001-01-01', 'Cristo', 2025, '0001-01-01', 'Testigo del mundo', 0),
+(3, 10287, '2024-01-01', 'Alberto II', 40, '1985-03-15', 'Hermano perdido', 0),
+(4, 10288, '2024-01-01', 'Otrebla', 40, '1985-03-16', 'Doppleganger', 0);
 
 -- Insertar en la tabla users
 INSERT INTO users (user_rpe, user_mail, user_role, user_name, cv_id)
-VALUES ('10285', 'alberto@uaslp.edu.mx', 'Profesor', 'Alberto', 1);
+VALUES ('10285', 'alberto@uaslp.edu.mx', 'Administrador', 'Alberto', 1),
+('10286', 'antialberto@uaslp.edu.mx', 'Profesor', 'Anti Alberto', 2);
 
 -- Insertar en la tabla areas
 INSERT INTO areas (area_id, area_name, user_rpe)
@@ -41,9 +45,9 @@ VALUES (1, 1, '10285', 1, 1, '2025-05-01'),
 
 -- Insertar en la tabla revisers
 INSERT INTO revisers (reviser_id, user_rpe, evidence_id)
-VALUES (1, '10285', 1),
-(2, '10285', 2),
-(3, '10285', 3);
+VALUES ('10286', '10285', 1),
+('10287', '10285', 2),
+('10288', '10285', 3);
 
 
 
@@ -102,8 +106,8 @@ INSERT INTO groups (group_id, semester, type_a, period_a, subject_id, hour_a)
 VALUES (1, '2025-1', TRUE, 'Mañana', 1, '09:00');
 
 -- Insertar en la tabla accreditation_processes
-INSERT INTO accreditation_processes (process_id, career_id, frame_id, process_name, start_date, end_date, due_date)
-VALUES (1, 'C01', 1, 'Acreditación de Ingeniería en Sistemas', '2025-01-01', '2025-12-31', '2025-12-01');
+INSERT INTO accreditation_processes (process_id, career_id, frame_id, process_name, start_date, end_date, due_date, finished)
+VALUES (1, 'C01', 1, 'Acreditación de Ingeniería en Sistemas', '2025-01-01', '2025-12-31', '2025-12-01', false);
 
 -- Insertar en la tabla statuses
 INSERT INTO statuses (status_id, status_description, user_rpe, evidence_id, status_date, feedback)
@@ -113,12 +117,12 @@ VALUES (1, 'APROBADO', '10285', 1, '2025-04-22', 'Muy bueno'),
 
 
 -- Insertar en la tabla files
-INSERT INTO files (file_id, file_url, upload_date, evidence_id, justification, file_name)
-VALUES (1, 'http://files.uaslp.edu.mx/evidences/1.pdf', '2025-04-22', 1, 'Justificación de la evidencia', 'Evidencia_1.pdf');
+INSERT INTO files (file_id, file_url, upload_date, evidence_id, file_name)
+VALUES (1, 'http://files.uaslp.edu.mx/evidences/1.pdf', '2025-04-22', 1, 'Evidencia_1.pdf');
 
 -- Insertar en la tabla notifications
 INSERT INTO notifications (notification_id, title, evidence_id, notification_date, user_rpe, reviser_id, description, seen, pinned, starred)
-VALUES (1, 'Nueva Evidencia para Revisión', 1, '2025-04-22', '10285', 1, 'Revisión pendiente de evidencia', FALSE, FALSE, FALSE);
+VALUES (1, 'Nueva Evidencia para Revisión', 1, '2025-04-22', '10285', '10286', 'Revisión pendiente de evidencia', FALSE, FALSE, FALSE);
 
 
 INSERT INTO permissions (permission_id, permission_name)

@@ -124,8 +124,8 @@ CREATE TABLE academic_managements (
     cv_id BIGINT,
     job_position VARCHAR(100),
     institution VARCHAR(50),
-    start_date VARCHAR(7),
-    end_date VARCHAR(7),
+    start_date VARCHAR(10),
+    end_date VARCHAR(10),
     PRIMARY KEY (academic_management_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -144,8 +144,8 @@ CREATE TABLE laboral_experiences (
     cv_id BIGINT,
     company_name VARCHAR(60),
     position VARCHAR(60),
-    start_date VARCHAR(7),
-    end_date VARCHAR(7),
+    start_date VARCHAR(10),
+    end_date VARCHAR(10),
     PRIMARY KEY (laboral_experience_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -304,7 +304,7 @@ INSERT INTO role(role_id, role_name)VALUES
 (3, 'COORDINADOR'),
 (4, 'PROFESOR'),
 (5, 'DIRECTIVO'),
-(6, 'DEPARTAMENTO UNIVERSITARIO');
+(6, 'DEPARTAMENTO UNIVERSITARIO'),
 (7, 'PERSONAL DE APOYO');
 
 INSERT INTO permissions(permission_id, permission_name)VALUES
@@ -343,7 +343,7 @@ INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
 (6, 1, true),
 (6, 2, true),
 (6, 3, true),
-(6, 4, true).
+(6, 4, true),
 
 (7, 1, true),
 (7, 2, true),
