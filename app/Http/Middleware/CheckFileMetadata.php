@@ -22,10 +22,10 @@ class CheckFileMetadata
         // Revisa que los tipos de archivo y el espacio restante sean correctos
         $request->validate([
             'files' => 'array',
-            'files.*' => 'file|mimes:pdf,rar,zip,doc,docx,xlsx,xls,csv|max:' . $remainingSpace,
+            'files.*' => 'file|mimes:rar,zip|max:' . $remainingSpace,
         ], [
             'files.*.max' => 'Cada archivo no debe de exceder 50 MB.',
-            'files.*.mimes' => 'Los archivos deben ser PDF, DOC, DOCX, PNG, JPG, JPEG o XLSX.'
+            'files.*.mimes' => 'Los archivos deben ser RAR o ZIP.'
         ]);
 
         return $next($request);
