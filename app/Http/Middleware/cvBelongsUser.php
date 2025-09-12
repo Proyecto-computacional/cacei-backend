@@ -18,9 +18,10 @@ class cvBelongsUser
     {
         $cv = Cv::find($request->route('cv_id'));
 
-        if (!$cv || $cv->user_id !== auth()->user()->user_rpe) {
-            abort(403, 'No tienes permiso para modificar este CV');
-        }
+        if (!$cv || ($cv->user_rpe !== auth()->user()->user_rpe && auth()->user()->user_role !== 'ADMINISTRADOR')) {
+    abort(403, 'No tienes permiso para modificar este CV');
+}
+
 
         return $next($request);
     }
