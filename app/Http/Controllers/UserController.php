@@ -10,17 +10,22 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query();
-        if ($request->has('search')) {
+        $query = User::with('area');
+
+        /*if ($request->has('search')) {
             $search = $request->input('search');
 
             $query->where(function ($q) use ($search) {
                 $q->where('user_mail', 'LIKE', "%$search%")
-                    ->orWhere('user_rpe', 'LIKE', "%$search%");
+                ->orWhere('user_rpe', 'LIKE', "%$search%")
+                ->orWhereHas('area', function ($q2) use ($search) {
+                    $q2->where('nombre', 'LIKE', "%$search%"); // Ajusta el campo de área
+                });
             });
-        }
+        }*/
+        
         return response()->json([
-            'usuarios' => $query->cursorPaginate(10), // Pagina los resultados si hay muchos
+            'usuarios' => $query->get(),
             'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO', 'ADMINISTRADOR']
         ]);
     }
