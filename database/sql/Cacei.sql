@@ -304,7 +304,7 @@ INSERT INTO role(role_id, role_name)VALUES
 (3, 'COORDINADOR'),
 (4, 'PROFESOR'),
 (5, 'DIRECTIVO'),
-(6, 'DEPARTAMENTO UNIVERSITARIO');
+(6, 'DEPARTAMENTO UNIVERSITARIO'),
 (7, 'PERSONAL DE APOYO');
 
 INSERT INTO permissions(permission_id, permission_name)VALUES
