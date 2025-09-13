@@ -343,7 +343,7 @@ INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
 (6, 1, true),
 (6, 2, true),
 (6, 3, true),
-(6, 4, true).
+(6, 4, true),
 
 (7, 1, true),
 (7, 2, true),
