@@ -17,14 +17,12 @@ CREATE TABLE permissions (
     permission_name VARCHAR(50) UNIQUE NOT NULL
 );
 
-
 CREATE TABLE role_permissions (
-   
-    user_rpe VARCHAR(20) NOT NULL,
+    role_id int NOT NULL,
     permission_id INT NOT NULL,
     is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (user_rpe, permission_id),
-    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
+    PRIMARY KEY (role_id, permission_id),
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
     FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
 );
 
@@ -299,6 +297,60 @@ CREATE TABLE notifications (
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
     FOREIGN KEY (reviser_id) REFERENCES users(user_rpe)
 );
+
+INSERT INTO role(role_id, role_name)VALUES
+(1, 'ADMINISTRADOR'),
+(2, 'JEFE DE AREA'),
+(3, 'COORDINADOR'),
+(4, 'PROFESOR'),
+(5, 'DIRECTIVO'),
+(6, 'DEPARTAMENTO UNIVERSITARIO');
+(7, 'PERSONAL DE APOYO');
+
+INSERT INTO permissions(permission_id, permission_name)VALUES
+(1, 'Subir archivos'),
+(2, 'Actualizar archivos'),
+(3, 'Descargar archivos'),
+(4, 'Eliminar archivos');
+
+
+INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
+(1, 1, true),
+(1, 2, true),
+(1, 3, true),
+(1, 4, true),
+
+(2, 1, true),
+(2, 2, true),
+(2, 3, true),
+(2, 4, true),
+
+(3, 1, true),
+(3, 2, true),
+(3, 3, true),
+(3, 4, true),
+
+(4, 1, true),
+(4, 2, true),
+(4, 3, true),
+(4, 4, true),
+
+(5, 1, false),
+(5, 2, false),
+(5, 3, true),
+(5, 4, false),
+
+(6, 1, true),
+(6, 2, true),
+(6, 3, true),
+(6, 4, true).
+
+(7, 1, true),
+(7, 2, true),
+(7, 3, true),
+(7, 4, true);
+
+
 
 INSERT INTO areas (area_id, area_name) VALUES
 ('AR01', 'Área Agroindustrial'),
