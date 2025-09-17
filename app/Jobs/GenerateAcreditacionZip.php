@@ -42,31 +42,24 @@ class GenerateAcreditacionZip implements ShouldQueue
         $proceso = Accreditation_Process::find($procesoId);
         $area = $proceso->career->area->area_id;
 
-        $semester;
-        $dateProcess = new \DateTime($proceso->end_date);
+        $semester = $proceso->getSemester();
 
-        //calcular el semestre del proceso
-        if($dateProcess->format('n') <= 8 && $dateProcess->format('n') >= 1){
-            $semester = ($dateProcess->format('Y') - 1) . "-" . $dateProcess->format('Y') . "/II";
-        }else{
-            $semester = $dateProcess->format('Y') . "-" . ($dateProcess->format('Y') + 1) . "/I";
-        }
-
+        //Log::debug("Semestre compilacion", $semester);
         
         // Crear carpeta temporal
         $tempPath = storage_path("app/temp_zips/$procesoId");
         if (!file_exists($tempPath)) {
             mkdir($tempPath, 0777, true);
         }
-
+        
        //obtener los grupos del area en el semestre del proceso
         $area_groups = GroupController::getGroupsByArea($semester, $area);
         $area_groups_data = json_decode($area_groups->getContent(), true);
-
         $filesAdded = 0;
         if(isset($area_groups_data['data']['datos'])){
             $unique_rpes = array_unique(array_column($area_groups_data['data']['datos'], 'rpe'));
             mkdir("$tempPath/cv", 0777, true);
+            Log::debug("rpe", [$unique_rpes]);
             foreach($unique_rpes as $rpe){
             $response = CvController::saveCv($rpe, "$tempPath/cv/");
             $filesAdded++;
@@ -132,6 +125,8 @@ class GenerateAcreditacionZip implements ShouldQueue
 
             $zip->close();
         }
+
+        Log::debug("a");
 
         // Paso 6: Eliminar carpeta temporal
         File::deleteDirectory($tempPath);

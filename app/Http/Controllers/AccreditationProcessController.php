@@ -5,6 +5,7 @@ use App\Models\Accreditation_Process;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\GenerateAcreditacionZip;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -95,10 +96,11 @@ class AccreditationProcessController extends Controller
 
         // Ruta del ZIP generado por el job
         $zipPath = storage_path("app/zips/proceso_{$processId}.zip");
+        Log::debug($zipPath);
 
         // Si el archivo existe, lo devolvemos para descarga
         if (file_exists($zipPath)) {
-            return response()->download($zipPath)->deleteFileAfterSend(true);
+            return response()->download($zipPath);
         }
 
         return response()->json(['error' => 'No se encontraron archivos para este proceso.'], 404);
