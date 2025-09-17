@@ -1,8 +1,8 @@
 CREATE TABLE cvs (
     cv_id BIGSERIAL NOT NULL,
-    professor_number INT UNIQUE,
+    professor_number VARCHAR(20),
     update_date DATE,
-    professor_name VARCHAR(50),
+    professor_name VARCHAR(150),
     age INT,
     birth_date DATE,
     actual_position VARCHAR(25),
@@ -353,25 +353,25 @@ INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
 
 
 INSERT INTO areas (area_id, area_name) VALUES
-('AR01', 'Área Agroindustrial'),
+('7', 'Área Agroindustrial'),
 ('2', 'Área de Ciencias de la Computación'),
 ('AR03', 'Área de Ciencias de la Tierra'),
 ('3', 'Área Civil'),
-('AR05', 'Área Mecánica y Eléctrica'),
+('5', 'Área Mecánica y Eléctrica'),
 ('AR06', 'Área de Metalurgia y Materiales');
 
 INSERT INTO careers (career_id, area_id, career_name) VALUES
-('CA01', 'AR01', 'Ingeniería Agroindustrial'),
+('CA01', '7', 'Ingeniería Agroindustrial'),
 ('CA02', 'AR03', 'Ingeniería Ambiental'),
 ('CA03', '3', 'Ingeniería Civil'),
 ('CA04', '2', 'Ingeniería en Computación'),
-('CA05', 'AR05', 'Ingeniería en Electricidad y Automatización'),
+('CA05', '5', 'Ingeniería en Electricidad y Automatización'),
 ('CA06', 'AR03', 'Ingeniería en Geología'),
 ('CA07', '2', 'Ingeniería en Sistemas Inteligentes'),
 ('CA08', '3', 'Ingeniería en Topografía y Construcción'),
-('CA09', 'AR05', 'Ingeniería Mecánica'),
-('CA10', 'AR05', 'Ingeniería Mecánica Administrativa'),
-('CA11', 'AR05', 'Ingeniería Mecánica Eléctrica'),
-('CA12', 'AR05', 'Ingeniería Mecatrónica'),
+('CA09', '5', 'Ingeniería Mecánica'),
+('CA10', '5', 'Ingeniería Mecánica Administrativa'),
+('CA11', '5', 'Ingeniería Mecánica Eléctrica'),
+('CA12', '5', 'Ingeniería Mecatrónica'),
 ('CA13', 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
 ('CA14', 'AR04', 'Ingeniería Geoinformática');

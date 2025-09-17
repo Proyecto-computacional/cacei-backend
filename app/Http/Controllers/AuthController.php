@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\Cv;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
@@ -26,22 +27,6 @@ class AuthController extends Controller
             'contra' => $request->password,
             'key' => $clave
         ];
-
-        if($request->rpe == '12345'){
-            $user = User::where('user_rpe', $request->rpe)->first();
-            $token = $user->createToken('auth_token');
-
-                $token->accessToken->forceFill([
-                    'expires_at' => Carbon::now()->addMinutes(20)
-                ])->save();
-            return response()->json([
-                    'correct' => true,
-                    'message' => 'Login exitoso',
-                    'token' => $token,
-                    'rpe' => $request->rpe,
-                    'role' => 'CAPTURISTA'
-                ]);
-            } 
 
         $responseApi = Http::withHeaders([
             'Content-Type' => 'application/json',
@@ -67,12 +52,23 @@ class AuthController extends Controller
                         ]);
                     }
                 } else {
+                    do {
+                        $randomId = rand(1, 100);
+                    } while (Cv::where('cv_id', $randomId)->exists()); // Verifica que no se repita
+                        Cv::create([
+                        'cv_id' => $randomId,
+                        'professor_number' => $data['rpe'],
+                        'professor_name' => $data['nombre'],
+                        'actual_position' =>$data['cargo'],
+                    ]);
+
                     $user = User::create([
                         'user_rpe' => $data['rpe'],
                         'user_mail' => $data['correo'],
                         'user_role' => $data['cargo'],
                         'user_name' => $data['nombre'],
-                        'user_area' => $data['cve_area']
+                        'user_area' => $data['cve_area'],
+                        'cv_id' => $randomId
                     ]);                  
                 }
 
