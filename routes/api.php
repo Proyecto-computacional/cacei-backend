@@ -169,7 +169,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 //Exclusivos de administrador 
-Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,DIRECTIVO'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,DIRECTIVO,CAPTURISTA'])->group(function () {
     //6. Administracion de usuarios
     Route::get('/usersadmin', [UserController::class, 'index'])->name('usuarios.index');
     Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
@@ -283,7 +283,7 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 //Rutas hechas en la rama de asignarTareas
-Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA,DIRECTIVO'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA,DIRECTIVO,CAPTURISTA'])->group(function () {
     Route::get('/revisers', [ReviserController::class, 'index']);
     Route::post('/reviser', [ReviserController::class, 'store']);
     Route::post('/evidence', [EvidenceController::class, 'store']);

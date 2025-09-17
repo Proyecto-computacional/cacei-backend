@@ -19,7 +19,8 @@ class CheckRole
         'PROFESOR',
         'DIRECTIVO',
         'DEPARTAMENTO UNIVERSITARIO',
-        'PERSONAL DE APOYO'
+        'PERSONAL DE APOYO',
+        'CAPTURISTA'
     ];
 
     /**
