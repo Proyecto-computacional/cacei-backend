@@ -217,7 +217,7 @@ CREATE TABLE awards (
 CREATE TABLE contributions_to_pe (
     contribution_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    description VARCHAR(1200),
+    description VARCHAR(2000),
     PRIMARY KEY (contribution_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
