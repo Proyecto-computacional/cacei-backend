@@ -1,4 +1,4 @@
-
+SET TIMEZONE = 'America/Mexico_City';
 
 CREATE TABLE role (
     role_id SERIAL PRIMARY KEY,
