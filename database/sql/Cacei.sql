@@ -119,7 +119,7 @@ CREATE TABLE educations (
     institution VARCHAR(30),
     degree_obtained VARCHAR(1),
     obtained_year INT,
-    professional_license VARCHAR(30),
+    professional_license VARCHAR(10),
     degree_name VARCHAR(100),
     PRIMARY KEY (education_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
@@ -201,7 +201,7 @@ CREATE TABLE participations (
     cv_id BIGINT,
     institution VARCHAR(30),
     period INT,
-    level_participation VARCHAR(20),
+    level_participation INT,
     PRIMARY KEY (participation_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
