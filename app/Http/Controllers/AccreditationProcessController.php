@@ -102,7 +102,7 @@ class AccreditationProcessController extends Controller
 
         // Si el archivo existe, lo devolvemos para descarga
         if (file_exists($zipPath)) {
-            return response()->download($zipPath);
+            return response()->download($zipPath)->deleteFileAfterSend();
         }
 
         return response()->json(['error' => 'No se encontraron archivos para este proceso.'], 404);
