@@ -354,9 +354,3 @@ INSERT INTO careers (career_id, area_id, career_name) VALUES
 ('CA13', 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
 ('CA14', 'AR03', 'Ingeniería Geoinformática');
 
-INSERT INTO users (user_rpe, user_mail, user_role, user_name, user_area, cv_id, situation)
-VALUES ('10285', 'beto@uaslp.mx', 'PROFESOR', 'RAMOS BLANCO ALBERTO', 2, 1, 'Activo'),
-       ('10314', 'eduardo.perez@uaslp.mx', 'COORDINADOR DE CARRERA', 'MARTÍNEZ PÉREZ FRANCISCO EDUARDO', 2, 2, 'Activo'),
-       ('18220', 'oscar.reyes@uaslp.mx', 'PROFESOR', 'REYES CARDENAZ OSCAR', 2, 3, 'Activo'),
-       ('3045', 'diaquili@uaslp.mx', 'ADMINISTRADOR', 'DIAZ QUIÑONES LILIA DEL CARMEN', 2, 4, 'Activo');
-
