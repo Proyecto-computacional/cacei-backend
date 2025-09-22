@@ -23,7 +23,7 @@ class UserController extends Controller
                 });
             });
         }*/
-        
+
         return response()->json([
             'usuarios' => $query->get(),
             'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO', 'ADMINISTRADOR']
@@ -62,7 +62,7 @@ class UserController extends Controller
         $assignments = Evidence::with([
             'standard:standard_id,standard_name', // Traemos el criterio (nombre del standard)
             'status' => function ($query) {
-                $query->orderByDesc('status_date')->limit(1); // Solo el último estado
+                $query->orderByDesc('status_date'); // Solo el último estado
             }
         ])
             ->where('user_rpe', $user->user_rpe)
@@ -72,7 +72,7 @@ class UserController extends Controller
                 return [
                     'evidence_id' => $evidence->evidence_id,
                     'criterio' => $evidence->standard?->standard_name,
-                    'estado' => $evidence->status->first()?->status_description ?? 'PENDIENTE', // El nombre del estado más reciente
+                    'estado' => $evidence->status->first()?->status_description ?? 'MALO', // El nombre del estado más reciente
                 ];
             });
 
