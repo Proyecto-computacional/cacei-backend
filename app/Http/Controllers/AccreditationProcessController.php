@@ -5,6 +5,9 @@ use App\Models\Accreditation_Process;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\GenerateAcreditacionZip;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -95,10 +98,11 @@ class AccreditationProcessController extends Controller
 
         // Ruta del ZIP generado por el job
         $zipPath = storage_path("app/zips/proceso_{$processId}.zip");
+        Log::debug($zipPath);
 
         // Si el archivo existe, lo devolvemos para descarga
         if (file_exists($zipPath)) {
-            return response()->download($zipPath)->deleteFileAfterSend(true);
+            return response()->download($zipPath)->deleteFileAfterSend();
         }
 
         return response()->json(['error' => 'No se encontraron archivos para este proceso.'], 404);
@@ -213,5 +217,70 @@ class AccreditationProcessController extends Controller
         $process->save();  // Guarda el cambio en la base de datos
 
         return response()->json(['message' => 'Estado de proceso actualizado']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de favorito
+    }
+
+    public function getCVsProcess($processId){
+
+        $process = Accreditation_Process::with('career')->find($processId);
+        
+        
+        if(!$process){
+            return response()->json(['message' => 'No se encontro proceso'], 404);
+        }
+
+        $semester = $process->getSemester();
+        $area = $process->career->area->area_id;
+
+        //usuarios que dan clase en el area de la carrera (Falta un filtro con plan educativo para que solo sean materias de la carrera)
+        $users_area = self::getUsersOfAreaBySemester($semester, $area);
+        //La api tiene un error al mandar el area 0 (DFM), detecta que los campos no estan completos.
+        $users_dfm = self::getUsersOfAreaBySemester($semester, 0);
+        //Area humanistica = 1
+        $users_humanistic = self::getUsersOfAreaBySemester($semester, 1);
+        //La api no tiene datos de los profesores del DUI
+        //$users_english = self::getUsersOfAreaBySemester($semester, '7');
+
+    
+        return response()->json(['rpes_area' => $users_area, 'rpes_dfm' => $users_dfm, 'rpes_humanistic' => $users_humanistic]);
+        
+    }
+
+    public static function getUsersOfAreaBySemester($semester, $area){
+        //Obtener los grupos de clase de un area en un semestre.
+        $area_groups = GroupController::getGroupsByArea($semester, $area);
+        $area_groups_data = json_decode($area_groups->getContent(), true);
+
+        if(isset($area_groups_data['data']['datos'])){
+
+            //Eliminar claves repetidas para obtener el listado de profesores que están dando clase.
+            $teachers_area = array_unique(array_column($area_groups_data['data']['datos'], 'nombre' ,'rpe'));
+            //Castear rpes a string para la consulta
+            $rpes_area = array_map('strval', array_keys($teachers_area));
+              
+            $users = User::whereIn('user_rpe', $rpes_area)
+                ->get(['user_rpe', 'user_name'])
+                ->keyBy('user_rpe');
+
+            $users_area = collect($rpes_area)->map(function($rpe) use ($users, $teachers_area) {
+                if (isset($users[$rpe])) {
+                    return [
+                        'user_rpe'  => $users[$rpe]->user_rpe,
+                        'user_name' => $users[$rpe]->user_name,
+                    ];
+                }
+                
+                // si no existe en la BD
+                return [
+                    'user_rpe'  => null, //devolver rpe null para indicar en el front que no tenemos información del profesor.
+                    'user_name' => $teachers_area[$rpe],
+                ];
+            })->toArray();
+            
+        }else{
+            $rpes_area = [];
+            $users_area = [];
+        }
+
+        return $users_area;
     }
 }
