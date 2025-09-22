@@ -16,7 +16,8 @@ class Accreditation_Process extends Model
         'process_name',
         'start_date',
         'end_date',
-        'due_date'
+        'due_date',
+        'finished'
     ];
     public $timestamps = false;
     protected $primaryKey = 'process_id';
