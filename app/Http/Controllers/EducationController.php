@@ -19,8 +19,8 @@ class EducationController extends Controller
             'institution' => 'required|string|max:30',
             'degree_obtained' => 'required|string|max:1',
             'obtained_year' => 'required|integer',
-            'professional_license' => 'nullable|string|max:8',
-            'degree_name' => 'required|string|max:50',
+            'professional_license' => 'nullable|string|max:10',
+            'degree_name' => 'required|string|max:100',
         ]);
         
         $education = Education::updateOrCreate(

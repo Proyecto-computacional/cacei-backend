@@ -16,7 +16,7 @@ class ContributionToPeController extends Controller
     public function store(Request $request, $cv_id)
     {
         $validated = $request->validate([
-            'description' => 'required|string|max:255',
+            'description' => 'required|string|max:2000',
         ]);
 
          $contribution = ContributionToPe::updateOrCreate(

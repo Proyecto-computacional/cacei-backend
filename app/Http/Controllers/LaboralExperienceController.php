@@ -16,8 +16,8 @@ class LaboralExperienceController extends Controller
     public function store(Request $request, $cv_id)
     {
         $validated = $request->validate([
-            'company_name' => 'required|string|max:50',
-            'position' => 'required|string|max:50',
+            'company_name' => 'required|string|max:60',
+            'position' => 'required|string|max:60',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
         ]);

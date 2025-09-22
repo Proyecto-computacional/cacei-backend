@@ -152,8 +152,8 @@ CREATE TABLE academic_managements (
     cv_id BIGINT,
     job_position VARCHAR(100),
     institution VARCHAR(50),
-    start_date VARCHAR(7),
-    end_date VARCHAR(7),
+    start_date DATE,
+    end_date DATE,
     PRIMARY KEY (academic_management_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -172,8 +172,8 @@ CREATE TABLE laboral_experiences (
     cv_id BIGINT,
     company_name VARCHAR(60),
     position VARCHAR(60),
-    start_date VARCHAR(7),
-    end_date VARCHAR(7),
+    start_date DATE,
+    end_date DATE,
     PRIMARY KEY (laboral_experience_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -201,7 +201,7 @@ CREATE TABLE participations (
     cv_id BIGINT,
     institution VARCHAR(30),
     period INT,
-    level_participation INT,
+    level_participation VARCHAR(20),
     PRIMARY KEY (participation_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -217,7 +217,7 @@ CREATE TABLE awards (
 CREATE TABLE contributions_to_pe (
     contribution_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    description VARCHAR(1200),
+    description VARCHAR(2000),
     PRIMARY KEY (contribution_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
