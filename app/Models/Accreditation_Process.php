@@ -16,7 +16,8 @@ class Accreditation_Process extends Model
         'process_name',
         'start_date',
         'end_date',
-        'due_date'
+        'due_date',
+        'finished'
     ];
     public $timestamps = false;
     protected $primaryKey = 'process_id';
@@ -38,5 +39,18 @@ class Accreditation_Process extends Model
     public function evidences()
     {
         return $this->hasMany(Evidence::class, 'process_id', 'process_id');
+    }
+
+    public function getSemester(){
+        $dateProcess = new \DateTime($this->end_date);
+        $semester = '';
+        //calcular el semestre del proceso
+        if($dateProcess->format('n') <= 8 && $dateProcess->format('n') >= 1){
+            $semester = ($dateProcess->format('Y') - 1) . "-" . $dateProcess->format('Y') . "/II";
+        }else{
+            $semester = $dateProcess->format('Y') . "-" . ($dateProcess->format('Y') + 1) . "/I";
+        }
+
+        return $semester;
     }
 }

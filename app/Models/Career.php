@@ -16,7 +16,7 @@ class Career extends Model
     ];
     public $timestamps = false;
     protected $primaryKey = 'career_id';
-
+    protected $keyType = 'string';
     protected $table = 'careers';
 
     public function area()
