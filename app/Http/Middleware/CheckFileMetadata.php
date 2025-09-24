@@ -19,10 +19,11 @@ class CheckFileMetadata
         $totalSize = $files->sum('size');
         $remainingSpace = 51200 - $totalSize;
 
-        // Revisa que los tipos de archivo y el espacio restante sean correctos
+        // Revisa que los tipos de archivo y el espacio restante sean correctos, y que lleve evidence_id
         $request->validate([
             'files' => 'array',
             'files.*' => 'file|mimes:rar,zip|max:' . $remainingSpace,
+            'evidence_id' => 'required|exists:evidences,evidence_id',
         ], [
             'files.*.max' => 'Cada archivo no debe de exceder 50 MB.',
             'files.*.mimes' => 'Los archivos deben ser RAR o ZIP.'

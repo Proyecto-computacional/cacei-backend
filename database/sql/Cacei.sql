@@ -1,24 +1,3 @@
-SET TIMEZONE = 'America/Mexico_City';
-
-CREATE TABLE role (
-    role_id SERIAL PRIMARY KEY,
-    role_name VARCHAR(50) UNIQUE NOT NULL
-);
-
-CREATE TABLE permissions (
-    permission_id SERIAL PRIMARY KEY,
-    permission_name VARCHAR(50) UNIQUE NOT NULL
-);
-
-CREATE TABLE role_permissions (
-    role_id INT NOT NULL,
-    permission_id INT NOT NULL,
-    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (role_id, permission_id),
-    FOREIGN KEY (role_id) REFERENCES role(role_id),
-    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
-);
-
 CREATE TABLE cvs (
     cv_id BIGSERIAL NOT NULL,
     professor_number INT UNIQUE,
@@ -31,16 +10,11 @@ CREATE TABLE cvs (
     PRIMARY KEY (cv_id)
 );
 
-CREATE TABLE frames_of_reference (
-    frame_id INT NOT NULL,
-    frame_name VARCHAR(60) NOT NULL,
-    PRIMARY KEY (frame_id)
-);
 
-CREATE TABLE areas (
-    area_id VARCHAR(20) NOT NULL,
-    area_name VARCHAR(60) NOT NULL,
-    PRIMARY KEY (area_id)
+
+CREATE TABLE permissions (
+    permission_id SERIAL PRIMARY KEY,
+    permission_name VARCHAR(50) UNIQUE NOT NULL
 );
 
 
@@ -49,15 +23,31 @@ CREATE TABLE users (
     user_mail VARCHAR(100) UNIQUE NOT NULL,
     user_role VARCHAR(30) NOT NULL,
     user_name VARCHAR(150) NOT NULL,
-    user_area VARCHAR(20) NOT NULL,
     cv_id BIGINT,
     situation VARCHAR(20),
     PRIMARY KEY (user_rpe),
-    FOREIGN KEY (user_area) REFERENCES areas(area_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 
+CREATE TABLE role(
+    role_id int PRIMARY KEY,
+    role_name varchar(30)
+);
 
+CREATE TABLE role_permissions (
+    role_id int NOT NULL,
+    permission_id INT NOT NULL,
+    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (role_id, permission_id),
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
+    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
+);
+
+CREATE TABLE frames_of_reference (
+    frame_id INT NOT NULL,
+    frame_name VARCHAR(60) NOT NULL,
+    PRIMARY KEY (frame_id)
+);
 
 CREATE TABLE categories (
     category_id INT NOT NULL,
@@ -100,14 +90,13 @@ CREATE TABLE evidences (
     due_date DATE NOT NULL,
     justification VARCHAR(1024),
     PRIMARY KEY (evidence_id),
-    FOREIGN KEY (standard_id) REFERENCES standards(standard_id),
-    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
+    FOREIGN KEY (standard_id) REFERENCES standards(standard_id)
 );
 
 CREATE TABLE revisers (
     reviser_id BIGSERIAL NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    evidence_id INT,
+    evidence_id BIGINT,
     PRIMARY KEY (reviser_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)
@@ -119,7 +108,7 @@ CREATE TABLE educations (
     institution VARCHAR(30),
     degree_obtained VARCHAR(1),
     obtained_year INT,
-    professional_license VARCHAR(10),
+    professional_license VARCHAR(30),
     degree_name VARCHAR(100),
     PRIMARY KEY (education_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
@@ -152,8 +141,8 @@ CREATE TABLE academic_managements (
     cv_id BIGINT,
     job_position VARCHAR(100),
     institution VARCHAR(50),
-    start_date VARCHAR(7),
-    end_date VARCHAR(7),
+    start_date VARCHAR(10),
+    end_date VARCHAR(10),
     PRIMARY KEY (academic_management_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -172,8 +161,8 @@ CREATE TABLE laboral_experiences (
     cv_id BIGINT,
     company_name VARCHAR(60),
     position VARCHAR(60),
-    start_date VARCHAR(7),
-    end_date VARCHAR(7),
+    start_date VARCHAR(10),
+    end_date VARCHAR(10),
     PRIMARY KEY (laboral_experience_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -201,7 +190,7 @@ CREATE TABLE participations (
     cv_id BIGINT,
     institution VARCHAR(30),
     period INT,
-    level_participation INT,
+    level_participation VARCHAR(20),
     PRIMARY KEY (participation_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -217,9 +206,17 @@ CREATE TABLE awards (
 CREATE TABLE contributions_to_pe (
     contribution_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    description VARCHAR(2000),
+    description VARCHAR(500),
     PRIMARY KEY (contribution_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+);
+
+CREATE TABLE areas (
+    area_id VARCHAR(20) NOT NULL,
+    area_name VARCHAR(60) NOT NULL,
+    user_rpe VARCHAR(20),
+    PRIMARY KEY (area_id),
+    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
 );
 
 CREATE TABLE careers (
@@ -293,7 +290,7 @@ CREATE TABLE notifications (
     evidence_id INT,
     notification_date DATE NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    reviser_id BIGINT NOT NULL, 
+    reviser_id VARCHAR(20) NOT NULL, 
     description VARCHAR(255),
     seen BOOL NOT NULL,
     pinned BOOL NOT NULL DEFAULT FALSE,
@@ -301,12 +298,10 @@ CREATE TABLE notifications (
     PRIMARY KEY (notification_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
-    FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
+    FOREIGN KEY (reviser_id) REFERENCES users(user_rpe)
 );
 
-
-
-INSERT INTO role(role_id, role_name) VALUES
+INSERT INTO role(role_id, role_name)VALUES
 (1, 'ADMINISTRADOR'),
 (2, 'JEFE DE AREA'),
 (3, 'COORDINADOR'),
@@ -315,41 +310,71 @@ INSERT INTO role(role_id, role_name) VALUES
 (6, 'DEPARTAMENTO UNIVERSITARIO'),
 (7, 'PERSONAL DE APOYO');
 
-INSERT INTO permissions(permission_id, permission_name) VALUES
+INSERT INTO permissions(permission_id, permission_name)VALUES
 (1, 'Subir archivos'),
 (2, 'Actualizar archivos'),
 (3, 'Descargar archivos'),
 (4, 'Eliminar archivos');
 
+
 INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
-(1, 1, true), (1, 2, true), (1, 3, true), (1, 4, true),
-(2, 1, true), (2, 2, true), (2, 3, true), (2, 4, true),
-(3, 1, true), (3, 2, true), (3, 3, true), (3, 4, true),
-(4, 1, true), (4, 2, true), (4, 3, true), (4, 4, true),
-(5, 1, false), (5, 2, false), (5, 3, true), (5, 4, false),
-(6, 1, true), (6, 2, true), (6, 3, true), (6, 4, true),
-(7, 1, true), (7, 2, true), (7, 3, true), (7, 4, true);
+(1, 1, true),
+(1, 2, true),
+(1, 3, true),
+(1, 4, true),
+
+(2, 1, true),
+(2, 2, true),
+(2, 3, true),
+(2, 4, true),
+
+(3, 1, true),
+(3, 2, true),
+(3, 3, true),
+(3, 4, true),
+
+(4, 1, true),
+(4, 2, true),
+(4, 3, true),
+(4, 4, true),
+
+(5, 1, false),
+(5, 2, false),
+(5, 3, true),
+(5, 4, false),
+
+(6, 1, true),
+(6, 2, true),
+(6, 3, true),
+(6, 4, true),
+
+(7, 1, true),
+(7, 2, true),
+(7, 3, true),
+(7, 4, true);
+
+
 
 INSERT INTO areas (area_id, area_name) VALUES
 ('AR01', 'Área Agroindustrial'),
-('2', 'Área de Ciencias de la Computación'),
+('AR02', 'Área de Ciencias de la Computación'),
 ('AR03', 'Área de Ciencias de la Tierra'),
-('3', 'Área Civil'),
+('AR04', 'Área Civil'),
 ('AR05', 'Área Mecánica y Eléctrica'),
 ('AR06', 'Área de Metalurgia y Materiales');
 
 INSERT INTO careers (career_id, area_id, career_name) VALUES
 ('CA01', 'AR01', 'Ingeniería Agroindustrial'),
 ('CA02', 'AR03', 'Ingeniería Ambiental'),
-('CA03', '3', 'Ingeniería Civil'),
-('CA04', '2', 'Ingeniería en Computación'),
+('CA03', 'AR04', 'Ingeniería Civil'),
+('CA04', 'AR02', 'Ingeniería en Computación'),
 ('CA05', 'AR05', 'Ingeniería en Electricidad y Automatización'),
 ('CA06', 'AR03', 'Ingeniería en Geología'),
-('CA07', '2', 'Ingeniería en Sistemas Inteligentes'),
-('CA08', '3', 'Ingeniería en Topografía y Construcción'),
+('CA07', 'AR02', 'Ingeniería en Sistemas Inteligentes'),
+('CA08', 'AR04', 'Ingeniería en Topografía y Construcción'),
 ('CA09', 'AR05', 'Ingeniería Mecánica'),
 ('CA10', 'AR05', 'Ingeniería Mecánica Administrativa'),
 ('CA11', 'AR05', 'Ingeniería Mecánica Eléctrica'),
 ('CA12', 'AR05', 'Ingeniería Mecatrónica'),
 ('CA13', 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
-('CA14', 'AR03', 'Ingeniería Geoinformática');
+('CA14', 'AR04', 'Ingeniería Geoinformática');
