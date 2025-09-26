@@ -26,3 +26,4 @@ storage/framework/cache/*
 storage/framework/cache/data
 storage/framework/cache/data/*
 !storage/app/public/CV_*.docx
+public/phpinfo.php
