@@ -2,25 +2,6 @@
 
 SET TIMEZONE = 'America/Mexico_City';
 
-CREATE TABLE role (
-    role_id SERIAL PRIMARY KEY,
-    role_name VARCHAR(50) UNIQUE NOT NULL
-);
-
-CREATE TABLE permissions (
-    permission_id SERIAL PRIMARY KEY,
-    permission_name VARCHAR(50) UNIQUE NOT NULL
-);
-
-CREATE TABLE role_permissions (
-    role_id INT NOT NULL,
-    permission_id INT NOT NULL,
-    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (role_id, permission_id),
-    FOREIGN KEY (role_id) REFERENCES role(role_id),
-    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
-);
-
 CREATE TABLE cvs (
     cv_id BIGSERIAL NOT NULL,
     professor_number INT,
