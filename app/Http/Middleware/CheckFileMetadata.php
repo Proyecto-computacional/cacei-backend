@@ -25,7 +25,7 @@ class CheckFileMetadata
             'files.*' => 'file|mimes:rar,zip|max:' . $remainingSpace,
             'evidence_id' => 'required|exists:evidences,evidence_id',
         ], [
-            'files.*.max' => 'Cada archivo no debe de exceder 50 MB.',
+            'files.*.max' => 'El conjunto de archivos no debe de exceder los 50 MB. ' . ($remainingSpace / 1024) . ' MB restantes.',
             'files.*.mimes' => 'Los archivos deben ser RAR o ZIP.'
         ]);
 
