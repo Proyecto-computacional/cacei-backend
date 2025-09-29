@@ -1,5 +1,26 @@
 /*Nota: modificar restricciones y validaciones en controladores*/
 
+SET TIMEZONE = 'America/Mexico_City';
+
+CREATE TABLE role (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE permissions (
+    permission_id SERIAL PRIMARY KEY,
+    permission_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE role_permissions (
+    role_id INT NOT NULL,
+    permission_id INT NOT NULL,
+    is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (role_id, permission_id),
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
+    FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
+);
+
 CREATE TABLE cvs (
     cv_id BIGSERIAL NOT NULL,
     professor_number INT,
@@ -39,6 +60,28 @@ CREATE TABLE frames_of_reference (
     frame_name VARCHAR(60) NOT NULL,
     PRIMARY KEY (frame_id)
 );
+
+CREATE TABLE areas (
+    area_id VARCHAR(20) NOT NULL,
+    area_name VARCHAR(60) NOT NULL,
+    PRIMARY KEY (area_id)
+);
+
+
+CREATE TABLE users (
+    user_rpe VARCHAR(20) NOT NULL,
+    user_mail VARCHAR(100) UNIQUE NOT NULL,
+    user_role VARCHAR(30) NOT NULL,
+    user_name VARCHAR(150) NOT NULL,
+    user_area VARCHAR(20) NOT NULL,
+    cv_id BIGINT,
+    situation VARCHAR(20),
+    PRIMARY KEY (user_rpe),
+    FOREIGN KEY (user_area) REFERENCES areas(area_id),
+    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+);
+
+
 
 CREATE TABLE categories (
     category_id BIGSERIAL NOT NULL,
@@ -80,13 +123,14 @@ CREATE TABLE evidences (
     due_date DATE NOT NULL,
     justification VARCHAR(2048),
     PRIMARY KEY (evidence_id),
-    FOREIGN KEY (standard_id) REFERENCES standards(standard_id)
+    FOREIGN KEY (standard_id) REFERENCES standards(standard_id),
+    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
 );
 
 CREATE TABLE revisers (
     reviser_id BIGSERIAL NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    evidence_id BIGINT,
+    evidence_id INT,
     PRIMARY KEY (reviser_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)
@@ -98,7 +142,7 @@ CREATE TABLE educations (
     institution VARCHAR(70),
     degree_obtained VARCHAR(1),
     obtained_year INT,
-    professional_license VARCHAR(30),
+    professional_license VARCHAR(10),
     degree_name VARCHAR(100),
     PRIMARY KEY (education_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
@@ -180,7 +224,7 @@ CREATE TABLE participations (
     cv_id BIGINT,
     institution VARCHAR(70),
     period INT,
-    level_participation VARCHAR(20),
+    level_participation INT,
     PRIMARY KEY (participation_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -277,7 +321,7 @@ CREATE TABLE notifications (
     evidence_id BIGINT,
     notification_date DATE NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    reviser_id VARCHAR(20) NOT NULL, 
+    reviser_id BIGINT NOT NULL, 
     description VARCHAR(255),
     seen BOOL NOT NULL,
     pinned BOOL NOT NULL DEFAULT FALSE,
@@ -285,62 +329,34 @@ CREATE TABLE notifications (
     PRIMARY KEY (notification_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
-    FOREIGN KEY (reviser_id) REFERENCES users(user_rpe)
+    FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
 );
 
-INSERT INTO role(role_id, role_name)VALUES
+
+
+INSERT INTO role(role_id, role_name) VALUES
 (1, 'ADMINISTRADOR'),
 (2, 'JEFE DE AREA'),
 (3, 'COORDINADOR'),
 (4, 'PROFESOR'),
 (5, 'DIRECTIVO'),
-(6, 'DEPARTAMENTO UNIVERSITARIO');
+(6, 'DEPARTAMENTO UNIVERSITARIO'),
 (7, 'PERSONAL DE APOYO');
 
-INSERT INTO permissions(permission_id, permission_name)VALUES
+INSERT INTO permissions(permission_id, permission_name) VALUES
 (1, 'Subir archivos'),
 (2, 'Actualizar archivos'),
 (3, 'Descargar archivos'),
 (4, 'Eliminar archivos');
 
-
 INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
-(1, 1, true),
-(1, 2, true),
-(1, 3, true),
-(1, 4, true),
-
-(2, 1, true),
-(2, 2, true),
-(2, 3, true),
-(2, 4, true),
-
-(3, 1, true),
-(3, 2, true),
-(3, 3, true),
-(3, 4, true),
-
-(4, 1, true),
-(4, 2, true),
-(4, 3, true),
-(4, 4, true),
-
-(5, 1, false),
-(5, 2, false),
-(5, 3, true),
-(5, 4, false),
-
-(6, 1, true),
-(6, 2, true),
-(6, 3, true),
-(6, 4, true).
-
-(7, 1, true),
-(7, 2, true),
-(7, 3, true),
-(7, 4, true);
-
-
+(1, 1, true), (1, 2, true), (1, 3, true), (1, 4, true),
+(2, 1, true), (2, 2, true), (2, 3, true), (2, 4, true),
+(3, 1, true), (3, 2, true), (3, 3, true), (3, 4, true),
+(4, 1, true), (4, 2, true), (4, 3, true), (4, 4, true),
+(5, 1, false), (5, 2, false), (5, 3, true), (5, 4, false),
+(6, 1, true), (6, 2, true), (6, 3, true), (6, 4, true),
+(7, 1, true), (7, 2, true), (7, 3, true), (7, 4, true);
 
 INSERT INTO areas (area_id, area_name) VALUES
 ('7', 'Área Agroindustrial'),
@@ -364,4 +380,4 @@ INSERT INTO careers (career_id, area_id, career_name) VALUES
 ('CA11', '5', 'Ingeniería Mecánica Eléctrica'),
 ('CA12', '5', 'Ingeniería Mecatrónica'),
 ('CA13', 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
-('CA14', 'AR04', 'Ingeniería Geoinformática');
+('CA14', 'AR03', 'Ingeniería Geoinformática');
