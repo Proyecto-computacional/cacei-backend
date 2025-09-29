@@ -1,17 +1,34 @@
+/*Nota: modificar restricciones y validaciones en controladores*/
+
 SET TIMEZONE = 'America/Mexico_City';
 
-CREATE TABLE role (
-    role_id SERIAL PRIMARY KEY,
-    role_name VARCHAR(50) UNIQUE NOT NULL
+CREATE TABLE cvs (
+    cv_id BIGSERIAL NOT NULL,
+    professor_number INT,
+    update_date DATE,
+    professor_name VARCHAR(150),
+    age INT,
+    birth_date DATE,
+    actual_position VARCHAR(40),
+    duration INT,
+    PRIMARY KEY (cv_id)
 );
+
+
 
 CREATE TABLE permissions (
     permission_id SERIAL PRIMARY KEY,
     permission_name VARCHAR(50) UNIQUE NOT NULL
 );
 
-CREATE TABLE role_permissions (
+CREATE TABLE role (
     role_id INT NOT NULL,
+    role_name VARCHAR (30) NOT NULL,
+    PRIMARY KEY (role_id)
+);
+
+CREATE TABLE role_permissions (
+    role_id int NOT NULL,
     permission_id INT NOT NULL,
     is_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (role_id, permission_id),
@@ -19,20 +36,8 @@ CREATE TABLE role_permissions (
     FOREIGN KEY (permission_id) REFERENCES permissions(permission_id)
 );
 
-CREATE TABLE cvs (
-    cv_id BIGSERIAL NOT NULL,
-    professor_number INT UNIQUE,
-    update_date DATE,
-    professor_name VARCHAR(50),
-    age INT,
-    birth_date DATE,
-    actual_position VARCHAR(25),
-    duration INT,
-    PRIMARY KEY (cv_id)
-);
-
 CREATE TABLE frames_of_reference (
-    frame_id INT NOT NULL,
+    frame_id BIGSERIAL NOT NULL,
     frame_name VARCHAR(60) NOT NULL,
     PRIMARY KEY (frame_id)
 );
@@ -60,17 +65,17 @@ CREATE TABLE users (
 
 
 CREATE TABLE categories (
-    category_id INT NOT NULL,
+    category_id BIGSERIAL NOT NULL,
     category_name VARCHAR(60) NOT NULL,
-    frame_id INT NOT NULL,
+    frame_id BIGINT NOT NULL,
     indice INT NOT NULL, 
     PRIMARY KEY (category_id),
     FOREIGN KEY (frame_id) REFERENCES frames_of_reference(frame_id)
 );
 
 CREATE TABLE sections (
-    section_id INT NOT NULL,
-    category_id INT NOT NULL,
+    section_id BIGSERIAL NOT NULL,
+    category_id BIGINT NOT NULL,
     section_name VARCHAR(50) NOT NULL,
     section_description VARCHAR(150) NOT NULL,
     indice INT NOT NULL,
@@ -80,8 +85,8 @@ CREATE TABLE sections (
 );
 
 CREATE TABLE standards (
-    standard_id INT NOT NULL,
-    section_id INT NOT NULL,
+    standard_id BIGSERIAL NOT NULL,
+    section_id BIGINT NOT NULL,
     standard_name VARCHAR(50) NOT NULL,
     standard_description VARCHAR(150) NOT NULL,
     is_transversal BOOL NOT NULL,
@@ -92,13 +97,12 @@ CREATE TABLE standards (
 );
 
 CREATE TABLE evidences (
-    evidence_id INT NOT NULL,
-    standard_id INT NOT NULL,
+    evidence_id BIGSERIAL NOT NULL,
+    standard_id BIGINT NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    group_id INT,
     process_id INT NOT NULL,
     due_date DATE NOT NULL,
-    justification VARCHAR(1024),
+    justification VARCHAR(2048),
     PRIMARY KEY (evidence_id),
     FOREIGN KEY (standard_id) REFERENCES standards(standard_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
@@ -116,7 +120,7 @@ CREATE TABLE revisers (
 CREATE TABLE educations (
     education_id BIGSERIAL NOT NULL,
     cv_id BIGINT NOT NULL,
-    institution VARCHAR(30),
+    institution VARCHAR(70),
     degree_obtained VARCHAR(1),
     obtained_year INT,
     professional_license VARCHAR(10),
@@ -139,7 +143,7 @@ CREATE TABLE teacher_trainings (
 CREATE TABLE disciplinary_updates (
     disciplinary_update_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    title_certification VARCHAR(50),
+    title_certification VARCHAR(100),
     year_certification INT,
     institution_country VARCHAR(50),
     hours INT,
@@ -151,9 +155,9 @@ CREATE TABLE academic_managements (
     academic_management_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
     job_position VARCHAR(100),
-    institution VARCHAR(50),
-    start_date VARCHAR(7),
-    end_date VARCHAR(7),
+    institution VARCHAR(70),
+    start_date VARCHAR(10),
+    end_date VARCHAR(10),
     PRIMARY KEY (academic_management_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -172,8 +176,8 @@ CREATE TABLE laboral_experiences (
     cv_id BIGINT,
     company_name VARCHAR(60),
     position VARCHAR(60),
-    start_date VARCHAR(7),
-    end_date VARCHAR(7),
+    start_date VARCHAR(10),
+    end_date VARCHAR(10),
     PRIMARY KEY (laboral_experience_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -181,7 +185,7 @@ CREATE TABLE laboral_experiences (
 CREATE TABLE engineering_designs (
     engineering_design_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    institution VARCHAR(30),
+    institution VARCHAR(70),
     period INT,
     level_experience VARCHAR(20),
     PRIMARY KEY (engineering_design_id),
@@ -189,7 +193,7 @@ CREATE TABLE engineering_designs (
 );
 
 CREATE TABLE professional_achievements (
-    achievement_id INT NOT NULL,
+    achievement_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
     description VARCHAR(500),
     PRIMARY KEY (achievement_id),
@@ -199,7 +203,7 @@ CREATE TABLE professional_achievements (
 CREATE TABLE participations (
     participation_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    institution VARCHAR(30),
+    institution VARCHAR(70),
     period INT,
     level_participation INT,
     PRIMARY KEY (participation_id),
@@ -217,14 +221,36 @@ CREATE TABLE awards (
 CREATE TABLE contributions_to_pe (
     contribution_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    description VARCHAR(2000),
+    description VARCHAR(500),
     PRIMARY KEY (contribution_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 
-CREATE TABLE careers (
-    career_id VARCHAR(20) NOT NULL,
+CREATE TABLE areas (
     area_id VARCHAR(20) NOT NULL,
+    area_name VARCHAR(60) NOT NULL,
+    user_rpe VARCHAR(20),
+    PRIMARY KEY (area_id),
+    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
+);
+
+
+CREATE TABLE users (
+    user_rpe VARCHAR(20) NOT NULL,
+    user_mail VARCHAR(100) UNIQUE NOT NULL,
+    user_role VARCHAR(30) NOT NULL,
+    user_name VARCHAR(150) NOT NULL,
+    user_area VARCHAR(100) NOT NULL,
+    cv_id BIGINT,
+    situation VARCHAR(20),
+    PRIMARY KEY (user_rpe),
+    FOREIGN KEY (user_area) REFERENCES areas(area_id),
+    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+);
+
+CREATE TABLE careers (
+    career_id INT NOT NULL,
+    area_id INT NOT NULL,
     career_name VARCHAR(60) NOT NULL,
     user_rpe VARCHAR(20),
     PRIMARY KEY (career_id),
@@ -233,9 +259,9 @@ CREATE TABLE careers (
 );
 
 CREATE TABLE accreditation_processes (
-    process_id INT NOT NULL,
-    career_id VARCHAR(20) NOT NULL,
-    frame_id INT,
+    process_id BIGSERIAL NOT NULL,
+    career_id INT NOT NULL,
+    frame_id BIGINT,
     process_name VARCHAR(150) NOT NULL,
     start_date DATE,
     end_date DATE,
@@ -246,31 +272,14 @@ CREATE TABLE accreditation_processes (
     FOREIGN KEY (frame_id) REFERENCES frames_of_reference(frame_id)
 );
 
-CREATE TABLE subjects (
-    subject_id INT NOT NULL,
-    subject_name VARCHAR(50) NOT NULL,
-    career_id VARCHAR(20) NOT NULL,
-    PRIMARY KEY (subject_id),
-    FOREIGN KEY (career_id) REFERENCES careers(career_id)
-);
-
-CREATE TABLE groups (
-    group_id INT NOT NULL,
-    semester VARCHAR(15) NOT NULL,
-    type_a BOOL NOT NULL,
-    period_a VARCHAR(25) NOT NULL,
-    subject_id INT NOT NULL,
-    hour_a VARCHAR(5) NOT NULL,
-    PRIMARY KEY (group_id),
-    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
-);
-
 CREATE TABLE statuses (
     status_id BIGSERIAL NOT NULL,
     status_description VARCHAR(30) NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    evidence_id INT NOT NULL,
-    status_date DATE NOT NULL,
+    evidence_id BIGINT NOT NULL,
+    status_date TIMESTAMP NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
     feedback VARCHAR(255),
     PRIMARY KEY (status_id),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
@@ -278,10 +287,10 @@ CREATE TABLE statuses (
 );
 
 CREATE TABLE files (
-    file_id INT NOT NULL,
+    file_id BIGSERIAL NOT NULL,
     file_url VARCHAR(255) NOT NULL,
     upload_date DATE NOT NULL,
-    evidence_id INT NOT NULL,
+    evidence_id BIGINT NOT NULL,
     file_name VARCHAR(50),
     PRIMARY KEY (file_id),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id)
@@ -289,8 +298,8 @@ CREATE TABLE files (
 
 CREATE TABLE notifications (
     notification_id BIGSERIAL NOT NULL,
-    title VARCHAR(30) NOT NULL,
-    evidence_id INT,
+    title VARCHAR(50) NOT NULL,
+    evidence_id BIGINT,
     notification_date DATE NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
     reviser_id BIGINT NOT NULL, 
@@ -331,25 +340,25 @@ INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
 (7, 1, true), (7, 2, true), (7, 3, true), (7, 4, true);
 
 INSERT INTO areas (area_id, area_name) VALUES
-('AR01', 'Área Agroindustrial'),
+('7', 'Área Agroindustrial'),
 ('2', 'Área de Ciencias de la Computación'),
 ('AR03', 'Área de Ciencias de la Tierra'),
 ('3', 'Área Civil'),
-('AR05', 'Área Mecánica y Eléctrica'),
+('5', 'Área Mecánica y Eléctrica'),
 ('AR06', 'Área de Metalurgia y Materiales');
 
 INSERT INTO careers (career_id, area_id, career_name) VALUES
-('CA01', 'AR01', 'Ingeniería Agroindustrial'),
+('CA01', '7', 'Ingeniería Agroindustrial'),
 ('CA02', 'AR03', 'Ingeniería Ambiental'),
 ('CA03', '3', 'Ingeniería Civil'),
 ('CA04', '2', 'Ingeniería en Computación'),
-('CA05', 'AR05', 'Ingeniería en Electricidad y Automatización'),
+('CA05', '5', 'Ingeniería en Electricidad y Automatización'),
 ('CA06', 'AR03', 'Ingeniería en Geología'),
 ('CA07', '2', 'Ingeniería en Sistemas Inteligentes'),
 ('CA08', '3', 'Ingeniería en Topografía y Construcción'),
-('CA09', 'AR05', 'Ingeniería Mecánica'),
-('CA10', 'AR05', 'Ingeniería Mecánica Administrativa'),
-('CA11', 'AR05', 'Ingeniería Mecánica Eléctrica'),
-('CA12', 'AR05', 'Ingeniería Mecatrónica'),
+('CA09', '5', 'Ingeniería Mecánica'),
+('CA10', '5', 'Ingeniería Mecánica Administrativa'),
+('CA11', '5', 'Ingeniería Mecánica Eléctrica'),
+('CA12', '5', 'Ingeniería Mecatrónica'),
 ('CA13', 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
 ('CA14', 'AR03', 'Ingeniería Geoinformática');
