@@ -38,12 +38,12 @@ class GenerateNotifications extends Command
             }
             try {
                 Notification::create([
-                    'title' => 'Vence evidencia',
+                    'title' => 'Limite de entrega de evidencia pronto',
                     'evidence_id' => $evidencia->evidence_id,
                     'notification_date' => Carbon::now(),
                     'user_rpe' => $evidencia->user_rpe, // Notificar al usuario responsable
                     'reviser_id' => $revisor->reviser_id,
-                    'description' => 'vence en 3 días.',
+                    'description' => 'Esta evidencia vencerá el ' . $evidencia->due_date,
                     'seen' => false,
                     'pinned' => false
                 ]);
