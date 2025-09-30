@@ -14,6 +14,35 @@ CREATE TABLE cvs (
     PRIMARY KEY (cv_id)
 );
 
+CREATE TABLE areas (
+    area_id VARCHAR(20) NOT NULL,
+    area_name VARCHAR(60) NOT NULL,
+    user_rpe VARCHAR(20),  -- Esta FK se agregará después
+    PRIMARY KEY (area_id)
+);
+
+-- Ahora crear users (sin la FK problemática temporalmente)
+CREATE TABLE users (
+    user_rpe VARCHAR(20) NOT NULL,
+    user_mail VARCHAR(100) UNIQUE NOT NULL,
+    user_role VARCHAR(30) NOT NULL,
+    user_name VARCHAR(150) NOT NULL,
+    user_area VARCHAR(100) NOT NULL,
+    cv_id BIGINT,
+    situation VARCHAR(20),
+    PRIMARY KEY (user_rpe),
+    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    -- QUITAR temporalmente: FOREIGN KEY (user_area) REFERENCES areas(area_id)
+);
+
+-- Ahora agregar la FK faltante a users
+ALTER TABLE users ADD CONSTRAINT fk_user_area 
+    FOREIGN KEY (user_area) REFERENCES areas(area_id);
+
+-- Y agregar la FK a areas
+ALTER TABLE areas ADD CONSTRAINT fk_area_user 
+    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe);
+
 
 
 CREATE TABLE permissions (
@@ -41,28 +70,6 @@ CREATE TABLE frames_of_reference (
     frame_name VARCHAR(60) NOT NULL,
     PRIMARY KEY (frame_id)
 );
-
-CREATE TABLE areas (
-    area_id VARCHAR(20) NOT NULL,
-    area_name VARCHAR(60) NOT NULL,
-    PRIMARY KEY (area_id)
-);
-
-
-CREATE TABLE users (
-    user_rpe VARCHAR(20) NOT NULL,
-    user_mail VARCHAR(100) UNIQUE NOT NULL,
-    user_role VARCHAR(30) NOT NULL,
-    user_name VARCHAR(150) NOT NULL,
-    user_area VARCHAR(20) NOT NULL,
-    cv_id BIGINT,
-    situation VARCHAR(20),
-    PRIMARY KEY (user_rpe),
-    FOREIGN KEY (user_area) REFERENCES areas(area_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
-);
-
-
 
 CREATE TABLE categories (
     category_id BIGSERIAL NOT NULL,
@@ -226,31 +233,9 @@ CREATE TABLE contributions_to_pe (
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 
-CREATE TABLE areas (
-    area_id VARCHAR(20) NOT NULL,
-    area_name VARCHAR(60) NOT NULL,
-    user_rpe VARCHAR(20),
-    PRIMARY KEY (area_id),
-    FOREIGN KEY (user_rpe) REFERENCES users(user_rpe)
-);
-
-
-CREATE TABLE users (
-    user_rpe VARCHAR(20) NOT NULL,
-    user_mail VARCHAR(100) UNIQUE NOT NULL,
-    user_role VARCHAR(30) NOT NULL,
-    user_name VARCHAR(150) NOT NULL,
-    user_area VARCHAR(100) NOT NULL,
-    cv_id BIGINT,
-    situation VARCHAR(20),
-    PRIMARY KEY (user_rpe),
-    FOREIGN KEY (user_area) REFERENCES areas(area_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
-);
-
 CREATE TABLE careers (
     career_id INT NOT NULL,
-    area_id INT NOT NULL,
+    area_id VARCHAR(20) NOT NULL,
     career_name VARCHAR(60) NOT NULL,
     user_rpe VARCHAR(20),
     PRIMARY KEY (career_id),
@@ -278,8 +263,8 @@ CREATE TABLE statuses (
     user_rpe VARCHAR(20) NOT NULL,
     evidence_id BIGINT NOT NULL,
     status_date TIMESTAMP NOT NULL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    --created_at TIMESTAMP,
+    --updated_at TIMESTAMP,
     feedback VARCHAR(255),
     PRIMARY KEY (status_id),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
@@ -348,17 +333,17 @@ INSERT INTO areas (area_id, area_name) VALUES
 ('AR06', 'Área de Metalurgia y Materiales');
 
 INSERT INTO careers (career_id, area_id, career_name) VALUES
-('CA01', '7', 'Ingeniería Agroindustrial'),
-('CA02', 'AR03', 'Ingeniería Ambiental'),
-('CA03', '3', 'Ingeniería Civil'),
-('CA04', '2', 'Ingeniería en Computación'),
-('CA05', '5', 'Ingeniería en Electricidad y Automatización'),
-('CA06', 'AR03', 'Ingeniería en Geología'),
-('CA07', '2', 'Ingeniería en Sistemas Inteligentes'),
-('CA08', '3', 'Ingeniería en Topografía y Construcción'),
-('CA09', '5', 'Ingeniería Mecánica'),
-('CA10', '5', 'Ingeniería Mecánica Administrativa'),
-('CA11', '5', 'Ingeniería Mecánica Eléctrica'),
-('CA12', '5', 'Ingeniería Mecatrónica'),
-('CA13', 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
-('CA14', 'AR03', 'Ingeniería Geoinformática');
+(1, '7', 'Ingeniería Agroindustrial'),
+(2, 'AR03', 'Ingeniería Ambiental'),
+(3, '3', 'Ingeniería Civil'),
+(4, '2', 'Ingeniería en Computación'),
+(5, '5', 'Ingeniería en Electricidad y Automatización'),
+(6, 'AR03', 'Ingeniería en Geología'),
+(7, '2', 'Ingeniería en Sistemas Inteligentes'),
+(8, '3', 'Ingeniería en Topografía y Construcción'),
+(9, '5', 'Ingeniería Mecánica'),
+(10, '5', 'Ingeniería Mecánica Administrativa'),
+(11, '5', 'Ingeniería Mecánica Eléctrica'),
+(12, '5', 'Ingeniería Mecatrónica'),
+(13, 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
+(14, 'AR03', 'Ingeniería Geoinformática');
