@@ -99,7 +99,6 @@ class NotificationController extends Controller
         } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
 
         $notification = Notification::create([
-            'notification_id' => $randomId,
             'title' => $request->title,
             'evidence_id' => $request->evidence_id,
             'notification_date' => $request->notification_date,
