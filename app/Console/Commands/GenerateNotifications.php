@@ -40,7 +40,6 @@ class GenerateNotifications extends Command
                 Notification::create([
                     'title' => 'Vence evidencia',
                     'evidence_id' => $evidencia->evidence_id,
-                    'notification_id' => 2,
                     'notification_date' => Carbon::now(),
                     'user_rpe' => $evidencia->user_rpe, // Notificar al usuario responsable
                     'reviser_id' => $revisor->reviser_id,
