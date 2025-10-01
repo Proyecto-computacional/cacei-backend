@@ -34,6 +34,8 @@ class FileController extends Controller
         Log::info('Request data:', $request->all());
         Log::info('Files:', $request->hasFile('files') ? ['present' => true] : ['present' => false]);
 
+        // Esto ya se hace en el middleware de CheckFileMetadata
+        /*
         try {
             $request->validate([
                 'evidence_id' => 'required|exists:evidences,evidence_id',
@@ -43,26 +45,27 @@ class FileController extends Controller
             Log::error('Error de validación:', $e->errors());
             throw $e;
         }
-    
+        */
+
         $evidence = \App\Models\Evidence::where('evidence_id', $request->evidence_id)->first();
         Log::info('Evidence encontrada:', ['evidence_id' => $evidence ? $evidence->evidence_id : 'no encontrada']);
-        
+
         if (!$evidence) {
             return response()->json(['message' => 'Evidencia no encontrada'], 404);
         }
-        
+
         $standard_id = $evidence->standard_id;
         $evidence_id = $evidence->evidence_id;
         $group_id = $evidence->group_id;
-    
+
         // Actualizar la justificación en la evidencia si se proporciona
         if ($request->has('justification')) {
             $evidence->justification = FacadesPurifier::clean($request->justification);
             $evidence->save();
         }
-    
+
         $savedFiles = [];
-        
+
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
                 try {
@@ -79,27 +82,27 @@ class FileController extends Controller
                     do {
                         $randomId = rand(1, 1000000);
                     } while (File::where('file_id', $randomId)->exists());
-            
+
                     // Preparar nuevo nombre y path
                     $extension = $file->getClientOriginalExtension();
                     $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '-' . $randomId . '.' . $extension;
                     $path_name = 'uploads/' . $evidence_id;
-            
+
                     // Asegurarse de que el directorio existe
                     if (!Storage::disk('public')->exists($path_name)) {
                         Storage::disk('public')->makeDirectory($path_name);
                     }
-            
+
                     // Guardar archivo
                     $path = $file->storeAs($path_name, $newName, 'public');
-            
+
                     if (!$path) {
                         Log::error('Error al guardar archivo:', [
                             'name' => $file->getClientOriginalName()
                         ]);
                         continue;
                     }
-            
+
                     // Crear registro
                     $newFile = File::create([
                         'file_id' => $randomId,
@@ -108,7 +111,7 @@ class FileController extends Controller
                         'evidence_id' => $evidence_id,
                         'file_name' => $file->getClientOriginalName()
                     ]);
-            
+
                     $savedFiles[] = $newFile;
                 } catch (\Exception $e) {
                     Log::error('Error al procesar archivo:', [
@@ -117,11 +120,11 @@ class FileController extends Controller
                     ]);
                 }
             }
-        
+
             if (empty($savedFiles)) {
                 return response()->json(['message' => 'No se pudo subir ningún archivo'], 422);
             }
-            
+
             return response()->json($savedFiles, 201); // Retornar todos los archivos subidos
         }
 
@@ -180,20 +183,20 @@ class FileController extends Controller
     }
 
     public function deleteFile($file_id)
-{
-    $file = File::find($file_id);
+    {
+        $file = File::find($file_id);
 
-    if (!$file) {
-        return response()->json(['message' => 'Archivo no encontrado'], 404);
+        if (!$file) {
+            return response()->json(['message' => 'Archivo no encontrado'], 404);
+        }
+
+        $path = public_path('uploads/' . $file->file_url);
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        $file->delete();
+
+        return response()->json(['message' => 'Archivo eliminado correctamente']);
     }
-
-    $path = public_path('uploads/' . $file->file_url);
-    if (file_exists($path)) {
-        unlink($path);
-    }
-
-    $file->delete();
-
-    return response()->json(['message' => 'Archivo eliminado correctamente']);
-}
 }
