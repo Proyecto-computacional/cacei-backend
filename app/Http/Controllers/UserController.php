@@ -26,7 +26,7 @@ class UserController extends Controller
 
         return response()->json([
             'usuarios' => $query->get(),
-            'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO', 'ADMINISTRADOR']
+            'roles' => ['DIRECTIVO', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'PROFESOR RESPONSABLE', 'PROFESOR', 'DEPARTAMENTO UNIVERSITARIO', 'PERSONAL DE APOYO', 'ADMINISTRADOR', 'CAPTURISTA']
         ]);
     }
 
@@ -36,7 +36,7 @@ class UserController extends Controller
         try {
             $validado = $request->validate([
                 'user_id' => 'required|exists:users,user_rpe',
-                'rol' => 'required|string|in:DIRECTIVO,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR,DEPARTAMENTO UNIVERSITARIO,PERSONAL DE APOYO,ADMINISTRADOR',
+                'rol' => 'required|string|in:DIRECTIVO,JEFE DE AREA,COORDINADOR DE CARRERA,PROFESOR,DEPARTAMENTO UNIVERSITARIO,PERSONAL DE APOYO,ADMINISTRADOR,CAPTURISTA',
             ]);
 
             Log::debug("Datos validados correctamente:", $validado);
