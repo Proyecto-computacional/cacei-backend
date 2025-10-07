@@ -30,7 +30,7 @@ class CvController extends Controller
             return response()->json(['error' => 'Usuario no encontrado'], 404);
         }
         
-        if($currentUser->user_rpe != $user->user_rpe && !in_array($user->user_role, ['ADMINISTRADOR', 'JEFE DE AREA', 'COORDINADOR', 'DIRECTIVO'])){
+        if($currentUser->user_rpe != $user->user_rpe && !in_array($currentUser->user_role, ['ADMINISTRADOR', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'DIRECTIVO'])){
             return response()->json(['error' => 'No se puede acceder a este CV'], 403);
         }
         $cv = Cv::where('cv_id', $user->cv_id)->first();

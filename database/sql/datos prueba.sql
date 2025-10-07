@@ -499,10 +499,10 @@ VALUES (1, 1, 'Criterio de seguridad', 'Descripción del estándar 1', FALSE, 'A
 
 
 -- Insertar en la tabla evidences
-INSERT INTO evidences (evidence_id, standard_id, user_rpe, group_id, process_id, due_date)
-VALUES (1, 1, '10285', 1, 1, '2025-05-01'),
- (2, 1, '10285', 1, 1, '2025-05-01'),
- (3, 1, '10285', 1, 1, '2025-05-01');
+INSERT INTO evidences (evidence_id, standard_id, user_rpe, process_id, due_date)
+VALUES (1, 1, '10285', 1, '2025-05-01'),
+ (2, 1, '10285', 1, '2025-05-01'),
+ (3, 1, '10285', 1, '2025-05-01');
 
 
 -- Insertar en la tabla revisers
