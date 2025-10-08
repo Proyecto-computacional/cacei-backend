@@ -63,4 +63,24 @@ class FrameOfReferenceController extends Controller
             'data' => $frame
         ]);
     }
+
+    public function getFrameById($id){
+        $frame = FrameOfReference::with('categories.sections.standards')->find($id);
+
+        if(!$frame){
+            return response()->json(
+                [
+                    'message' => "Marco de referencia no encontrado",
+                    'frame' => null
+                ], 404
+            );
+        }
+
+        return response()->json(
+            [
+                'message' => "Marco de referencia encontrado",
+                'frame' => $frame
+            ], 200
+        );
+    }
 }
