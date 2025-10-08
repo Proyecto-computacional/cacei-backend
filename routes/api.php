@@ -292,6 +292,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR DE CARRERA,JE
     Route::post('/evidence', [EvidenceController::class, 'store']);
     Route::post('/categories', [CategoryController::class, 'getByFrame']);
     Route::post('/category', [CategoryController::class, 'store']);
+    Route::put('/categories/order', [CategoryController::class, 'reorder']); // Debe haber una manera de optimizar las rutas (digamos category/, luego order/)
     Route::put('/category-update', [CategoryController::class, 'update']);
 
     Route::post('/sections', [SectionController::class, 'getByCategory']);
