@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class FrameOfReference extends Model
@@ -19,4 +20,8 @@ class FrameOfReference extends Model
         'frame_id',
         'frame_name'
     ];
+
+    public function categories() : HasMany{
+        return $this->hasMany(Category::class, 'frame_id', 'frame_id');
+    }
 }
