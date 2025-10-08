@@ -251,7 +251,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('contributions-to-pe', [ContributionToPEController::class, 'index']);
     });
 
-        // 13. Guardar información adicional de un CV
+    // 13. Guardar información adicional de un CV
     Route::prefix('additionalInfo/{cv_id}')->middleware('cv.owner')->group(function () {
         // Rutas para educaciones
         Route::post('educations', [EducationController::class, 'store']);
@@ -289,6 +289,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA,
     Route::post('/evidence', [EvidenceController::class, 'store']);
     Route::post('/categories', [CategoryController::class, 'getByFrame']);
     Route::post('/category', [CategoryController::class, 'store']);
+    Route::put('/categories/order', [CategoryController::class, 'reorder']); // Debe haber una manera de optimizar las rutas (digamos category/, luego order/)
     Route::put('/category-update', [CategoryController::class, 'update']);
 
     Route::post('/sections', [SectionController::class, 'getByCategory']);
