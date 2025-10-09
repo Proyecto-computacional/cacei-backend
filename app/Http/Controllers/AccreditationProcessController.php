@@ -219,12 +219,13 @@ class AccreditationProcessController extends Controller
         return response()->json(['message' => 'Estado de proceso actualizado']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de favorito
     }
 
-    public function getCVsProcess($processId){
+    public function getCVsProcess($processId)
+    {
 
         $process = Accreditation_Process::with('career')->find($processId);
-        
-        
-        if(!$process){
+
+
+        if (!$process) {
             return response()->json(['message' => 'No se encontro proceso'], 404);
         }
 
@@ -240,43 +241,44 @@ class AccreditationProcessController extends Controller
         //La api no tiene datos de los profesores del DUI
         //$users_english = self::getUsersOfAreaBySemester($semester, '7');
 
-    
+
         return response()->json(['rpes_area' => $users_area, 'rpes_dfm' => $users_dfm, 'rpes_humanistic' => $users_humanistic]);
-        
+
     }
 
-    public static function getUsersOfAreaBySemester($semester, $area){
+    public static function getUsersOfAreaBySemester($semester, $area)
+    {
         //Obtener los grupos de clase de un area en un semestre.
         $area_groups = GroupController::getGroupsByArea($semester, $area);
         $area_groups_data = json_decode($area_groups->getContent(), true);
 
-        if(isset($area_groups_data['data']['datos'])){
+        if (isset($area_groups_data['data']['datos'])) {
 
             //Eliminar claves repetidas para obtener el listado de profesores que están dando clase.
-            $teachers_area = array_unique(array_column($area_groups_data['data']['datos'], 'nombre' ,'rpe'));
+            $teachers_area = array_unique(array_column($area_groups_data['data']['datos'], 'nombre', 'rpe'));
             //Castear rpes a string para la consulta
             $rpes_area = array_map('strval', array_keys($teachers_area));
-              
+
             $users = User::whereIn('user_rpe', $rpes_area)
                 ->get(['user_rpe', 'user_name'])
                 ->keyBy('user_rpe');
 
-            $users_area = collect($rpes_area)->map(function($rpe) use ($users, $teachers_area) {
+            $users_area = collect($rpes_area)->map(function ($rpe) use ($users, $teachers_area) {
                 if (isset($users[$rpe])) {
                     return [
-                        'user_rpe'  => $users[$rpe]->user_rpe,
+                        'user_rpe' => $users[$rpe]->user_rpe,
                         'user_name' => $users[$rpe]->user_name,
                     ];
                 }
-                
+
                 // si no existe en la BD
                 return [
-                    'user_rpe'  => null, //devolver rpe null para indicar en el front que no tenemos información del profesor.
+                    'user_rpe' => null, //devolver rpe null para indicar en el front que no tenemos información del profesor.
                     'user_name' => $teachers_area[$rpe],
                 ];
             })->toArray();
-            
-        }else{
+
+        } else {
             $rpes_area = [];
             $users_area = [];
         }
