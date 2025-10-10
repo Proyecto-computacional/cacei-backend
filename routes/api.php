@@ -287,18 +287,26 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA,
     Route::get('/revisers', [ReviserController::class, 'index']);
     Route::post('/reviser', [ReviserController::class, 'store']);
     Route::post('/evidence', [EvidenceController::class, 'store']);
+
     Route::post('/categories', [CategoryController::class, 'getByFrame']);
     Route::post('/category', [CategoryController::class, 'store']);
-    Route::put('/categories/order', [CategoryController::class, 'reorder']); // Debe haber una manera de optimizar las rutas (digamos category/, luego order/)
     Route::put('/category-update', [CategoryController::class, 'update']);
 
     Route::post('/sections', [SectionController::class, 'getByCategory']);
     Route::post('/section', [SectionController::class, 'store']);
     Route::put('/section-update', [SectionController::class, 'update']);
+
     Route::post('/standards', [StandardController::class, 'getBySection']);
     Route::post('/standard', [StandardController::class, 'store']);
     Route::put('/standard-update', [StandardController::class, 'update']);
     Route::delete('/standard/{id}', [StandardController::class, 'destroy']);
+
+    Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,CAPTURISTA'])->group(function () {
+        Route::put('/categories/order', [CategoryController::class, 'reorder']); // Debe haber una manera de optimizar las rutas (digamos category/, luego order/)
+        Route::put('/sections/order', [SectionController::class, 'reorder']);
+        Route::put('/standards/order', [StandardController::class, 'reorder']);
+    });
+
     Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
     Route::get('/frames-of-references', [FrameOfReferenceController::class, 'index']);
     Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
