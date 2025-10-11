@@ -549,7 +549,7 @@ VALUES (1, 1, 'Desarrollador principal de un sistema de gestión universitaria')
 
 -- Insertar en la tabla participations
 INSERT INTO participations (participation_id, cv_id, institution, period, level_participation)
-VALUES (1, 1, 'UASLP', 2, 'Nacional');
+VALUES (1, 1, 'UASLP', 2, 1);
 
 -- Insertar en la tabla awards
 INSERT INTO awards (award_id, cv_id, description)
@@ -561,15 +561,15 @@ VALUES (1, 1, 'Contribución al diseño de plataformas de educación en línea')
 
 -- Insertar en la tabla subjects
 INSERT INTO subjects (subject_id, subject_name, career_id)
-VALUES (1, 'Programación Avanzada', 'C01');
+VALUES (1, 'Programación Avanzada', 'CA04');
 
 -- Insertar en la tabla groups
 INSERT INTO groups (group_id, semester, type_a, period_a, subject_id, hour_a)
 VALUES (1, '2025-1', TRUE, 'Mañana', 1, '09:00');
 
 -- Insertar en la tabla accreditation_processes
-INSERT INTO accreditation_processes (process_id, career_id, frame_id, process_name, start_date, end_date, due_date)
-VALUES (1, 'C01', 1, 'Acreditación de Ingeniería en Sistemas', '2025-01-01', '2025-12-31', '2025-12-01');
+INSERT INTO accreditation_processes (process_id, career_id, frame_id, process_name, start_date, end_date, due_date, finished)
+VALUES (1, 'CA04', 1, 'Acreditación de Ingeniería en Sistemas', '2025-01-01', '2025-12-31', '2025-12-01', FALSE);
 
 -- Insertar en la tabla statuses
 INSERT INTO statuses (status_id, status_description, user_rpe, evidence_id, status_date, feedback)
@@ -579,12 +579,12 @@ VALUES (1, 'APROBADO', '10285', 1, '2025-04-22', 'Muy bueno'),
 
 
 -- Insertar en la tabla files
-INSERT INTO files (file_id, file_url, upload_date, evidence_id, justification, file_name)
-VALUES (1, 'http://files.uaslp.edu.mx/evidences/1.pdf', '2025-04-22', 1, 'Justificación de la evidencia', 'Evidencia_1.pdf');
+INSERT INTO files (file_id, file_url, upload_date, evidence_id, file_name)
+VALUES (1, 'http://files.uaslp.edu.mx/evidences/1.pdf', '2025-04-22', 1, 'Evidencia_1.pdf');
 
 -- Insertar en la tabla notifications
-INSERT INTO notifications (notification_id, title, evidence_id, notification_date, user_rpe, reviser_id, description, seen, pinned, starred)
-VALUES (1, 'Nueva Evidencia para Revisión', 1, '2025-04-22', '10285', 1, 'Revisión pendiente de evidencia', FALSE, FALSE, FALSE);
+INSERT INTO notifications (title, evidence_id, notification_date, user_rpe, reviser_id, description, seen, pinned, starred)
+VALUES ('Nueva Evidencia para Revisión', 1, '2025-04-22', '10285', 1, 'Revisión pendiente de evidencia', FALSE, FALSE, FALSE);
 
 
 
