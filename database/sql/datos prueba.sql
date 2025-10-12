@@ -309,7 +309,7 @@ CREATE TABLE notifications (
 INSERT INTO role(role_id, role_name) VALUES
 (1, 'ADMINISTRADOR'),
 (2, 'JEFE DE AREA'),
-(3, 'COORDINADOR'),
+(3, 'COORDINADOR DE CARRERA'),
 (4, 'PROFESOR'),
 (5, 'DIRECTIVO'),
 (6, 'DEPARTAMENTO UNIVERSITARIO'),
@@ -339,10 +339,10 @@ INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
 
 INSERT INTO cvs (professor_number, update_date, professor_name, age, birth_date, actual_position, duration)
 VALUES 
-(10285, '2025-03-15', 'RAMOS BLANCO ALBERTO', 40, '1985-03-15', 'Profesor', 15),
-(10314, '2025-04-15', 'MARTÍNEZ PÉREZ FRANCISCO EDUARDO', 38, '1985-03-15', 'Coordinador de Carrera', 20),
-(18220, '2025-05-15', 'REYES CARDENAZ OSCAR', 42, '1985-03-15', 'Profesor', 20),
-(3045, '2025-06-15', 'DIAZ QUIÑONES LILIA DEL CARMEN', 50, '1985-03-15', 'Administrador', 20);
+(10285, '2025-03-15', 'RAMOS BLANCO ALBERTO', 40, '1985-03-15', 'PROFESOR', 15),
+(10314, '2025-04-15', 'MARTÍNEZ PÉREZ FRANCISCO EDUARDO', 38, '1985-03-15', 'COORDINADOR DE CARRERA', 20),
+(18220, '2025-05-15', 'REYES CARDENAZ OSCAR', 42, '1985-03-15', 'PROFESOR', 20),
+(3045, '2025-06-15', 'DIAZ QUIÑONES LILIA DEL CARMEN', 50, '1985-03-15', 'ADMINISTRADOR', 20);
 
 -- Insertar en la tabla areas
 
@@ -499,10 +499,10 @@ VALUES (1, 1, 'Criterio de seguridad', 'Descripción del estándar 1', FALSE, 'A
 
 
 -- Insertar en la tabla evidences
-INSERT INTO evidences (evidence_id, standard_id, user_rpe, group_id, process_id, due_date)
-VALUES (1, 1, '10285', 1, 1, '2025-05-01'),
- (2, 1, '10285', 1, 1, '2025-05-01'),
- (3, 1, '10285', 1, 1, '2025-05-01');
+INSERT INTO evidences (evidence_id, standard_id, user_rpe, process_id, due_date)
+VALUES (1, 1, '10285', 1, '2025-05-01'),
+ (2, 1, '10285', 1, '2025-05-01'),
+ (3, 1, '10285', 1, '2025-05-01');
 
 
 -- Insertar en la tabla revisers
