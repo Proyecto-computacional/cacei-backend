@@ -96,5 +96,23 @@ Para probar los endpoints, puedes usar **Postman**.
 
 ## Helpers
 
+## Programador de tareas (Scheduler)
+
+Laravel permite programar tareas automáticas usando el scheduler. Las tareas se definen en `app/Console/Kernel.php` usando el método `schedule`. Ejemplo de tareas programadas:
+
+```php
+$schedule->command('notifications:generate')->dailyAt('06:00');
+$schedule->command('sessions:clean')->daily();
+```
+
+Para que el programador de tareas funcione correctamente, es necesario agregar la siguiente línea al cron de tu servidor, para que Laravel ejecute las tareas cada minuto:
+
+```sh
+* * * * * cd /ruta/a/tu/proyecto && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Reemplaza `/ruta/a/tu/proyecto` por la ruta real de tu proyecto.
+
+
 No olvidar que para usar helpers agregarlos en el autoload de composer.json y ejecutar el comando:
 composer dump-autoload
