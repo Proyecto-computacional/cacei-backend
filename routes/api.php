@@ -123,11 +123,13 @@ Route::middleware([
     'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,DIRECTIVO'
 ])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence']);
 
-// 5.a. Revisar archivos
+// 5.a. Revisar archivos. El middleware para revisar los archivos CheckFileMetadata
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['permission:Descargar archivos'])->get('/files/{evidence_id}', [FileController::class, 'index']);
     Route::middleware(['permission:Descargar archivos'])->get('/file/{file_id}', [FileController::class, 'show']);
     Route::middleware(['file.correct'])->group(function () {
+
+        Route::put('/file/{file_id}', [FileController::class, 'update']);
         Route::middleware(['permission:Subir archivos'])->post('/file', [FileController::class, 'store']);
         Route::middleware(['permission:Actualizar archivos'])->put('/file/{file_id}', [FileController::class, 'update']);
     });
@@ -252,7 +254,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('contributions-to-pe', [ContributionToPEController::class, 'index']);
     });
 
-        // 13. Guardar información adicional de un CV
+    // 13. Guardar información adicional de un CV
     Route::prefix('additionalInfo/{cv_id}')->middleware('cv.owner')->group(function () {
         // Rutas para educaciones
         Route::post('educations', [EducationController::class, 'store']);
