@@ -39,13 +39,12 @@ class FileController extends Controller
         try {
             $request->validate([
                 'evidence_id' => 'required|exists:evidences,evidence_id',
-                'files.*' => 'required|file|max:10240' // Máximo 10MB por archivo
+                'files.*' => 'required|file|max:51200' // Máximo 50MB por archivo
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Error de validación:', $e->errors());
             throw $e;
         }
-        */
 
         $evidence = \App\Models\Evidence::where('evidence_id', $request->evidence_id)->first();
         Log::info('Evidence encontrada:', ['evidence_id' => $evidence ? $evidence->evidence_id : 'no encontrada']);
