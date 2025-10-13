@@ -285,4 +285,61 @@ class AccreditationProcessController extends Controller
 
         return $users_area;
     }
+
+    public function findProcessById($processId)
+    {
+        $process = DB::select("
+            SELECT 
+                ap.process_id,
+                ap.process_name,
+                ap.start_date,
+                ap.end_date,
+                ap.due_date,
+                ap.finished,
+                
+                c.career_name,
+                c.career_id,
+                u_career.user_name AS career_owner,
+                u_career.user_rpe AS career_owner_rpe,
+                
+                a.area_name,
+                a.area_id,
+                u_area.user_name AS area_owner,
+                u_area.user_rpe AS area_owner_rpe,
+                
+                fr.frame_name,
+                ap.frame_id
+                
+            FROM accreditation_processes ap
+            
+            JOIN careers c
+            ON ap.career_id = c.career_id
+            JOIN users u_career
+            ON c.user_rpe = u_career.user_rpe
+            
+            JOIN areas a
+            ON c.area_id = a.area_id
+            JOIN users u_area
+            ON a.user_rpe = u_area.user_rpe
+            
+            LEFT JOIN frames_of_reference fr
+            ON ap.frame_id = fr.frame_id
+            
+            WHERE ap.process_id = ?
+        ", [$processId]);
+
+        if (empty($process)) {
+            return response()->json([
+                'message' => 'Proceso no encontrado.',
+                'process_id' => $processId,
+                'success' => false
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $process[0],
+            'success' => true,
+            'message' => 'Proceso encontrado exitosamente.'
+        ]);
+    }
 }
