@@ -66,6 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
     Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
     Route::get('/processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
+    Route::get('/processes/{processId}/find', [AccreditationProcessController::class, 'findProcessById']);
 });
 
 //1. Login
@@ -95,7 +96,7 @@ Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $req
 //3. Confitguracion personal
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, PERSONAL DE APOYO, DIRECTIVO'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, PERSONAL DE APOYO, DIRECTIVO'
 ])->get('/personalInfo', function () {
     return response()->json(['message' => 'Informacion personal']);
 });
@@ -111,7 +112,7 @@ Route::middleware(['auth:sanctum'])->get('/evidences/by-standard/{standard_id}',
 //REPETIDA CON CV
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR, PROFESOR, DIRECTIVO, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA, PROFESOR, DIRECTIVO, DEPARTAMENTO UNIVERSITARIO, PERSONAL DE APOYO'
 ])->get('/cv', function () {
     return response()->json(['message' => 'Subir evidencia']);
 });
@@ -119,7 +120,7 @@ Route::middleware([
 //5. Revisar evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR,DIRECTIVO'
+    'role:ADMINISTRADOR,JEFE DE AREA,COORDINADOR DE CARRERA,DIRECTIVO'
 ])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence']);
 
 // 5.a. Revisar archivos. El middleware para revisar los archivos CheckFileMetadata
@@ -154,7 +155,7 @@ Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
 // 8.Gestion Evidencias
 Route::middleware([
     'auth:sanctum',
-    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR'
+    'role:ADMINISTRADOR, JEFE DE AREA, COORDINADOR DE CARRERA'
 ])->get('/GestionEvidencias', function () {
     return response()->json(['message' => 'Gestionar evidencias']);
 });
@@ -285,7 +286,7 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 //Rutas hechas en la rama de asignarTareas
-Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR,JEFE DE AREA,DIRECTIVO,CAPTURISTA'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR DE CARRERA,JEFE DE AREA,DIRECTIVO,CAPTURISTA'])->group(function () {
     Route::get('/revisers', [ReviserController::class, 'index']);
     Route::post('/reviser', [ReviserController::class, 'store']);
     Route::post('/evidence', [EvidenceController::class, 'store']);

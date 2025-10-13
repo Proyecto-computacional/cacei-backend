@@ -14,7 +14,7 @@ class CheckRole
      */
     private const VALID_ROLES = [
         'ADMINISTRADOR',
-        'COORDINADOR',
+        'COORDINADOR DE CARRERA',
         'JEFE DE AREA',
         'PROFESOR',
         'DIRECTIVO',

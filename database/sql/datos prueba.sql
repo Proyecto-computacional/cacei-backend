@@ -33,10 +33,10 @@ VALUES (1, 1, 'Criterio de seguridad', 'Descripción del estándar 1', FALSE, 'A
 
 
 -- Insertar en la tabla evidences
-INSERT INTO evidences (evidence_id, standard_id, user_rpe, group_id, process_id, due_date)
-VALUES (1, 1, '10285', 1, 1, '2025-05-01'),
- (2, 1, '10285', 1, 1, '2025-05-01'),
- (3, 1, '10285', 1, 1, '2025-05-01');
+INSERT INTO evidences (evidence_id, standard_id, user_rpe, process_id, due_date)
+VALUES (1, 1, '10285', 1, '2025-05-01'),
+ (2, 1, '10285', 1, '2025-05-01'),
+ (3, 1, '10285', 1, '2025-05-01');
 
 
 -- Insertar en la tabla revisers
@@ -83,7 +83,7 @@ VALUES (1, 1, 'Desarrollador principal de un sistema de gestión universitaria')
 
 -- Insertar en la tabla participations
 INSERT INTO participations (participation_id, cv_id, institution, period, level_participation)
-VALUES (1, 1, 'UASLP', 2, 'Nacional');
+VALUES (1, 1, 'UASLP', 2, 1);
 
 -- Insertar en la tabla awards
 INSERT INTO awards (award_id, cv_id, description)
@@ -95,7 +95,7 @@ VALUES (1, 1, 'Contribución al diseño de plataformas de educación en línea')
 
 -- Insertar en la tabla subjects
 INSERT INTO subjects (subject_id, subject_name, career_id)
-VALUES (1, 'Programación Avanzada', 'C01');
+VALUES (1, 'Programación Avanzada', 'CA04');
 
 -- Insertar en la tabla groups
 INSERT INTO groups (group_id, semester, type_a, period_a, subject_id, hour_a)

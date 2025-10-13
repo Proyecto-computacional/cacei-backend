@@ -32,7 +32,6 @@ class UserController extends Controller
 
     public function actualizarRol(Request $request)
     {
-        Log::debug("Datos recibidos en la solicitud:", $request->all());
         try {
             $validado = $request->validate([
                 'user_id' => 'required|exists:users,user_rpe',
