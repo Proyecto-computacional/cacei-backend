@@ -18,8 +18,8 @@ class AcademicManagementController extends Controller
         $validated = $request->validate([
             'job_position' => 'required|string|max:100',
             'institution' => 'required|string|max:50',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
+            'start_date' => 'required|string',
+            'end_date' => 'nullable|string',
         ]);
 
         $academicManagement = AcademicManagement::updateOrCreate(
