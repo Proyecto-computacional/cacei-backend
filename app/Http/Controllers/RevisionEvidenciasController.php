@@ -188,7 +188,6 @@ class RevisionEvidenciasController extends Controller
             Log::info('reviser_rpe: ' . $reviser_rpe);
             //crea la notificacion y carga el comentario..
             Notification::create([
-                'notification_id' => $randomId,
                 'title' => "Evidencia {$estado}",
                 'evidence_id' => $request->evidence_id,
                 'notification_date' => Carbon::now('America/Mexico_City'),
