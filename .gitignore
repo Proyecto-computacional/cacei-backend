@@ -25,4 +25,5 @@ storage/framework/cache
 storage/framework/cache/*
 storage/framework/cache/data
 storage/framework/cache/data/*
+storage/app/zips
 !storage/app/public/CV_*.docx
