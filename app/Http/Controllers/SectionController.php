@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Section;
+use Illuminate\Support\Facades\DB;
 class SectionController extends Controller
 {
     public function getByCategory(Request $request)
@@ -26,9 +27,9 @@ class SectionController extends Controller
             $randomId = rand(1, 100);
         } while (Section::where('section_id', $randomId)->exists()); // Verifica que no se repita
         $indice = 0;
-        do{
+        do {
             $indice = $indice + 1;
-        }while (Section::where('indice', $indice)->where('category_id', $request->input('category_id'))->exists());
+        } while (Section::where('indice', $indice)->where('category_id', $request->input('category_id'))->exists());
 
         $section = new Section();
         $section->section_id = $randomId;
@@ -72,6 +73,18 @@ class SectionController extends Controller
         return response()->json([
             'message' => 'Registro actualizado correctamente.',
             'data' => $section
-        ],201);
+        ], 201);
+    }
+
+    public function reorder(Request $request)
+    {
+        $ordered = $request->validate(['ordered_ids' => 'required|array']);
+
+        DB::transaction(function () use ($ordered) {
+            foreach ($ordered['ordered_ids'] as $i => $id) {
+                Section::where('section_id', $id)->update(['indice' => $i + 1]);
+            }
+        });
+        return response()->json(['Ordenado correctamente' => true]);
     }
 }
