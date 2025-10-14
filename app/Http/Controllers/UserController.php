@@ -32,7 +32,6 @@ class UserController extends Controller
 
     public function actualizarRol(Request $request)
     {
-        Log::debug("Datos recibidos en la solicitud:", $request->all());
         try {
             $validado = $request->validate([
                 'user_id' => 'required|exists:users,user_rpe',
@@ -72,7 +71,7 @@ class UserController extends Controller
                 return [
                     'evidence_id' => $evidence->evidence_id,
                     'criterio' => $evidence->standard?->standard_name,
-                    'estado' => $evidence->status->first()?->status_description ?? 'MALO', // El nombre del estado más reciente
+                    'estado' => $evidence->status->first()?->status_description ?? 'POR SUBIR', // El nombre del estado más reciente
                 ];
             });
 

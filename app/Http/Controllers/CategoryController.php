@@ -27,13 +27,13 @@ class CategoryController extends Controller
             'frame_id' => 'required|int',
             'category_name' => 'required|string|max:50'
         ]);
-        
+
         // Generar un ID único
         do {
             $randomId = rand(1, 100);
         } while (Category::where('category_id', $randomId)->exists()); // Verifica que no se repita
 
-        do{
+        do {
             $indice = $indice + 1;
         } while (Category::where('indice', $indice)->where('frame_id', $request->input('frame_id'))->exists());
 
@@ -76,6 +76,18 @@ class CategoryController extends Controller
         ]);
     }
 
+    public function reorder(Request $request)
+    {
+        $ordered = $request->validate(['ordered_ids' => 'required|array']);
+
+        DB::transaction(function () use ($ordered) {
+            foreach ($ordered['ordered_ids'] as $i => $id) {
+                Category::where('category_id', $id)->update(['indice' => $i + 1]);
+            }
+        });
+        return response()->json(['Ordenado correctamente' => true]);
+    }
+
     public function getProgressByProcess($processId, Request $request)
     {
         // First verify the process exists
@@ -93,8 +105,8 @@ class CategoryController extends Controller
 
         // Modificar la consulta base para incluir el filtro de usuario si es profesor
         $evidenceFilter = $userRole === 'PROFESOR' ? "AND e.user_rpe = ?" : "";
-        $evidenceParams = $userRole === 'PROFESOR' 
-            ? [$processId, $userRpe, $processId, $userRpe] 
+        $evidenceParams = $userRole === 'PROFESOR'
+            ? [$processId, $userRpe, $processId, $userRpe]
             : [$processId, $processId];
 
         // Get all categories with their evidences for this process
@@ -139,8 +151,8 @@ class CategoryController extends Controller
             }
 
             // Modificar la consulta de evidencias para incluir el filtro de usuario si es profesor
-            $evidenceParams = $userRole === 'PROFESOR' 
-                ? [$processId, $userRpe, $processId, $category->category_id, $userRpe] 
+            $evidenceParams = $userRole === 'PROFESOR'
+                ? [$processId, $userRpe, $processId, $category->category_id, $userRpe]
                 : [$processId, $processId, $category->category_id];
 
             $evidences = DB::select("

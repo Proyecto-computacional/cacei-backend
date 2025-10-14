@@ -71,7 +71,7 @@ class CvController extends Controller
         }
         
         $currentUser = auth()->user();
-        if($currentUser->user_rpe != $user->user_rpe && $currentUser->user_role != "ADMINISTRADOR"){
+        if($currentUser->user_rpe != $user->user_rpe && !in_array($currentUser->user_role, ['ADMINISTRADOR', 'JEFE DE AREA', 'COORDINADOR DE CARRERA', 'DIRECTIVO'])){
             return response()->json(['error' => 'No se puede acceder a este CV'], 403);
         }
 

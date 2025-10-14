@@ -53,7 +53,7 @@ class EvidenceController extends Controller
             $evidenceCareer = $evidence->process->career;
             $evidenceArea = $evidenceCareer->area;
 
-            if ($user->user_role === 'COORDINADOR') {
+            if ($user->user_role === 'COORDINADOR DE CARRERA') {
                 if ($evidenceCareer->user_rpe == $user->user_rpe) {
                     $nextRevisor = [$evidenceCareer->area->user_rpe];
                 }
@@ -120,7 +120,7 @@ class EvidenceController extends Controller
             // Todas las evidencias (sin filtro adicional)
         } elseif ($role === 'JEFE DE AREA') {
             $query->where('area_manager.user_rpe', $user->user_rpe);
-        } elseif ($role == 'COORDINADOR') {
+        } elseif ($role == 'COORDINADOR DE CARRERA') {
             $query->where('career_coordinator.user_rpe', $user->user_rpe);
         } elseif ($role == 'PROFESOR') {
             $query->where(function ($q) use ($user) {

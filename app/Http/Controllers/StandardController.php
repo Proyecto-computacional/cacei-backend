@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Standard;
+use Illuminate\Support\Facades\DB;
 
 class StandardController extends Controller
 {
@@ -12,7 +13,7 @@ class StandardController extends Controller
         $standards = Standard::where('section_id', $request->section_id)->orderBy('indice')->get();
         return response()->json($standards);
     }
-    
+
     public function store(Request $request)
     {
         // cuando se guarda un standard 'transversal' no hace nada especial
@@ -30,7 +31,7 @@ class StandardController extends Controller
             $randomId = rand(1, 100);
         } while (Standard::where('standard_id', $randomId)->exists()); // Verifica que no se repita
 
-        do{
+        do {
             $indice = $indice + 1;
         } while (Standard::where('indice', $indice)->where('section_id', $request->input('section_id'))->exists());
 
@@ -42,7 +43,7 @@ class StandardController extends Controller
         $standard->is_transversal = $request->input('is_transversal');
         $standard->help = $request->input('help');
         $standard->indice = $indice;
-        
+
         $standard->save();
 
         return response()->json([
@@ -79,7 +80,7 @@ class StandardController extends Controller
         return response()->json([
             'message' => 'Registro actualizado correctamente.',
             'data' => $standard
-        ],201);
+        ], 201);
     }
 
     public function destroy($id)
@@ -98,5 +99,17 @@ class StandardController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function reorder(Request $request)
+    {
+        $ordered = $request->validate(['ordered_ids' => 'required|array']);
+
+        DB::transaction(function () use ($ordered) {
+            foreach ($ordered['ordered_ids'] as $i => $id) {
+                Standard::where('standard_id', $id)->update(['indice' => $i + 1]);
+            }
+        });
+        return response()->json(['Ordenado correctamente' => true]);
     }
 }

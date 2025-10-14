@@ -26,7 +26,7 @@ class AcademicProductController extends Controller
             error_log($existingProduct);
         if ($existingProduct) {
             return response()->json([
-                'message' => 'Datos actualizados',
+                'message' => 'No se puede crear un producto académico duplicado.',
                 'data' => $existingProduct
             ], 409); // Código 409 = Conflicto
         }
@@ -35,7 +35,7 @@ class AcademicProductController extends Controller
         $lastProductNumber = AcademicProduct::where('cv_id', $cv_id)
             ->max('academic_product_number') ?? 0;
 
-        $academicProduct = AcademicProduct::create([
+        $academicProduct = AcademicProduct::updateOrCreate([
             'cv_id' => $cv_id,
             'academic_product_number' => $lastProductNumber + 1,
             'description' => $validated['description']

@@ -18,8 +18,8 @@ class LaboralExperienceController extends Controller
         $validated = $request->validate([
             'company_name' => 'required|string|max:50',
             'position' => 'required|string|max:50',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
+            'start_date' => 'required|string',
+            'end_date' => 'nullable|string',
         ]);
 
         $laboralExperience = LaboralExperience::updateOrCreate(
