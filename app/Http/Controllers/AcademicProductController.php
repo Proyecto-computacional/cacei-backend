@@ -23,7 +23,7 @@ class AcademicProductController extends Controller
         $existingProduct = AcademicProduct::where('cv_id', $cv_id)
             ->where('description', $validated['description'])
             ->first();
-
+            error_log($existingProduct);
         if ($existingProduct) {
             return response()->json([
                 'message' => 'Datos actualizados',
