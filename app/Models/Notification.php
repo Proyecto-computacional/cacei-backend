@@ -38,15 +38,10 @@ class Notification extends Model
     {
         return $this->belongsTo(User::class, 'user_rpe', 'user_rpe');
     }
-    public function revisor()
-    {
-        return $this->belongsTo(Reviser::class, 'reviser_id', 'reviser_id');
-    }
-
-    // Para obtener info de los usuarios y criterios
+    // Relación con el revisor usando user_rpe
     public function reviser()
     {
-        return $this->belongsTo(User::class, 'reviser_id', 'user_rpe');
+        return $this->belongsTo(User::class, 'user_rpe', 'user_rpe');
     }
 
     public function evidence()
