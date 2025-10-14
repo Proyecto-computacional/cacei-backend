@@ -287,7 +287,7 @@ CREATE TABLE notifications (
     evidence_id BIGINT,
     notification_date DATE NOT NULL,
     user_rpe VARCHAR(20) NOT NULL,
-    reviser_id BIGINT NOT NULL, 
+    reviser_id VARCHAR(20) NOT NULL, -- ahora apunta a user_rpe
     description VARCHAR(255),
     seen BOOL NOT NULL,
     pinned BOOL NOT NULL DEFAULT FALSE,
@@ -295,7 +295,7 @@ CREATE TABLE notifications (
     PRIMARY KEY (notification_id),
     FOREIGN KEY (user_rpe) REFERENCES users(user_rpe),
     FOREIGN KEY (evidence_id) REFERENCES evidences(evidence_id),
-    FOREIGN KEY (reviser_id) REFERENCES revisers(reviser_id)
+    FOREIGN KEY (reviser_id) REFERENCES users(user_rpe)
 );
 
 
