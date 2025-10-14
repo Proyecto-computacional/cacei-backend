@@ -35,7 +35,7 @@ class FileController extends Controller
         Log::info('Files:', $request->hasFile('files') ? ['present' => true] : ['present' => false]);
 
         // Esto ya se hace en el middleware de CheckFileMetadata
-        /*
+        
         try {
             $request->validate([
                 'evidence_id' => 'required|exists:evidences,evidence_id',
