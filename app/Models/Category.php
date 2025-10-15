@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
@@ -24,5 +25,9 @@ class Category extends Model
     public function frame()
     {
         return $this->belongsTo(FrameOfReference::class, 'frame_id', 'frame_id');
+    }
+
+    public function sections() : HasMany{
+        return $this->hasMany(Section::class, 'category_id', 'category_id');
     }
 }
