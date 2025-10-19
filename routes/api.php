@@ -312,6 +312,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR DE CARRERA,JE
 
     Route::post('/evidences', [EvidenceController::class, 'getByStandard']);
     Route::get('/frames-of-references', [FrameOfReferenceController::class, 'index']);
+     Route::get('/frames-of-references/{id}', [FrameOfReferenceController::class, 'getFrameById']);
     Route::post('/frames-of-reference', [FrameOfReferenceController::class, 'store']);
     Route::put('/frames-of-reference-update', [FrameOfReferenceController::class, 'update']);
     Route::post('/validate-user', [UserController::class, 'validateUser']);
