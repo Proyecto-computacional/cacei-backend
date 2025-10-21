@@ -132,4 +132,16 @@ class AuthController extends Controller
 
         return response()->json(compact('activeTokens'));
     }
+
+    public function checkToken (Request $request) {
+        $token = $request->user()->currentAccessToken();
+
+        return response()->json([
+            'expires_at' => optional($token->expires_at)->toISOString(),
+            'remaining_seconds' => $token && $token->expires_at
+                ? $token->expires_at->diffInSeconds(now())
+                : null,
+            'user' => $request->user()->only('id', 'name', 'email'),
+        ]);
+    }
 }
