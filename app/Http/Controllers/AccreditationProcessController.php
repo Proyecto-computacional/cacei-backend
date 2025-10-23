@@ -53,7 +53,7 @@ class AccreditationProcessController extends Controller
         $process->deleted = true;
         $process->save();
 
-        return response()->json(['message' => 'Proceso eliminado'], status: 202);
+        return response()->json(['message' => 'Proceso eliminado'], status: 201);
     }
 
     /* obtener los procesos de acreditación asociados a un usuario */
