@@ -252,6 +252,7 @@ CREATE TABLE accreditation_processes (
     end_date DATE,
     due_date DATE,
     finished BOOLEAN NOT NULL,
+    deleted BOOLEAN NOT NULL,
     PRIMARY KEY (process_id),
     FOREIGN KEY (career_id) REFERENCES careers(career_id),
     FOREIGN KEY (frame_id) REFERENCES frames_of_reference(frame_id)
