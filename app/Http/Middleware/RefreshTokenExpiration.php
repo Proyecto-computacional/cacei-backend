@@ -17,7 +17,7 @@ class RefreshTokenExpiration
             $token = $user->currentAccessToken();
 
             if ($token) {
-
+                $inactiveLimit = config('sanctum.token_inactivity_limit');
                 // Si expiró, elimínalo
                 if ($token->expires_at && $token->expires_at->isPast()) {
                     $token->delete();
@@ -26,7 +26,7 @@ class RefreshTokenExpiration
 
                 // Renovar expiración sin modificar la respuesta original
                 $token->forceFill([
-                    'expires_at' => Carbon::now()->addMinutes(20),
+                    'expires_at' => Carbon::now()->addMinutes($inactiveLimit),
                 ])->save();
             }
         }
