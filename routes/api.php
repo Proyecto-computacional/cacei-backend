@@ -62,7 +62,7 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
 */
 
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
     Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
     Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
     Route::get('/processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
@@ -80,16 +80,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function () {
         return auth()->user();
     });
+    //Ruta para verificar tiempo de expiracion del token.
+    Route::get('/auth/status', AuthController::class, 'checkToken');
+});
 
+
+
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
     // Accreditation Process routes
     Route::post('/accreditation-processes', [AccreditationProcessController::class, 'store']);
     Route::get('/accreditation-processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
     Route::get('/accreditation-processes/user', [AccreditationProcessController::class, 'getProcessesByUser']);
     Route::get('/accreditation-processes/{processId}/download', [AccreditationProcessController::class, 'downloadProcess']);
 });
-
 //2. Menu prinicipal
-Route::middleware('auth:sanctum')->get('/menuPrinicipal', function (Request $request) {
+Route::middleware(['auth:sanctum', 'refreshToken'])->get('/menuPrinicipal', function (Request $request) {
     return response()->json(['message' => 'Bienvenido al menu principal']);
 });
 
@@ -102,12 +107,12 @@ Route::middleware([
 });
 
 // 3.a cv
-Route::middleware(['auth:sanctum'])->get('/cv/word/{user_rpe}', [CvController::class, 'downloadCv']);
+Route::middleware(['auth:sanctum', 'refreshToken'])->get('/cv/word/{user_rpe}', [CvController::class, 'downloadCv']);
 
 //4. Subir evidencia
-Route::middleware(['auth:sanctum'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
-Route::middleware(['auth:sanctum'])->put('/evidences/{evidence_id}', [EvidenceController::class, 'update']);
-Route::middleware(['auth:sanctum'])->get('/evidences/by-standard/{standard_id}', [EvidenceController::class, 'getByStandardUpload']);
+Route::middleware(['auth:sanctum', 'refreshToken'])->get('/evidences/{evidence}', [EvidenceController::class, 'show']);
+Route::middleware(['auth:sanctum', 'refreshToken'])->put('/evidences/{evidence_id}', [EvidenceController::class, 'update']);
+Route::middleware(['auth:sanctum', 'refreshToken'])->get('/evidences/by-standard/{standard_id}', [EvidenceController::class, 'getByStandardUpload']);
 
 //REPETIDA CON CV
 Route::middleware([
@@ -124,7 +129,7 @@ Route::middleware([
 ])->get('/ReviewEvidence', [EvidenceController::class, 'allEvidence']);
 
 // 5.a. Revisar archivos. El middleware para revisar los archivos CheckFileMetadata
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
     Route::middleware(['permission:Descargar archivos'])->get('/files/{evidence_id}', [FileController::class, 'index']);
     Route::middleware(['permission:Descargar archivos'])->get('/file/{file_id}', [FileController::class, 'show']);
     Route::middleware(['file.correct'])->group(function () {
@@ -137,7 +142,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['permission:Eliminar archivos'])->delete('/file/{id}', [EvidenceController::class, 'deleteFile']);
 });
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
 
     Route::post('/RevisionEvidencias/aprobar', [RevisionEvidenciasController::class, 'aprobarEvidencia']);
 
@@ -148,7 +153,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 // 7.Dashboard
-Route::middleware(['auth:sanctum'])->get('/Dashboard', function () {
+Route::middleware(['auth:sanctum', 'refreshToken'])->get('/Dashboard', function () {
     return response()->json(['message' => 'Dashboard']);
 });
 
@@ -161,7 +166,7 @@ Route::middleware([
 });
 
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
     Route::get('/estadisticas/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorRPE']);
     Route::get('/estadisticas/resumen/{rpe}', [EvidenciaEstadisticaController::class, 'resumenGeneralPorRPE']);
     Route::get('/estadisticas/por-autor/{rpe}/{frame_name}/{career_name}', [EvidenciaEstadisticaController::class, 'estadisticasPorAutor']);
@@ -192,7 +197,7 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,DIRECTIVO,CAPTURISTA'])->
 });
 
 // 10. Notificaciones
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
     // Listar notificaciones
     Route::get('/Notificaciones', [NotificationController::class, 'index']);
     Route::post('/Notificaciones', [NotificationController::class, 'index']);
@@ -224,7 +229,7 @@ Route::middleware(
     );
 
 // 12.CV de un usuario
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
     Route::post('/cvs', [CvController::class, 'index']);
 
     // 13. Obtener información adicional de un CV
@@ -322,4 +327,4 @@ Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR DE CARRERA,JE
 });
 
 // 13. Categorías relacionadas a un proceso dado el rol del usuario
-Route::middleware(['auth:sanctum'])->get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);
+Route::middleware(['auth:sanctum', 'refreshToken'])->get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);
