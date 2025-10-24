@@ -81,7 +81,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return auth()->user();
     });
     //Ruta para verificar tiempo de expiracion del token.
-    Route::get('/auth/status', AuthController::class, 'checkToken');
+    Route::get('/auth/status', [AuthController::class, 'checkToken']);
+    Route::Post('/auth/renew', [AuthController::class, 'renewToken']);
 });
 
 
@@ -291,7 +292,7 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 //Rutas hechas en la rama de asignarTareas
-Route::middleware(['auth:sanctum', 'role:ADMINISTRADOR,COORDINADOR DE CARRERA,JEFE DE AREA,DIRECTIVO,CAPTURISTA'])->group(function () {
+Route::middleware(['auth:sanctum',  'refreshToken', 'role:ADMINISTRADOR,COORDINADOR DE CARRERA,JEFE DE AREA,DIRECTIVO,CAPTURISTA'])->group(function () {
     Route::get('/revisers', [ReviserController::class, 'index']);
     Route::post('/reviser', [ReviserController::class, 'store']);
     Route::post('/evidence', [EvidenceController::class, 'store']);
