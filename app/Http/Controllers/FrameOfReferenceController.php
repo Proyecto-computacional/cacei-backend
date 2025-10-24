@@ -10,7 +10,7 @@ class FrameOfReferenceController extends Controller
     // Obtener todos los registros en formato JSON
     public function index()
     {
-        $data = FrameOfReference::all();
+        $data = FrameOfReference::orderBy('frame_id', 'asc')->get();
         return response()->json($data);
     }
 
@@ -43,7 +43,7 @@ class FrameOfReferenceController extends Controller
     {
         $request->validate([
             'frame_id' => 'required|int',
-            'frame_name' => 'required|string|max:20'
+            'frame_name' => 'required|string|max:60'
         ]);
 
         $frame = FrameOfReference::find($request->frame_id);
