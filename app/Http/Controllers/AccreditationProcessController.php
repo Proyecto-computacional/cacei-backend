@@ -47,13 +47,34 @@ class AccreditationProcessController extends Controller
     }
 
     // # "Elimina" un proceso, haciendo que se oculte
-    public function delete(Request $request)
+    public function delete($processId)
     {
-        $process = Accreditation_Process::findOrFail($request->process_id);
+        $process = Accreditation_Process::findOrFail($processId);
         $process->deleted = true;
         $process->save();
 
         return response()->json(['message' => 'Proceso eliminado'], status: 201);
+    }
+
+    // # Modifica los datos un proceso
+    public function modify(Request $request, $processId)
+    {
+        $data = $request->validate([
+            'process_name' => 'required|string|max:150',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'due_date' => 'required|date|after:start_date|before_or_equal:end_date'
+        ]);
+
+        $process = Accreditation_Process::findOrFail($processId);
+        if (!$process) {
+            return response()->json(['message' => 'Proceso no encontrado', 404]);
+        }
+
+        // Cambia los datos del proceso con los que vienen en la solicitud
+        $process->update($data);
+
+        return response()->json(['message' => 'Proceso modificado'], status: 200);
     }
 
     /* obtener los procesos de acreditación asociados a un usuario */

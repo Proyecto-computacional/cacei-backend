@@ -81,9 +81,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return auth()->user();
     });
 
-    // Accreditation Process routes
     Route::post('/accreditation-processes', [AccreditationProcessController::class, 'store']);
-    Route::middleware(['role:ADMINISTRADOR'])->post('/accreditation-processes/delete', [AccreditationProcessController::class, 'delete']);
+    Route::delete('/accreditation-processes/{processId}/delete', [AccreditationProcessController::class, 'delete']);
+    Route::put('/accreditation-processes/{processId}/modify', [AccreditationProcessController::class, 'modify']);
+
     Route::get('/accreditation-processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
     Route::get('/accreditation-processes/user', [AccreditationProcessController::class, 'getProcessesByUser']);
     Route::get('/accreditation-processes/{processId}/download', [AccreditationProcessController::class, 'downloadProcess']);
