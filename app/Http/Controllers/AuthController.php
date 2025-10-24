@@ -74,8 +74,10 @@ class AuthController extends Controller
 
                 $token = $user->createToken('auth_token');
 
+                $inactiveLimit = config('sanctum.token_inactivity_limit');
+
                 $token->accessToken->forceFill([
-                    'expires_at' => Carbon::now()->addMinutes(20)
+                    'expires_at' => Carbon::now()->addMinutes($inactiveLimit)
                 ])->save();
 
                 return response()->json([
@@ -141,7 +143,28 @@ class AuthController extends Controller
             'remaining_seconds' => $token && $token->expires_at
                 ? $token->expires_at->diffInSeconds(now())
                 : null,
-            'user' => $request->user()->only('id', 'name', 'email'),
+            
         ]);
     }
+
+    public function renewToken (Request $request) {
+        $token = $request->user()->currentAccessToken();
+
+        $inactiveLimit = config('sanctum.token_inactivity_limit');
+
+        if ($token) {
+            $token->forceFill([
+                'expires_at' => now()->addMinutes($inactiveLimit)
+            ])->save();
+
+            return response()->json([
+                'message' => 'Session renewed',
+                'expires_at' => $token->expires_at->toISOString(),
+                'remaining_seconds' => $token->expires_at->diffInSeconds(now())
+            ]);
+        }
+
+        return response()->json(['message' => 'Token not found'], 401);
+    }
+
 }
