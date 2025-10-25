@@ -25,7 +25,7 @@ class AcademicManagementController extends Controller
         $academicManagement = AcademicManagement::updateOrCreate(
             [
                 'cv_id' => $cv_id,
-                'job_position' => $validated['job_position']
+                'academic_management_id' => $request->input('academic_management_id')
             ],
             $validated
         );

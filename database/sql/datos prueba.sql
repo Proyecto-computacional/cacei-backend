@@ -78,7 +78,7 @@ INSERT INTO engineering_designs (engineering_design_id, cv_id, institution, peri
 VALUES (1, 1, 'UASLP', 3, 'Avanzado');
 
 -- Insertar en la tabla professional_achievements
-INSERT INTO professional_achievements (achievement_id, cv_id, description)
+INSERT INTO professional_achievements (professional_achievement_id, cv_id, description)
 VALUES (1, 1, 'Desarrollador principal de un sistema de gestión universitaria');
 
 -- Insertar en la tabla participations

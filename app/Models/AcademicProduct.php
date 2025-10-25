@@ -15,7 +15,6 @@ class AcademicProduct extends Model
 
     protected $fillable = [
         'cv_id',
-        'academic_product_number',
         'description',
     ];
 

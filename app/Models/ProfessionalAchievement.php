@@ -10,11 +10,13 @@ class ProfessionalAchievement extends Model
     use HasFactory;
 
     protected $table = 'professional_achievements';
-    protected $primaryKey = 'achievement_id';
+    protected $primaryKey = 'professional_achievement_id';
     public $timestamps = false;
 
+    public $incrementing = true;
+
     protected $fillable = [
-        'achievement_id',
+        //'professional_achievement_id',
         'cv_id',
         'description',
     ];

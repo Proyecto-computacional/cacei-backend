@@ -16,15 +16,15 @@ class ParticipationController extends Controller
     public function store(Request $request, $cv_id)
     {
         $validated = $request->validate([
-            'institution' => 'required|string|max:30',
+            'institution' => 'required|string|max:70',
             'period' => 'required|integer',
-            'level_participation' => 'required|string|max:20',
+            'level_participation' => 'required|integer',
         ]);
 
         $participation = Participation::updateOrCreate(
             [
                 'cv_id' => $cv_id,
-                'institution' => $validated['institution']
+                'participation_id' => $request->input('participation_id')
             ],
             $validated
         );

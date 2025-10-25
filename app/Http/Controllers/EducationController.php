@@ -26,7 +26,7 @@ class EducationController extends Controller
         $education = Education::updateOrCreate(
             [
                 'cv_id' => $cv_id,
-                'degree_name' => $validated['degree_name']
+                'education_id' => $request->input('education_id')
             ],
             $validated
         );
