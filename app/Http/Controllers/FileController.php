@@ -123,6 +123,10 @@ class FileController extends Controller
             if (empty($savedFiles)) {
                 return response()->json(['message' => 'No se pudo subir ningún archivo'], 422);
             }
+            // DESPACHAR BACKUP DESPUÉS DE SUBIR ARCHIVOS
+            BackupJob::dispatch()->afterResponse();
+            
+            Log::info('BackupJob despachado después de subir archivos');
 
             return response()->json($savedFiles, 201); // Retornar todos los archivos subidos
         }
