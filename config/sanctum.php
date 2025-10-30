@@ -37,6 +37,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Token inactivity limit (minutes)
+    |--------------------------------------------------------------------------
+    |
+    | Define how long a Sanctum token remains valid without activity.
+    | Each authenticated request will refresh this expiration time.
+    |
+    */
+
+    'token_inactivity_limit' => env('SANCTUM_TOKEN_INACTIVITY_LIMIT', 20),
+    
+    /*
+    |--------------------------------------------------------------------------
     | Expiration Minutes
     |--------------------------------------------------------------------------
     |
