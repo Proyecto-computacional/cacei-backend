@@ -46,7 +46,8 @@ return [
     */
 
     'token_inactivity_limit' => env('SANCTUM_TOKEN_INACTIVITY_LIMIT', 20),
-    
+
+
     /*
     |--------------------------------------------------------------------------
     | Expiration Minutes

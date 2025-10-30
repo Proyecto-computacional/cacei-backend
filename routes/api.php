@@ -62,7 +62,7 @@ Route::middleware('auth:sanctum')->get('/test_check_user_example', function (Req
 */
 
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
     Route::get('/linked_processes', [ProcessController::class, 'linkedProcesses']);
     Route::post('/test_check_user_example', [ProcessController::class, 'checkUser']);
     Route::get('/processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
@@ -81,18 +81,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return auth()->user();
     });
     //Ruta para verificar tiempo de expiracion del token.
-        Route::get('/auth/status', [AuthController::class, 'checkToken']);
-        Route::Post('/auth/renew', [AuthController::class, 'renewToken']);
-    });
+    Route::get('/auth/status', [AuthController::class, 'checkToken']);
+    Route::Post('/auth/renew', [AuthController::class, 'renewToken']);
+});
 
-    Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
-        // Accreditation Process routes
-        Route::post('/accreditation-processes', [AccreditationProcessController::class, 'store']);
-        Route::get('/accreditation-processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
-        Route::get('/accreditation-processes/user', [AccreditationProcessController::class, 'getProcessesByUser']);
-        Route::get('/accreditation-processes/{processId}/download', [AccreditationProcessController::class, 'downloadProcess']);
-    });
 
+
+Route::middleware(['auth:sanctum', 'refreshToken'])->group(function () {
+    // Accreditation Process routes
+    Route::post('/accreditation-processes', [AccreditationProcessController::class, 'store']);
+    Route::delete('/accreditation-processes/{processId}/delete', [AccreditationProcessController::class, 'delete']);
+    Route::put('/accreditation-processes/{processId}/modify', [AccreditationProcessController::class, 'modify']);
+
+    Route::get('/accreditation-processes/{processId}', [AccreditationProcessController::class, 'getProcessById']);
+    Route::get('/accreditation-processes/user', [AccreditationProcessController::class, 'getProcessesByUser']);
+    Route::get('/accreditation-processes/{processId}/download', [AccreditationProcessController::class, 'downloadProcess']);
+});
 //2. Menu prinicipal
 Route::middleware(['auth:sanctum', 'refreshToken'])->get('/menuPrinicipal', function (Request $request) {
     return response()->json(['message' => 'Bienvenido al menu principal']);
@@ -291,7 +295,7 @@ Route::get('/mensaje', function () {
     return response()->json(['mensaje' => '¡Hola desde Laravel!']);
 });
 //Rutas hechas en la rama de asignarTareas
-Route::middleware(['auth:sanctum', 'refreshToken', 'role:ADMINISTRADOR,COORDINADOR DE CARRERA,JEFE DE AREA,DIRECTIVO,CAPTURISTA'])->group(function () {
+Route::middleware(['auth:sanctum',  'refreshToken', 'role:ADMINISTRADOR,COORDINADOR DE CARRERA,JEFE DE AREA,DIRECTIVO,CAPTURISTA'])->group(function () {
     Route::get('/revisers', [ReviserController::class, 'index']);
     Route::post('/reviser', [ReviserController::class, 'store']);
     Route::post('/evidence', [EvidenceController::class, 'store']);

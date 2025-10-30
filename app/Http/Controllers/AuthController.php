@@ -143,7 +143,7 @@ class AuthController extends Controller
             'remaining_seconds' => $token && $token->expires_at
                 ? $token->expires_at->diffInSeconds(now())
                 : null,
-
+            
         ]);
     }
 
@@ -166,4 +166,5 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Token not found'], 401);
     }
+
 }
