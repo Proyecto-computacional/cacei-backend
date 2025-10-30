@@ -368,7 +368,7 @@ class AccreditationProcessController extends Controller
                 'message' => 'Proceso no encontrado.',
                 'process_id' => $processId,
                 'success' => false
-            ], 404);
+            ], 404);  
         }
 
         return response()->json([

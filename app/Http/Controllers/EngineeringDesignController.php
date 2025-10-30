@@ -16,7 +16,7 @@ class EngineeringDesignController extends Controller
     public function store(Request $request, $cv_id)
     {
         $validated = $request->validate([
-            'institution' => 'required|string|max:30',
+            'institution' => 'required|string|max:70',
             'period' => 'required|integer',
             'level_experience' => 'required|string|max:20',
         ]);
@@ -24,7 +24,7 @@ class EngineeringDesignController extends Controller
         $engineeringDesign = EngineeringDesign::updateOrCreate(
             [
                 'cv_id' => $cv_id,
-                'institution' => $validated['institution']
+                'engineering_design_id' => $request->input('engineering_design_id')
             ],
             $validated
         );

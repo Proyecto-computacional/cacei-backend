@@ -16,22 +16,21 @@ class ProfessionalAchievementController extends Controller
     public function store(Request $request, $cv_id)
     {
         $validated = $request->validate([
-            'description' => 'required|string|max:255',
+            'description' => 'required|string|max:500',
         ]);
 
-        // Buscar por descripción (evita duplicados)
-        $achievement = ProfessionalAchievement::firstOrNew([
-            'cv_id' => $cv_id,
-            'description' => $validated['description']
-        ]);
-
-        if (!$achievement->exists) {
-            $achievement->achievement_id = rand(1000, 999999);
-            $achievement->save();
-        }
+        // Usar updateOrCreate para evitar duplicados
+        $achievement = ProfessionalAchievement::updateOrCreate(
+            [
+                'cv_id' => $cv_id,
+                'professional_achievement_id' => $request->input('professional_achievement_id')
+            ],
+            $validated
+        );
 
         return response()->json($achievement, 201);
     }
+
 
     public function show($cv_id, $achievement_id)
     {

@@ -16,16 +16,20 @@ class ContributionToPeController extends Controller
     public function store(Request $request, $cv_id)
     {
         $validated = $request->validate([
-            'description' => 'required|string|max:255',
+            'description' => 'required|string|max:500',
         ]);
 
          $contribution = ContributionToPe::updateOrCreate(
-        ['cv_id' => $cv_id],
-        ['description' => $validated['description']]
+        [
+		    'cv_id' => $cv_id,
+        	'contribution_id' => $request->input('contribution_id')
+	    ],
+        $validated
     );
 
         return response()->json($contribution, 201);
     }
+
 
     public function show($cv_id, $contribution_id)
     {

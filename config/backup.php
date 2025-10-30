@@ -28,7 +28,10 @@ return [
                  */
                 'exclude' => [
                     storage_path('framework'),
-                    storage_path('framework'),
+                    storage_path('logs'),
+                    storage_path('app/public'),
+                    storage_path('app/private-backups'), // Excluir backups de otros backups
+                    storage_path('app/backup-temp'),
                 ],
 
                 /*
@@ -80,7 +83,7 @@ return [
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
             'databases' => [
-                'pgsql',
+                //'pgsql',
             ],
         ],
 
@@ -154,7 +157,7 @@ return [
              * The disk names on which the backups will be stored.
              */
             'disks' => [
-                'local',
+                'backups',
             ],
         ],
 

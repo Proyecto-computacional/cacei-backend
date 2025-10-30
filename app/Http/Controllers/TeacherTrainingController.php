@@ -25,7 +25,7 @@ class TeacherTrainingController extends Controller
         $teacherTraining = TeacherTraining::updateOrCreate(
             [
                 'cv_id' => $cv_id,
-                'title_certification' => $validated['title_certification']
+                'teacher_training_id' => $request->input('teacher_training_id')
             ],
             $validated
         );

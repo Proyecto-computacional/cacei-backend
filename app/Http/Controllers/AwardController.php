@@ -22,7 +22,7 @@ class AwardController extends Controller
         $award = Award::updateOrCreate(
             [
                 'cv_id' => $cv_id,
-                'description' => $validated['description']
+                'award_id' => $request->input('award_id')
             ],
             $validated
         );

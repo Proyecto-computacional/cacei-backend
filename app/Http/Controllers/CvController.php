@@ -84,7 +84,7 @@ class CvController extends Controller
         $teacher_training = TeacherTraining::where('cv_id', $cv->cv_id)->orderByDesc('obtained_year')->get();
         $disciplinary_update = DisciplinaryUpdate::where('cv_id', $cv->cv_id)->orderByDesc('year_certification')->get();
         $academic_management = AcademicManagement::where('cv_id', $cv->cv_id)->orderByDesc('start_date')->get();
-        $academic_product = AcademicProduct::where('cv_id', $cv->cv_id)->orderByDesc('academic_product_number')->get();
+        $academic_product = AcademicProduct::where('cv_id', $cv->cv_id)->orderByRaw('academic_product_id')->get();
         $laboral_experience = LaboralExperience::where('cv_id', $cv->cv_id)->orderByDesc('start_date')->get();
         $engineering_design = EngineeringDesign::where('cv_id', $cv->cv_id)->get();
         $professional_achievement = ProfessionalAchievement::where('cv_id', $cv->cv_id)->get();
@@ -208,7 +208,7 @@ class CvController extends Controller
             foreach ($academic_product->values() as $i => $product) {
                 $index = $i + 1;
         
-                $template->setValue("userId#$index", $product->academic_product_number);
+                $template->setValue("userId#$index", $product->academic_product_id);
                 $template->setValue("des#$index", $product->description);
                 //$template->setValue("periP#$index", $product->period);
                 //El template original valida que haya un año

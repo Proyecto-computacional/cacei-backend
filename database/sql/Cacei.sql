@@ -172,7 +172,6 @@ CREATE TABLE academic_managements (
 CREATE TABLE academic_products (
     academic_product_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    academic_product_number INT,
     description VARCHAR(150),
     PRIMARY KEY (academic_product_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
@@ -200,10 +199,10 @@ CREATE TABLE engineering_designs (
 );
 
 CREATE TABLE professional_achievements (
-    achievement_id BIGSERIAL NOT NULL,
+    professional_achievement_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
     description VARCHAR(500),
-    PRIMARY KEY (achievement_id),
+    PRIMARY KEY (professional_achievement_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
 

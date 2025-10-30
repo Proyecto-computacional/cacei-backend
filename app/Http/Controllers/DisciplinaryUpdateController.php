@@ -25,7 +25,7 @@ class DisciplinaryUpdateController extends Controller
         $disciplinaryUpdate = DisciplinaryUpdate::updateOrCreate(
             [
                 'cv_id' => $cv_id,
-                'title_certification' => $validated['title_certification']
+                'disciplinary_update_id' => $request->input('disciplinary_update_id')
             ],
             $validated
         );

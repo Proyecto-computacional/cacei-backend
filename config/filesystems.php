@@ -55,6 +55,21 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+        'backups' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private-backups'), //Directorio donde se quiere guardar el backup
+            'throw' => false,
+            'permissions' => [
+                'file' => [
+                    'public' => 0640,
+                    'private' => 0600,
+                ],
+                'dir' => [
+                    'public' => 0750,
+                    'private' => 0700,
+                ],
+            ],
+        ],
 
     ],
 
