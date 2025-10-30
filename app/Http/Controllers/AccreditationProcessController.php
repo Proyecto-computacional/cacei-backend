@@ -46,6 +46,37 @@ class AccreditationProcessController extends Controller
         ], 201);
     }
 
+    // # "Elimina" un proceso, haciendo que se oculte
+    public function delete($processId)
+    {
+        $process = Accreditation_Process::findOrFail($processId);
+        $process->deleted = true;
+        $process->save();
+
+        return response()->json(['message' => 'Proceso eliminado'], status: 201);
+    }
+
+    // # Modifica los datos un proceso
+    public function modify(Request $request, $processId)
+    {
+        $data = $request->validate([
+            'process_name' => 'required|string|max:150',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'due_date' => 'required|date|after:start_date|before_or_equal:end_date'
+        ]);
+
+        $process = Accreditation_Process::findOrFail($processId);
+        if (!$process) {
+            return response()->json(['message' => 'Proceso no encontrado', 404]);
+        }
+
+        // Cambia los datos del proceso con los que vienen en la solicitud
+        $process->update($data);
+
+        return response()->json(['message' => 'Proceso modificado'], status: 200);
+    }
+
     /* obtener los procesos de acreditación asociados a un usuario */
     public function getProcessesByUser(Request $request)
     {
@@ -56,7 +87,7 @@ class AccreditationProcessController extends Controller
         }
         // consultar a la base de datos
         $processes = DB::select(" 
-            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished, ap.deleted
             FROM users u
             LEFT JOIN evidences e ON u.user_rpe = e.user_rpe
             LEFT JOIN accreditation_processes ap ON e.process_id = ap.process_id
@@ -65,7 +96,7 @@ class AccreditationProcessController extends Controller
             LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
             WHERE u.user_rpe = ? AND ap.process_id IS NOT NULL
             UNION
-            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished, ap.deleted
             FROM users u
             JOIN careers c ON u.user_rpe = c.user_rpe
             JOIN accreditation_processes ap ON c.career_id = ap.career_id
@@ -73,7 +104,7 @@ class AccreditationProcessController extends Controller
             LEFT JOIN frames_of_reference fr ON ap.frame_id = fr.frame_id
             WHERE u.user_rpe = ?
             UNION
-            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished
+            SELECT DISTINCT ap.process_id, ap.process_name, ap.start_date, ap.end_date, ap.due_date, c.career_name, a.area_name, fr.frame_name, ap.frame_id, ap.finished, ap.deleted
             FROM users u
             JOIN areas a ON u.user_rpe = a.user_rpe
             JOIN careers c ON a.area_id = c.area_id
@@ -126,7 +157,8 @@ class AccreditationProcessController extends Controller
 
                 fr.frame_name,
                 ap.frame_id,
-                ap.finished
+                ap.finished,
+                ap.deleted
             FROM accreditation_processes ap
 
             JOIN careers c
@@ -166,6 +198,7 @@ class AccreditationProcessController extends Controller
                 fr.frame_name,
                 fr.frame_id,
                 ap.finished,
+                ap.deleted,
                 CONCAT('/api/process/', ap.process_id) as process_path
             FROM accreditation_processes ap
             JOIN careers c ON ap.career_id = c.career_id
@@ -198,7 +231,8 @@ class AccreditationProcessController extends Controller
                 a.area_name,
                 fr.frame_name,
                 fr.frame_id,
-                ap.finished
+                ap.finished,
+                ap.deleted
             FROM accreditation_processes ap
             JOIN careers c ON ap.career_id = c.career_id
             JOIN areas a ON c.area_id = a.area_id
@@ -296,6 +330,7 @@ class AccreditationProcessController extends Controller
                 ap.end_date,
                 ap.due_date,
                 ap.finished,
+                ap.deleted,
                 
                 c.career_name,
                 c.career_id,
