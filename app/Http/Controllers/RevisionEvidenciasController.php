@@ -199,7 +199,7 @@ class RevisionEvidenciasController extends Controller
                 'evidence_id' => $request->evidence_id,
                 'notification_date' => Carbon::now('America/Mexico_City'),
                 'user_rpe' => $request->user_rpe,
-                //'reviser_id' => $reviser_rpe,
+                'reviser_id' => $reviser_rpe,
                 'description' => $feedback ? "Tu evidencia ha sido marcada como {$estado} con el siguiente comentario: {$feedback}" : "Tu evidencia ha sido marcada como {$estado}",
                 'seen' => false,
                 'pinned' => false
