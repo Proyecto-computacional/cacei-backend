@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Jobs\BackupJob;
 
 class RevisionEvidenciasController extends Controller
 {
@@ -47,6 +48,9 @@ class RevisionEvidenciasController extends Controller
 
         //solo aprovadp o rechazado puede tener retroalimentacIon
         $feedback = in_array($estado, ['APROBADA', 'NO APROBADA',]) ? $request->feedback : "";
+
+        // Variable para controlar si se debe hacer backup
+        $shouldBackup = false;
 
         if ($estado === 'PENDIENTE') {
             // Buscar si ya existe un estado para este usuario y evidencia
@@ -100,6 +104,9 @@ class RevisionEvidenciasController extends Controller
 
                 if ($user->user_role === "ADMINISTRADOR") {
                     // Primero, aprobar el propio status del administrador
+                    // MARCAR PARA HACER BACKUP - ADMINISTRADOR APRUEBA
+                    $shouldBackup = true;
+
                     Status::updateOrCreate(
                         [
                             'evidence_id' => $evidence->evidence_id,
@@ -197,6 +204,17 @@ class RevisionEvidenciasController extends Controller
                 'seen' => false,
                 'pinned' => false
             ]);
+        }
+
+        // EJECUTAR BACKUP SI ES APROBACIÓN DE ADMINISTRADOR
+        if ($shouldBackup) {
+            try {
+                BackupJob::dispatch()->afterResponse();
+                Log::info('BackupJob despachado - Administrador aprobó evidencia ID: ' . $request->evidence_id);
+            } catch (\Exception $e) {
+                Log::error('Error al despachar BackupJob: ' . $e->getMessage());
+                // No fallar la operación principal si el backup falla
+            }
         }
 
         return response()->json([

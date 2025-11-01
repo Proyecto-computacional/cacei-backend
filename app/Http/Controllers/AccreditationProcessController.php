@@ -37,7 +37,8 @@ class AccreditationProcessController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'due_date' => $request->due_date,
-            'finished' => false
+            'finished' => false,
+            'deleted' => false
         ]);
 
         return response()->json([
