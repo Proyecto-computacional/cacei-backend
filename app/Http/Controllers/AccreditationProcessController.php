@@ -40,6 +40,8 @@ class AccreditationProcessController extends Controller
             'finished' => false
         ]);
 
+        // revisar que el area y carrera relacionadas al proceso tengan un owner asignado
+
         return response()->json([
             'message' => 'Proceso de acreditación creado exitosamente',
             'process' => $process
