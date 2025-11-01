@@ -42,7 +42,7 @@ class BackupApprovedEvidence extends Command
 
         $zip = new ZipArchive();
         $zipFileName = 'approved_evidences_' . now()->format('Ymd_His') . '.zip';
-        $zipPath = storage_path('app/backups/' . $zipFileName);
+        $zipPath = storage_path('app/private-backups/' . $zipFileName);
 
         if (!file_exists(dirname($zipPath))) {
             mkdir(dirname($zipPath), 0777, true);

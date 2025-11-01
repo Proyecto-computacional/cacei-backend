@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BackupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\EvidenciaEstadisticaController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Middleware\CorsMiddleware;
+use Spatie\Backup\Config\BackupConfig;
 
 /*
 |--------------------------------------------------------------------------
@@ -332,3 +334,6 @@ Route::middleware(['auth:sanctum',  'refreshToken', 'role:ADMINISTRADOR,COORDINA
 
 // 13. Categorías relacionadas a un proceso dado el rol del usuario
 Route::middleware(['auth:sanctum', 'refreshToken'])->get('/categories/progress/{processId}', [CategoryController::class, 'getProgressByProcess']);
+
+// 14. Backup
+Route::middleware(['auth:sanctum', 'refreshToken'])->get('/backup', [BackupController::class, 'backup']);
