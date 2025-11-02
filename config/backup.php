@@ -18,7 +18,7 @@ return [
                  * The list of directories and files that will be included in the backup.
                  */
                 'include' => [
-                    storage_path(),
+                    storage_path('app/public/uploads'),
                 ],
 
                 /*
@@ -27,11 +27,12 @@ return [
                  * Directories used by the backup process will automatically be excluded.
                  */
                 'exclude' => [
-                    storage_path('framework'),
+                    base_path('node_modules'),
+                    base_path('vendor'),
+                    base_path('storage/app/backup-temp'), // Excluir temp
+                    base_path('storage/app/private-backups'), // Excluir backups anteriores
                     storage_path('logs'),
-                    storage_path('app/public'),
-                    storage_path('app/private-backups'), // Excluir backups de otros backups
-                    storage_path('app/backup-temp'),
+                    storage_path('framework'),
                 ],
 
                 /*
@@ -42,14 +43,14 @@ return [
                 /*
                  * Determines if it should avoid unreadable folders.
                  */
-                'ignore_unreadable_directories' => false,
+                'ignore_unreadable_directories' => true,
 
                 /*
                  * This path is used to make directories in resulting zip-file relative
                  * Set to `null` to include complete absolute path
                  * Example: base_path()
                  */
-                'relative_path' => null,
+                'relative_path' => base_path(),
             ],
 
             /*
@@ -146,7 +147,7 @@ return [
              *
              * Setting of 0 for some algorithms may switch to the strongest compression.
              */
-            'compression_level' => 9,
+            'compression_level' => 1,
 
             /*
              * The filename prefix used for the backup zip file.

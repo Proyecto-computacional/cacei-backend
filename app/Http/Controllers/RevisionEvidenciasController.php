@@ -100,6 +100,9 @@ class RevisionEvidenciasController extends Controller
 
                 if ($user->user_role === "ADMINISTRADOR") {
                     // Primero, aprobar el propio status del administrador
+                    // MARCAR PARA HACER BACKUP - ADMINISTRADOR APRUEBA
+                    $shouldBackup = true;
+
                     Status::updateOrCreate(
                         [
                             'evidence_id' => $evidence->evidence_id,
