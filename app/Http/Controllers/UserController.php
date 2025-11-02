@@ -60,16 +60,18 @@ class UserController extends Controller
 
         $assignments = Evidence::with([
             'standard:standard_id,standard_name', // Traemos el criterio (nombre del standard)
+            'process:process_id,process_name',
             'status' => function ($query) {
                 $query->orderByDesc('status_date'); // Solo el último estado
             }
         ])
             ->where('user_rpe', $user->user_rpe)
-            ->select('evidence_id', 'standard_id') // Solo traemos lo necesario
+            ->select('evidence_id', 'standard_id', 'process_id') // Solo traemos lo necesario
             ->get()
             ->map(function ($evidence) {
                 return [
                     'evidence_id' => $evidence->evidence_id,
+                    'proceso' => $evidence->process->process_name,
                     'criterio' => $evidence->standard?->standard_name,
                     'estado' => $evidence->status->first()?->status_description ?? 'POR SUBIR', // El nombre del estado más reciente
                 ];
