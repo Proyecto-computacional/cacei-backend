@@ -327,23 +327,22 @@ INSERT INTO role_permissions (role_id, permission_id, is_enabled) VALUES
 INSERT INTO areas (area_id, area_name) VALUES
 ('7', 'Área Agroindustrial'),
 ('2', 'Área de Ciencias de la Computación'),
-('AR03', 'Área de Ciencias de la Tierra'),
+('4', 'Área de Ciencias de la Tierra'),
 ('3', 'Área Civil'),
 ('5', 'Área Mecánica y Eléctrica'),
-('AR06', 'Área de Metalurgia y Materiales');
+('6', 'Área de Metalurgia y Materiales');
 
 INSERT INTO careers (career_id, area_id, career_name) VALUES
-(1, '7', 'Ingeniería Agroindustrial'),
-(2, 'AR03', 'Ingeniería Ambiental'),
-(3, '3', 'Ingeniería Civil'),
-(4, '2', 'Ingeniería en Computación'),
-(5, '5', 'Ingeniería en Electricidad y Automatización'),
-(6, 'AR03', 'Ingeniería en Geología'),
-(7, '2', 'Ingeniería en Sistemas Inteligentes'),
-(8, '3', 'Ingeniería en Topografía y Construcción'),
-(9, '5', 'Ingeniería Mecánica'),
-(10, '5', 'Ingeniería Mecánica Administrativa'),
-(11, '5', 'Ingeniería Mecánica Eléctrica'),
-(12, '5', 'Ingeniería Mecatrónica'),
-(13, 'AR06', 'Ingeniería Metalúrgica y de Materiales'),
-(14, 'AR03', 'Ingeniería Geoinformática');
+(68, '7', 'Ingeniería Agroindustrial'),
+(77, '4', 'Ingeniería Ambiental'),
+(63, '3', 'Ingeniería Civil'),
+(75, '2', 'Ingeniería en Computación'),
+(78, '5', 'Ingeniería en Electricidad y Automatización'),
+(64, '4', 'Ingeniería en Geología'),
+(83, '2', 'Ingeniería en Sistemas Inteligentes'),
+(84, '3', 'Ingeniería en Topografía y Construcción'),
+(72, '5', 'Ingeniería Mecánica'),
+(69, '5', 'Ingeniería Mecánica Administrativa'),
+(65, '5', 'Ingeniería Mecánica Eléctrica'),
+(80, '5', 'Ingeniería Mecatrónica'),
+(76, '6', 'Ingeniería Metalúrgica y de Materiales');
