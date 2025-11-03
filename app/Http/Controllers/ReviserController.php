@@ -43,12 +43,7 @@ class ReviserController extends Controller
             'evidence_id' => 'required|integer',
         ]);
 
-        do {
-            $randomId = rand(1, 100);
-        } while (Reviser::where('reviser_id', $randomId)->exists()); // Verifica que no se repita
-
         $revisor = Reviser::create([
-            'reviser_id' => $randomId,
             'evidence_id' => $request->evidence_id,
             'user_rpe' => $request->user_rpe,
         ]);

@@ -26,17 +26,11 @@ class StandardController extends Controller
             'help' => 'required|string|max:255'
         ]);
 
-        // Generar un ID único
-        do {
-            $randomId = rand(1, 100);
-        } while (Standard::where('standard_id', $randomId)->exists()); // Verifica que no se repita
-
         do {
             $indice = $indice + 1;
         } while (Standard::where('indice', $indice)->where('section_id', $request->input('section_id'))->exists());
 
         $standard = new Standard();
-        $standard->standard_id = $randomId;
         $standard->section_id = $request->input('section_id');
         $standard->standard_name = $request->input('standard_name');
         $standard->standard_description = $request->input('standard_description');
