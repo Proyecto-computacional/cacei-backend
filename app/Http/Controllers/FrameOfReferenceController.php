@@ -25,6 +25,10 @@ class FrameOfReferenceController extends Controller
         $frame->frame_name = $request->input('frame_name');
 
         $frame->save();
+         
+        //para obtener el id con el que se guardo en la base de datos
+        $frame->refresh();
+
 
         return response()->json([
             'message' => 'Registro creado correctamente',
@@ -51,6 +55,9 @@ class FrameOfReferenceController extends Controller
         $frame->frame_name = $request->input('frame_name');
 
         $frame->save();
+
+        //para obtener el id con el que se guardo en la base de datos
+        $frame->refresh();
 
         return response()->json([
             'message' => 'Registro actualizado correctamente.',
