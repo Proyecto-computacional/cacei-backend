@@ -149,3 +149,9 @@ date.timezone = "America/Mexico_City"
 curl.cainfo = "C:\xampp\php\extras\ssl\cacert.pem"
 openssl.cafile = "C:\xampp\php\extras\ssl\cacert.pem"
 ```
+
+## Troubleshooting
+- Error 413 (Request Entity Too Large -> revisar `php.ini` los parámetros `post_max_size` y `upload_max_filesize`
+- Error 500 -> revisar registros en `storage/logs/laravel.log`
+- Problemas de sesión -> revisar permisos en `storage/framework/sessions`
+- Problemas de autenticación -> revisar `php.ini` los parámetros `curl.cainfo` y `openssl.cafile`. Sustituir por "C:ruta\a\xampp\php\extras\ssl\cacert.pem"
