@@ -2,9 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\AccreditationProcessController;
 use App\Models\Evidence;
 use DB;
-use File;
+use Illuminate\Support\Facades\File;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\CvController;
 use App\Http\Controllers\GroupController;
 use App\Models\Accreditation_Process;
+use Illuminate\Support\Str;
 
 class GenerateAcreditacionZip implements ShouldQueue
 {
@@ -36,77 +38,89 @@ class GenerateAcreditacionZip implements ShouldQueue
      * Execute the job.
      */
     public function handle()
-    {
-        //Log::info("procesoId: " . $this->procesoId);
+    { 
+        ////Log::info("procesoId: " . $this->procesoId);
+        $includeCV = ["categoryIndex" => 5, "sectionIndex" => 1, "standardIndex" => 1];
         $procesoId = $this->procesoId;
-        $proceso = Accreditation_Process::find($procesoId);
+        $proceso = Accreditation_Process::with('frame.categories.sections.standards.evidences.files')->find($procesoId);
         $area = $proceso->career->area->area_id;
-
-        $semester = $proceso->getSemester();
-
-        //Log::debug("Semestre compilacion", $semester);
         
-        // Crear carpeta temporal
-        $tempPath = storage_path("app/temp_zips/$procesoId");
-        if (!file_exists($tempPath)) {
-            mkdir($tempPath, 0777, true);
-        }
-        
-       //obtener los grupos del area en el semestre del proceso
-        $area_groups = GroupController::getGroupsByArea($semester, $area);
-        $area_groups_data = json_decode($area_groups->getContent(), true);
         $filesAdded = 0;
-        if(isset($area_groups_data['data']['datos'])){
-            $unique_rpes = array_unique(array_column($area_groups_data['data']['datos'], 'rpe'));
-            mkdir("$tempPath/cv", 0777, true);
-            Log::debug("rpe", [$unique_rpes]);
-            foreach($unique_rpes as $rpe){
-            $response = CvController::saveCv($rpe, "$tempPath/cv/");
-            $filesAdded++;
-            }
-        }
 
-        // Paso 1: Obtener evidencias del proceso
-        $evidencias = Evidence::where('process_id', $procesoId)->get();
+        //Log::debug("Proceso:", [$proceso]);
+        
 
-        foreach ($evidencias as $evidencia) {
-            // Paso 2: Obtener archivos relacionados con la evidencia
-            $archivos = DB::table('files')
-                ->where('evidence_id', $evidencia->evidence_id)
-                ->get();
+        $basePath = "temp_zips/{$procesoId}"; 
+        //Log::debug("basePath {$basePath}");
+        foreach ($proceso->frame->categories as $category) {
+            $categoryPath = "{$basePath}/{$category->indice}.{$category->category_name}";
+            Storage::makeDirectory($categoryPath);
+            //Log::debug("Category folder created: {$categoryPath}");
 
-            foreach ($archivos as $archivo) {
-                $filePath = storage_path("app/public/{$archivo->file_url}");
+            foreach ($category->sections as $section) {
+                $sectionPath = "{$categoryPath}/{$category->indice}.{$section->indice}.{$section->section_name}";
+                Storage::makeDirectory($sectionPath);
+                //Log::debug("Section folder created: {$sectionPath}");
 
-                if (file_exists($filePath)) {
-                    // Paso 3: Extraer nombre y secciones
-                    $nombreArchivo = basename($archivo->file_url); // Ej: "1000_1_1_86.pdf"
+                foreach ($section->standards as $standard) {
+                    $charIndex = $this->numToLetter($standard->indice);
+                    $standardPath = "{$sectionPath}/{$category->indice}.{$section->indice}.{$charIndex}.{$standard->standard_name}";
+                    //Log::debug("standard path: {$standardPath}");
+                    //Es el criterio de los cvs de los profesores?
+                    if($category->indice === $includeCV["categoryIndex"] && $section->indice === $includeCV["sectionIndex"] && $standard->indice === $includeCV["standardIndex"]){
+                        //Generar carpeta de cvs
+                        Storage::makeDirectory($standardPath);
+                        //Log::debug("CV Standard folder created: {$standardPath}");
 
-                    // Suponiendo que el nombre es "Seccion_Subseccion_Resto.pdf"
-                    // Por ejemplo: "1_1.1_001-abc123.pdf" o similar
-                    $partes = explode('_', $nombreArchivo);
-
-                    $seccion = $partes[0] ?? 'Desconocido';
-                    $subseccion = $partes[1] ?? 'Desconocido';
-                    $destino = "$tempPath/{$seccion}/{$subseccion}";
-
-                    if (!file_exists($destino)) {
-                        mkdir($destino, 0777, true);
+                        //Obtener los rpes de los profesores de los que se necesita el CV para el proceso.
+                        $rpesByArea = AccreditationProcessController::getCVsProcess($procesoId);
+                        $rpesByArea = $rpesByArea->getData(true);
+                        $index = 0;
+                        $areas = [$proceso->career->area->area_name, "Departmaneto de Físico - Matemáticas", "Área de Formación Humanística"]; 
+                        foreach($rpesByArea as $area){
+                            //dividir cvs en carpetas por cada area
+                            //Log::debug("i {$index}");
+                            Storage::makeDirectory("{$standardPath}/{$areas[$index]}");
+                            $rpes = $area;
+                            //Log::debug("Area for cvs:", $area);
+                            foreach($rpes as $rpe){
+                                if($rpe !== null){
+                                    $outpath = storage_path("app/{$standardPath}/{$areas[$index]}/");
+                                    //Log::debug("cv Outhpath {$outpath}");
+                                    $response = CvController::saveCv($rpe, $outpath);
+                                    ////Log::debug("cv response {$response}");
+                                    $filesAdded++;
+                                }
+                            }
+                            $index++;
+                        }
                     }
-
-                    // Paso 4: Copiar archivo a la carpeta organizada
-                    copy($filePath, "$destino/{$nombreArchivo}");
-                    $filesAdded++;
-                }
+                    foreach ($standard->evidences as $evidence) {
+                        foreach($evidence->files as $file){
+                                $fileExtension = pathinfo($file->file_url, PATHINFO_EXTENSION);
+                                $outpath = storage_path("app/{$standardPath}.{$fileExtension}");
+                                //Log::debug("file Outhpath {$outpath}");
+                                $filePath = storage_path("app/public/{$file->file_url}");
+                                //Log::debug("file path {$filePath}");
+                                $response = copy($filePath, $outpath);
+                                //Log::debug("file copy response {$response}");
+                                $filesAdded++;
+                            }
+                        }
+                    }
             }
         }
-
-        // Paso 5: Crear el ZIP
+        
+        // Crear el ZIP
         $zip = new ZipArchive;
-        $zipPath = storage_path("app/zips/proceso_$procesoId.zip");
-
+        $zipName = Str::slug($proceso->process_name, '_') . '.zip';
+        $zipPath = storage_path("app/zips/{$zipName}");
+        $tempPath = storage_path("app/{$basePath}/");
+        //Log::debug("TempPath {$tempPath}");
+         //Log::debug("Directorio ZIP creado: " . dirname($zipPath));
         if (!file_exists(dirname($zipPath))) {
             mkdir(dirname($zipPath), 0777, true);
+            //Log::debug("Directorio ZIP creado: " . dirname($zipPath));
         }
 
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
@@ -114,29 +128,43 @@ class GenerateAcreditacionZip implements ShouldQueue
                 new RecursiveDirectoryIterator($tempPath),
                 RecursiveIteratorIterator::LEAVES_ONLY
             );
+            // Normalizar antes del foreach
+            $tempPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $tempPath);
+            $tempPath = rtrim($tempPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            //Log::debug("TempPath normalizado: {$tempPath}");
 
             foreach ($files as $file) {
+                    $filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $file->getRealPath());
+                    $relativePath = substr($filePath, strlen($tempPath));
+                    $relativePath = ltrim($relativePath, DIRECTORY_SEPARATOR);
                 if (!$file->isDir()) {
-                    $filePath = $file->getRealPath();
-                    $relativePath = substr($filePath, strlen($tempPath) + 1);
+                    //incluir carpetas con archivo
                     $zip->addFile($filePath, $relativePath);
+                }else{
+                    //tambien incluir carpetas sin archivo para respetar la estructura
+                    $zip->addEmptyDir($relativePath);
                 }
             }
-
             $zip->close();
+        }else{
+             //Log::debug("Zip not open");
         }
 
-        Log::debug("a");
+        ////Log::debug("ZipPath {$zipPath}");
 
-        // Paso 6: Eliminar carpeta temporal
+        //Eliminar carpeta temporal
         File::deleteDirectory($tempPath);
 
-        // No return response, just create the file
+        // Si no se agrego un solo archivo, eliminar zip para manejar respuesta desde el controlador
         if ($filesAdded === 0) {
-            // If no files were added, delete the empty zip
             if (file_exists($zipPath)) {
                 unlink($zipPath);
             }
         }
+    }
+
+    //Pasar indices de criterios a indices alfabeticos
+    private function numToLetter($num) {
+        return chr(96 + $num);
     }
 }
