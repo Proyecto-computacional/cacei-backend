@@ -13,7 +13,7 @@ class Section extends Model
     public $timestamps = false;
     protected $primaryKey = 'section_id';
     protected $foreignKey = 'category_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     protected $fillable = [
         'section_id',
