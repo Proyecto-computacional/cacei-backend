@@ -27,4 +27,8 @@ class Standard extends Model
     {
         return $this->belongsTo(Section::class, 'section_id');
     }
+
+    public function evidences(){
+        return $this->hasMany(Evidence::class, 'standard_id');
+    }
 }
