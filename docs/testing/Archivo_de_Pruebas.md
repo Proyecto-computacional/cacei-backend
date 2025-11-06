@@ -1,3 +1,31 @@
+Instalaciones para testing
+Verificar lo que YA tienes:
+# En tu proyecto Laravel, ejecuta:
+php artisan --version
+composer show | grep test
+
+Instalaciones esenciales (si faltan):
+# Asegurar testing básico
+composer require --dev phpunit/phpunit
+composer require --dev laravel/dusk
+
+Configurar Dusk (pruebas E2E):
+php artisan dusk:install
+
+Archivos de configuración AUTOMÁTICOS(que probablemente se borren ya que pueden cambiar drasticamente segun los mantenimientos que se le den al sistema):
+# Laravel ya crea estos archivos automáticamente:
+- phpunit.xml
+- tests/TestCase.php
+- tests/Unit/ExampleTest.php
+- tests/Feature/ExampleTest.php
+- tests/Browser/ExampleTest.php (con Dusk)
+
+Comandos Seguros para Verificar
+SIN riesgo de que fallen pruebas:
+# Solo verifica que los comandos existen
+php artisan list | grep test
+php artisan list | grep dusk
+
 Auth Login Integration
 Objetivo
 Valida:
