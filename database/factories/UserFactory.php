@@ -37,6 +37,8 @@ class UserFactory extends Factory
                 'DEPARTAMENTO UNIVERSITARIO',
                 'PERSONAL DE APOYO'
             ]),
+            'user_area' => 'MAT',
+            'cv_id' => $this->faker->unique()->numberBetween(1,1000)
         ];
     }
 
