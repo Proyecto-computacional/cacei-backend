@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\CvController;
 use App\Http\Controllers\GroupController;
 use App\Models\Accreditation_Process;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 
 class GenerateAcreditacionZip implements ShouldQueue
@@ -106,6 +107,9 @@ class GenerateAcreditacionZip implements ShouldQueue
                                 //Log::debug("file copy response {$response}");
                                 $filesAdded++;
                             }
+                        $pdf = Pdf::loadHTML($evidence->justification);
+                        $path = storage_path("app/{$standardPath}_justificación.pdf");
+                        $pdf->save($path);
                         }
                     }
             }
