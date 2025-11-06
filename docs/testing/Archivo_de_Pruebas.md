@@ -23,16 +23,16 @@ Performance bajo carga
 Cómo Ejecutar
 Local:
 # Ejecutar todas las pruebas de integración
-php artisan test tests/Integration/
+php artisan test tests/integration/
 
 # Ejecutar solo pruebas de Auth
-php artisan test tests/Integration/Auth/
+php artisan test tests/integration/Auth/
 
 # Ejecutar prueba específica
-php artisan test tests/Integration/Auth/AuthLoginIntegrationTest.php
+php artisan test tests/integration/Auth/AuthLoginIntegrationTest.php
 
 # Con reporte de cobertura
-php artisan test tests/Integration/Auth/ --coverage-html=coverage/
+php artisan test tests/integration/Auth/ --coverage-html=coverage/
 
 CI/CD:
 # En pipeline
@@ -67,16 +67,16 @@ Middleware de permisos específicos (se mockean)
 Cómo Ejecutar
 Local:
 # Ejecutar todas las pruebas de Evidence
-php artisan test tests/Integration/Evidence/
+php artisan test tests/integration/Evidence/
 
 # Ejecutar solo pruebas CRUD
-php artisan test tests/Integration/Evidence/EvidenceCrudIntegrationTest.php
+php artisan test tests/integration/Evidence/EvidenceCrudIntegrationTest.php
 
 # Ejecutar solo pruebas de File Upload
-php artisan test tests/Integration/Evidence/FileUploadIntegrationTest.php
+php artisan test tests/integration/Evidence/FileUploadIntegrationTest.php
 
 # Con reporte de cobertura
-php artisan test tests/Integration/Evidence/ --coverage-html=coverage/
+php artisan test tests/integration/Evidence/ --coverage-html=coverage/
 
 CI/CD:
 # En pipeline
@@ -123,17 +123,164 @@ Users (PROFESOR, COORDINADOR, JEFE_DE_AREA, ADMINISTRADOR)
 Cómo Ejecutar
 Local:
 # Ejecutar todas las pruebas de workflow
-php artisan test tests/Integration/Workflow/
+php artisan test tests/integration/Workflow/
 
 # Ejecutar solo pruebas de revisión
-php artisan test tests/Integration/Workflow/EvidenceRevisionWorkflowTest.php
+php artisan test tests/integration/Workflow/EvidenceRevisionWorkflowTest.php
 
 # Ejecutar solo pruebas de notificaciones
-php artisan test tests/Integration/Workflow/NotificationWorkflowTest.php
+php artisan test tests/integration/Workflow/NotificationWorkflowTest.php
 
 # Con reporte de cobertura
-php artisan test tests/Integration/Workflow/ --coverage-html=coverage/
+php artisan test tests/integration/Workflow/ --coverage-html=coverage/
 
 CI/CD:
 # En pipeline
 php artisan test --testsuite=integration --filter=Workflow
+
+Smoke Tests
+Objetivo
+Qué valida:
+
+Funcionamiento básico de la aplicación Laravel y sus componentes críticos
+
+Disponibilidad de endpoints principales (web y API)
+
+Conectividad a base de datos
+
+Autenticación y autorización básica
+
+Integridad de middlewares (CORS, auth)
+
+Respuesta adecuada de servicios externos mockeados
+
+NO valida:
+
+Lógica de negocio compleja
+
+Flujos completos de usuario
+
+Rendimiento o carga del sistema
+
+Integración con servicios externos reales
+
+Casos edge o validaciones específicas
+
+Cómo ejecutar
+Local
+# Ejecutar todos los tests de smoke
+php artisan test --testsuite=smoke --filter=SmokeTest
+
+# Ejecutar test específico
+php artisan test --filter=application_returns_successful_response
+
+# Con cobertura
+php artisan test --coverage --min=80 --testsuite=smoke
+
+CI/CD
+# En pipeline (ejemplo GitHub Actions)
+- name: Run Smoke Tests
+  run: |
+    php artisan migrate:fresh --seed
+    php artisan test --testsuite=Feature --stop-on-failure
+      
+  env:
+    DB_CONNECTION: pgsql
+    DB_DATABASE: :memory:
+    APP_ENV: testing
+
+Datos de prueba
+Factories utilizadas
+User::factory()->create(['cv_id' => null]);
+
+Seeds necesarios
+Ninguno específico (usa RefreshDatabase)
+Factory básica de User
+
+Datos mockeados
+Http::fake([
+    'servicios.ing.uaslp.mx/ws_cacei/ValidaUsuario.php' => Http::response([
+        'correcto' => false,
+        'datos' => []
+    ], 200)
+]);
+
+Criterios de salida
+Cobertura mínima
+100% de tests deben pasar
+
+0% de flakiness tolerado
+
+Latencia máxima
+Ejecución completa < 30 segundos
+
+Respuesta individual < 2 segundos por test
+
+SLAs de prueba
+Disponibilidad aplicación: HTTP 200 en /
+
+Health check: HTTP 200 o 404 (nunca 500)
+
+Database: conexión < 1 segundo
+
+Auth: respuestas < 3 segundos
+
+Errores tolerados
+404 aceptables en endpoints opcionales
+
+403 aceptables en autorización
+
+NO se toleran errores 500
+
+Reportes
+Rutas de reportes
+# Reporte JUnit (CI/CD)
+./storage/logs/junit.xml
+
+# Reporte PHPUnit
+./reports/test-results.html
+
+# Logs de ejecución
+./storage/logs/laravel.log
+
+Formato de reportes
+JUnit: ./junit.xml
+
+HTML: ./reports/coverage/
+
+Console: Salida estándar de PHPUnit
+
+Mantenimiento
+Rotación de datos
+Base de datos se refresca automáticamente (RefreshDatabase)
+
+No requiere limpieza manual
+
+Factories se regeneran en cada ejecución
+
+Responsable
+Equipo de Desarrollo: Mantenimiento de tests
+
+DevOps: Ejecución en CI/CD
+
+QA: Validación de criterios
+
+Revisión trimestral
+Actualizar endpoints obsoletos
+
+Revisar mocks de servicios externos
+
+Actualizar factories según cambios en modelos
+
+Validar criterios de performance
+
+Checklist de mantenimiento
+Todos los endpoints siguen existiendo
+
+Estructura de respuestas JSON no ha cambiado
+
+Permisos de usuario siguen siendo consistentes
+
+Services externos mockeados reflejan API actual
+
+Factories coinciden con estructura de BD actual
