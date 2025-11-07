@@ -17,8 +17,8 @@ class SectionController extends Controller
     {
         $request->validate([
             'category_id' => 'required|int',
-            'section_name' => 'required|string|max:25',
-            'section_description' => 'required|string|max:50',
+            'section_name' => 'required|string|max:100',
+            'section_description' => 'required|string|max:1500',
             'is_standard' => 'required|boolean'
         ]);
 
@@ -51,8 +51,8 @@ class SectionController extends Controller
     {
         $request->validate([
             'section_id' => 'required|int',
-            'section_name' => 'nullable|string|max:25',
-            'section_description' => 'nullable|string|max:50',
+            'section_name' => 'nullable|string|max:100',
+            'section_description' => 'nullable|string|max:1500',
             'is_standard' => 'required|boolean'
         ]);
 

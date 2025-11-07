@@ -20,8 +20,8 @@ class StandardController extends Controller
         $indice = 0;
         $request->validate([
             'section_id' => 'required|int',
-            'standard_name' => 'required|string|max:25',
-            'standard_description' => 'required|string|max:50',
+            'standard_name' => 'required|string|max:100',
+            'standard_description' => 'required|string|max:1500',
             'is_transversal' => 'required|boolean',
             'help' => 'required|string|max:255'
         ]);
@@ -56,8 +56,8 @@ class StandardController extends Controller
     {
         $request->validate([
             'standard_id' => 'required|int',
-            'standard_name' => 'nullable|string|max:25',
-            'standard_description' => 'nullable|string|max:50',
+            'standard_name' => 'nullable|string|max:100',
+            'standard_description' => 'nullable|string|max:1500',
             'is_transversal' => 'nullable|boolean',
             'help' => 'nullable|string|max:255'
         ]);

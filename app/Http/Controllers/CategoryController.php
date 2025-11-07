@@ -25,7 +25,7 @@ class CategoryController extends Controller
         $indice = 0;
         $request->validate([
             'frame_id' => 'required|int',
-            'category_name' => 'required|string|max:50'
+            'category_name' => 'required|string|max:100'
         ]);
 
         // Generar un ID único
@@ -55,7 +55,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'category_id' => 'required|int',
-            'category_name' => 'required|string|max:50'
+            'category_name' => 'required|string|max:100'
         ]);
 
         $category = Category::find($request->category_id);
