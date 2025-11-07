@@ -63,8 +63,6 @@ Asegúrate de tener instalados los siguientes requisitos antes de continuar:
    composer require phpoffice/phpword
 ```
 
-
-
 ## Ejecutar el Servidor (Desarrollo)
 
 Para iniciar el servidor localmente necesitarás dos terminales, en la primera, usa:
@@ -79,7 +77,8 @@ En la segunda:
 php artisan serve
 ```
 
--    Al realizar cambios en los archivos, ejecutar estos comandos:
+-   Al realizar cambios en los archivos de configuración, ejecutar estos comandos:
+
 ```sh
     php artisan config:clear
     php artisan cache:clear
@@ -88,12 +87,6 @@ php artisan serve
 ```
 
 ## Ejecutar el Servidor (Producción)
-
-Construye el proyecto:
-
-```sh
-npm run build
-```
 
 Para iniciar el servidor, usa:
 
@@ -123,13 +116,17 @@ php artisan schedule:run >> /dev/null 2>&1
 ```
 
 No olvidar que para usar helpers agregarlos en el autoload de composer.json y ejecutar el comando:
+
 ```sh
 composer dump-autoload
 ```
-### Configuración de PHP
-Para que la aplicación permita manejar tamaños elevados de evidencias y trabajos, es necesario modificar `php.ini`, almacenado en los archivos de PHP del dispositivo 
 
-Usando XAMPP, se encuentra en `xampp/php/php.ini`, donde se deben editar estos parámetros:
+### Configuración de PHP
+
+Para que la aplicación permita manejar tamaños elevados de evidencias y trabajos, es necesario modificar `php.ini`, almacenado en los archivos de PHP del dispositivo
+
+Busca el directorio `php/php.ini`, donde se deben editar estos parámetros:
+
 ```ini
 ; para subir archivos
 upload_max_filesize = 100M
@@ -148,10 +145,15 @@ date.timezone = "America/Mexico_City"
 ; en caso de tener problemas de autenticación de la aplicación
 curl.cainfo = "C:\xampp\php\extras\ssl\cacert.pem"
 openssl.cafile = "C:\xampp\php\extras\ssl\cacert.pem"
+
+; descomentar las siguientes líneas para otorgar autorización para usar pg admin
+extension=pdo_pgsql
+extension=pgsql
 ```
 
 ## Troubleshooting
-- Error 413 (Request Entity Too Large -> revisar `php.ini` los parámetros `post_max_size` y `upload_max_filesize`
-- Error 500 -> revisar registros en `storage/logs/laravel.log`
-- Problemas de sesión -> revisar permisos en `storage/framework/sessions`
-- Problemas de autenticación -> revisar `php.ini` los parámetros `curl.cainfo` y `openssl.cafile`. Sustituir por "C:ruta\a\xampp\php\extras\ssl\cacert.pem"
+
+-   Error 413 (Request Entity Too Large -> revisar `php.ini` los parámetros `post_max_size` y `upload_max_filesize`
+-   Error 500 -> revisar registros en `storage/logs/laravel.log`
+-   Problemas de sesión -> revisar permisos del directorio `storage/framework/sessions`
+-   Problemas de autenticación -> revisar `php.ini` los parámetros `curl.cainfo` y `openssl.cafile`. Sustituir por "C:ruta\a\xampp\php\extras\ssl\cacert.pem"
