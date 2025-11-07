@@ -12,7 +12,7 @@ class Standard extends Model
     public $timestamps = false;
     protected $primaryKey = 'standard_id';
     protected $foreignKey = 'section_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     protected $fillable = [
         'standard_id',
