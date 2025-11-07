@@ -333,16 +333,16 @@ INSERT INTO areas (area_id, area_name) VALUES
 ('6', 'Área de Metalurgia y Materiales');
 
 INSERT INTO careers (career_id, area_id, career_name) VALUES
-(68, '7', 'Ingeniería Agroindustrial'),
-(77, '4', 'Ingeniería Ambiental'),
-(63, '3', 'Ingeniería Civil'),
-(75, '2', 'Ingeniería en Computación'),
-(78, '5', 'Ingeniería en Electricidad y Automatización'),
-(64, '4', 'Ingeniería en Geología'),
-(83, '2', 'Ingeniería en Sistemas Inteligentes'),
-(84, '3', 'Ingeniería en Topografía y Construcción'),
-(72, '5', 'Ingeniería Mecánica'),
-(69, '5', 'Ingeniería Mecánica Administrativa'),
-(65, '5', 'Ingeniería Mecánica Eléctrica'),
-(80, '5', 'Ingeniería Mecatrónica'),
-(76, '6', 'Ingeniería Metalúrgica y de Materiales');
+(1, '7', 'Ingeniería Agroindustrial'),
+(2, '4', 'Ingeniería Ambiental'),
+(3, '3', 'Ingeniería Civil'),
+(4, '2', 'Ingeniería en Computación'),
+(5, '5', 'Ingeniería en Electricidad y Automatización'),
+(6, '4', 'Ingeniería en Geología'),
+(7, '2', 'Ingeniería en Sistemas Inteligentes'),
+(8, '3', 'Ingeniería en Topografía y Construcción'),
+(9, '5', 'Ingeniería Mecánica'),
+(10, '5', 'Ingeniería Mecánica Administrativa'),
+(11, '5', 'Ingeniería Mecánica Eléctrica'),
+(12, '5', 'Ingeniería Mecatrónica'),
+(13, '6', 'Ingeniería Metalúrgica y de Materiales');
