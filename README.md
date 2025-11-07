@@ -42,6 +42,7 @@ Asegúrate de tener instalados los siguientes requisitos antes de continuar:
     DB_DATABASE=tu_base_de_datos
     DB_USERNAME=tu_usuario
     DB_PASSWORD=tu_contraseña
+    SANCTUM_TOKEN_INACTIVITY_LIMIT=20
     ```
 
 5. Ejecuta las migraciones (_queda pendiente la asignación de roles por su cargo_):
