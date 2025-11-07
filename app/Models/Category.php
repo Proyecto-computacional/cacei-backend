@@ -13,7 +13,7 @@ class Category extends Model
     public $timestamps = false;
     protected $primaryKey = 'category_id';
     protected $foreignKey = 'frame_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     protected $fillable = [
         'category_id',

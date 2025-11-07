@@ -202,12 +202,8 @@ class EvidenceController extends Controller
             'due_date' => 'required|date'
         ]);
 
-        do {
-            $randomId = rand(1, 100);
-        } while (Evidence::where('evidence_id', $randomId)->exists()); // Verifica que no se repita
 
         $evidence = Evidence::create([
-            'evidence_id' => $randomId,
             'standard_id' => $request->standard_id,
             'user_rpe' => $request->user_rpe,
             'process_id' => $request->process_id,
