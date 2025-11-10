@@ -77,14 +77,9 @@ class FileController extends Controller
                         continue;
                     }
 
-                    // Generar un ID único por archivo
-                    do {
-                        $randomId = rand(1, 1000000);
-                    } while (File::where('file_id', $randomId)->exists());
-
                     // Preparar nuevo nombre y path
                     $extension = $file->getClientOriginalExtension();
-                    $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '-' . $randomId . '.' . $extension;
+                    $newName = $standard_id . '_' . $evidence_id . '_' . $group_id . '-' . uniqid() . '.' . $extension;
                     $path_name = 'uploads/' . $evidence_id;
 
                     // Asegurarse de que el directorio existe
@@ -104,7 +99,6 @@ class FileController extends Controller
 
                     // Crear registro
                     $newFile = File::create([
-                        'file_id' => $randomId,
                         'file_url' => $path,
                         'upload_date' => now(),
                         'evidence_id' => $evidence_id,

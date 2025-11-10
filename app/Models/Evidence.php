@@ -13,7 +13,7 @@ class Evidence extends Model
     public $timestamps = false;
     protected $primaryKey = 'evidence_id';
     protected $foreignKey = 'standard_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [

@@ -24,13 +24,7 @@ class AccreditationProcessController extends Controller
             'due_date' => 'required|date|after:start_date|before_or_equal:end_date'
         ]);
 
-        // Generate a unique process_id
-        do {
-            $processId = rand(1, 1000);
-        } while (Accreditation_Process::where('process_id', $processId)->exists());
-
         $process = Accreditation_Process::create([
-            'process_id' => $processId,
             'career_id' => $request->career_id,
             'frame_id' => $request->frame_id,
             'process_name' => $request->process_name,
