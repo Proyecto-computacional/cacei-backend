@@ -21,6 +21,8 @@ use App\Http\Controllers\GroupController;
 use App\Models\Accreditation_Process;
 use Illuminate\Support\Str;
 
+use function Psy\debug;
+
 class GenerateAcreditacionZip implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -42,7 +44,11 @@ class GenerateAcreditacionZip implements ShouldQueue
         ////Log::info("procesoId: " . $this->procesoId);
         $includeCV = ["categoryIndex" => 5, "sectionIndex" => 1, "standardIndex" => 1];
         $procesoId = $this->procesoId;
-        $proceso = Accreditation_Process::with('frame.categories.sections.standards.evidences.files')->find($procesoId);
+       $proceso = Accreditation_Process::with([
+            'frame.categories.sections.standards.evidences.files',
+            'frame.categories.sections.standards.evidences.lastAdminStatus'
+        ])->find($procesoId);
+
         $area = $proceso->career->area->area_id;
         
         $filesAdded = 0;
@@ -96,18 +102,23 @@ class GenerateAcreditacionZip implements ShouldQueue
                         }
                     }
                     foreach ($standard->evidences as $evidence) {
-                        foreach($evidence->files as $file){
-                                $fileExtension = pathinfo($file->file_url, PATHINFO_EXTENSION);
-                                $outpath = storage_path("app/{$standardPath}.{$fileExtension}");
-                                //Log::debug("file Outhpath {$outpath}");
-                                $filePath = storage_path("app/public/{$file->file_url}");
-                                //Log::debug("file path {$filePath}");
-                                $response = copy($filePath, $outpath);
-                                //Log::debug("file copy response {$response}");
-                                $filesAdded++;
+                        if($evidence->lastAdminStatus){
+                            Log::debug($evidence->lastAdminStatus);
+                            if($evidence->lastAdminStatus->status_description === 'APROBADA'){
+                                foreach($evidence->files as $file){
+                                        $fileExtension = pathinfo($file->file_url, PATHINFO_EXTENSION);
+                                        $outpath = storage_path("app/{$standardPath}.{$fileExtension}");
+                                        //Log::debug("file Outhpath {$outpath}");
+                                        $filePath = storage_path("app/public/{$file->file_url}");
+                                        //Log::debug("file path {$filePath}");
+                                        $response = copy($filePath, $outpath);
+                                        //Log::debug("file copy response {$response}");
+                                        $filesAdded++;
+                                }
                             }
                         }
                     }
+                }
             }
         }
         
