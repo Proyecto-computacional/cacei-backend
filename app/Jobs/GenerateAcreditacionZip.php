@@ -20,7 +20,6 @@ use App\Http\Controllers\CvController;
 use App\Http\Controllers\GroupController;
 use App\Models\Accreditation_Process;
 use Illuminate\Support\Str;
-
 use function Psy\debug;
 
 class GenerateAcreditacionZip implements ShouldQueue
