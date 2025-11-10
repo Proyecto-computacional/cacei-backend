@@ -22,7 +22,7 @@ class Accreditation_Process extends Model
     ];
     public $timestamps = false;
     protected $primaryKey = 'process_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $table = 'accreditation_processes';

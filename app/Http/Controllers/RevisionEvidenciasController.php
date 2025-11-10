@@ -183,12 +183,6 @@ class RevisionEvidenciasController extends Controller
 
         // Solo crear notificación si el estado no es PENDIENTE
         if ($estado !== 'PENDIENTE') {
-            // Generar un ID único
-            do {
-                $randomId = rand(1, 100);
-            } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
-
-            Log::info('reviser_rpe: ' . $reviser_rpe);
             //crea la notificacion y carga el comentario..
             Notification::create([
                 'title' => "Evidencia {$estado}",

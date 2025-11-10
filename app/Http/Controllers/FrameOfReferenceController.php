@@ -21,16 +21,14 @@ class FrameOfReferenceController extends Controller
             'frame_name' => 'required|string|max:60',
         ]);
 
-        // Generar un ID único
-        do {
-            $randomId = rand(1, 100);
-        } while (FrameOfReference::where('frame_id', $randomId)->exists()); // Verifica que no se repita
-
         $frame = new FrameOfReference();
-        $frame->frame_id = $randomId;
         $frame->frame_name = $request->input('frame_name');
 
         $frame->save();
+         
+        //para obtener el id con el que se guardo en la base de datos
+        $frame->refresh();
+
 
         return response()->json([
             'message' => 'Registro creado correctamente',
@@ -57,6 +55,9 @@ class FrameOfReferenceController extends Controller
         $frame->frame_name = $request->input('frame_name');
 
         $frame->save();
+
+        //para obtener el id con el que se guardo en la base de datos
+        $frame->refresh();
 
         return response()->json([
             'message' => 'Registro actualizado correctamente.',

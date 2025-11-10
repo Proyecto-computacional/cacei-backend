@@ -28,17 +28,11 @@ class CategoryController extends Controller
             'category_name' => 'required|string|max:50'
         ]);
 
-        // Generar un ID único
-        do {
-            $randomId = rand(1, 100);
-        } while (Category::where('category_id', $randomId)->exists()); // Verifica que no se repita
-
         do {
             $indice = $indice + 1;
         } while (Category::where('indice', $indice)->where('frame_id', $request->input('frame_id'))->exists());
 
         $category = new Category();
-        $category->category_id = $randomId;
         $category->frame_id = $request->input('frame_id');
         $category->category_name = $request->input('category_name');
         $category->indice = $indice;
