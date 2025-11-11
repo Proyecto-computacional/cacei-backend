@@ -17,6 +17,7 @@ class Evidence extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
+        'status_id',
         'evidence_id',
         'standard_id',
         'user_rpe',
@@ -37,6 +38,17 @@ class Evidence extends Model
     {
         return $this->hasMany(Status::class, 'evidence_id');
     } 
+
+    //Saber si la evidencia esta aprobada defintivamente
+    public function lastAdminStatus()
+    {
+        return $this->hasOne(Status::class, 'evidence_id')
+            ->whereHas('user', function ($query) {
+                $query->where('user_role', 'ADMINISTRADOR');
+            })
+            ->latest('status_id');
+    }
+
     // Relación con Standard (Cada evidencia pertenece a un estándar)
     public function standard()
     {
