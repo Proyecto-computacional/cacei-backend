@@ -103,6 +103,7 @@ class CvController extends Controller
 
         // Insertar valores
         $nombres = explode(' ', $cv->professor_name);
+        $template->setValue('rpe', $user->user_rpe);
         $template->setValue('paterno', $nombres[0] ?? ''); 
         $template->setValue('materno', $nombres[1] ?? '');
         $template->setValue('nombre', implode(' ', array_slice($nombres, 2)) ?? '');
