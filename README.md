@@ -130,6 +130,13 @@ php artisan serve
 
 Para probar los endpoints, puedes usar **Postman**.
 
+Para más información sobre cómo configurar y ejecutar las pruebas, consulta el archivo [Archivo_de_Pruebas.md](./docs/testing/Archivo_de_Pruebas.md) que contiene:
+
+- Instalaciones necesarias para testing
+- Configuración de Dusk para pruebas E2E
+- Guías de integración para autenticación
+- Comandos para verificar la configuración de pruebas
+
 ## Helpers y configuraciones
 
 ### Programador de tareas (Scheduler)
