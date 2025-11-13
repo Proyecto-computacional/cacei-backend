@@ -25,6 +25,7 @@ class UserFactory extends Factory
     {
         return [
             'user_rpe' => $this->faker->unique()->numberBetween(100000, 999999),
+            'user_name' => $this->faker->userName(),
             'user_mail' => $this->faker->email(),
             'user_role' => $this->faker->randomElement([
                 'ADMINISTRADOR',
@@ -37,6 +38,8 @@ class UserFactory extends Factory
                 'DEPARTAMENTO UNIVERSITARIO',
                 'PERSONAL DE APOYO'
             ]),
+            'user_area' => '2',
+            'cv_id' => null,
         ];
     }
 

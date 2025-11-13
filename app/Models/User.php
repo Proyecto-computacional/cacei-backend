@@ -49,12 +49,17 @@ class User extends Authenticatable
   
     public function sentNotification()
     {
-        return $this->hasMany(Notification::class, 'user_rpe');
+        return $this->hasMany(Notification::class, 'user_rpe', 'user_rpe');
     }
 
     public function revisers()
     {
         return $this->hasMany(Reviser::class, 'user_rpe', 'user_rpe');
+    }
+
+    public function reviserNotifications()
+    {
+        return $this->hasMany(Notification::class, 'reviser_id', 'user_rpe');
     }
 
     public function area()
