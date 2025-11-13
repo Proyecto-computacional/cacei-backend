@@ -6,10 +6,41 @@ Este es el backend del proyecto, desarrollado con Laravel y PostgreSQL.
 
 Asegúrate de tener instalados los siguientes requisitos antes de continuar:
 
+-   [Git](https://git-scm.com/)
 -   [PHP 8.1+](https://www.php.net/)
 -   [Composer](https://getcomposer.org/)
 -   [PostgreSQL](https://www.postgresql.org/)
 -   [PgAdmin 4](https://www.pgadmin.org/) (opcional para administración visual)
+
+### Configuración de PHP
+
+Para que la aplicación permita manejar tamaños elevados de evidencias y trabajos, es necesario modificar `php.ini`, almacenado en los archivos de PHP del dispositivo
+
+Busca el directorio `php/php.ini`, donde se deben editar estos parámetros:
+
+```ini
+; para subir archivos
+upload_max_filesize = 100M
+post_max_size = 100M
+
+; para procesos pesados
+memory_limit = 512M
+
+; para tiempos elevados de trabajos
+max_execution_time = 300
+max_input_time = 300
+
+; para horario de zona
+date.timezone = "America/Mexico_City"
+
+; en caso de tener problemas de autenticación de la aplicación
+curl.cainfo = "C:\xampp\php\extras\ssl\cacert.pem"
+openssl.cafile = "C:\xampp\php\extras\ssl\cacert.pem"
+
+; descomentar las siguientes líneas para otorgar autorización para usar pg admin
+extension=pdo_pgsql
+extension=pgsql
+```
 
 ## Instalación
 
@@ -120,36 +151,6 @@ No olvidar que para usar helpers agregarlos en el autoload de composer.json y ej
 
 ```sh
 composer dump-autoload
-```
-
-### Configuración de PHP
-
-Para que la aplicación permita manejar tamaños elevados de evidencias y trabajos, es necesario modificar `php.ini`, almacenado en los archivos de PHP del dispositivo
-
-Busca el directorio `php/php.ini`, donde se deben editar estos parámetros:
-
-```ini
-; para subir archivos
-upload_max_filesize = 100M
-post_max_size = 100M
-
-; para procesos pesados
-memory_limit = 512M
-
-; para tiempos elevados de trabajos
-max_execution_time = 300
-max_input_time = 300
-
-; para horario de zona
-date.timezone = "America/Mexico_City"
-
-; en caso de tener problemas de autenticación de la aplicación
-curl.cainfo = "C:\xampp\php\extras\ssl\cacert.pem"
-openssl.cafile = "C:\xampp\php\extras\ssl\cacert.pem"
-
-; descomentar las siguientes líneas para otorgar autorización para usar pg admin
-extension=pdo_pgsql
-extension=pgsql
 ```
 
 ## Troubleshooting
