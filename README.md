@@ -6,10 +6,41 @@ Este es el backend del proyecto, desarrollado con Laravel y PostgreSQL.
 
 Asegúrate de tener instalados los siguientes requisitos antes de continuar:
 
+-   [Git](https://git-scm.com/)
 -   [PHP 8.1+](https://www.php.net/)
 -   [Composer](https://getcomposer.org/)
 -   [PostgreSQL](https://www.postgresql.org/)
 -   [PgAdmin 4](https://www.pgadmin.org/) (opcional para administración visual)
+
+### Configuración de PHP
+
+Para que la aplicación permita manejar tamaños elevados de evidencias y trabajos, es necesario modificar `php.ini`, almacenado en los archivos de PHP del dispositivo
+
+Busca el directorio `php/php.ini`, donde se deben editar estos parámetros:
+
+```ini
+; para subir archivos
+upload_max_filesize = 100M
+post_max_size = 100M
+
+; para procesos pesados
+memory_limit = 512M
+
+; para tiempos elevados de trabajos
+max_execution_time = 300
+max_input_time = 300
+
+; para horario de zona
+date.timezone = "America/Mexico_City"
+
+; en caso de tener problemas de autenticación de la aplicación
+curl.cainfo = "C:\xampp\php\extras\ssl\cacert.pem"
+openssl.cafile = "C:\xampp\php\extras\ssl\cacert.pem"
+
+; descomentar las siguientes líneas para otorgar autorización para usar pg admin
+extension=pdo_pgsql
+extension=pgsql
+```
 
 ## Instalación
 
@@ -95,9 +126,72 @@ Para iniciar el servidor, usa:
 php artisan serve
 ```
 
-## Pruebas de la API
+## Pruebas de la API con Postman
 
-Para probar los endpoints, puedes usar **Postman**.
+### Instalación de Postman
+
+1. Descarga Postman desde [https://www.postman.com/downloads/](conseguir plan gratuito)
+2. Instala la aplicación en tu sistema operativo
+
+### Configuración Inicial
+
+#### 1. Crear un ambiente en Postman
+
+1. Abre Postman
+2. Click en **Environments** (lado izquierdo)
+3. Click en **Create New Environment**
+4. Nombra tu ambiente (ej: `CACEI Backend Local`)
+5. Agrega estas variables:
+
+|  Variable  |          Valor          |          Descripción          |
+|------------|-------------------------|-------------------------------|
+| `base_url` | `http://localhost:8000` | URL base de tuservidorLaravel |
+|  `token`   |(se actualiza después del login)| Token de autenticación |
+
+6. Guarda el ambiente
+
+#### 2. Seleccionar el ambiente
+
+En la esquina superior derecha de Postman, selecciona tu ambiente en el dropdown que dice **No Environment**
+
+### Endpoints Principales
+
+#### **1. Login (Obtener Token)**
+
+```
+POST {{base_url}}/api/login
+```
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body (JSON):**
+```json
+{
+  "user_mail": "profesor@example.com",
+  "password": "tu_contraseña"
+}
+```
+
+**Respuesta esperada:**
+```json
+{
+  "access_token": "1|abc123xyz...",
+  "token_type": "Bearer",
+  "expires_in": 1440
+}
+```
+### Documentación adicional
+
+Para más información sobre cómo configurar y ejecutar las pruebas, consulta el archivo [Archivo_de_Pruebas.md](./docs/testing/Archivo_de_Pruebas.md) que contiene:
+
+- Instalaciones necesarias para testing
+- Configuración de Dusk para pruebas E2E
+- Guías de integración para autenticación
+- Comandos para verificar la configuración de pruebas
+
 
 ## Helpers y configuraciones
 
@@ -120,36 +214,6 @@ No olvidar que para usar helpers agregarlos en el autoload de composer.json y ej
 
 ```sh
 composer dump-autoload
-```
-
-### Configuración de PHP
-
-Para que la aplicación permita manejar tamaños elevados de evidencias y trabajos, es necesario modificar `php.ini`, almacenado en los archivos de PHP del dispositivo
-
-Busca el directorio `php/php.ini`, donde se deben editar estos parámetros:
-
-```ini
-; para subir archivos
-upload_max_filesize = 100M
-post_max_size = 100M
-
-; para procesos pesados
-memory_limit = 512M
-
-; para tiempos elevados de trabajos
-max_execution_time = 300
-max_input_time = 300
-
-; para horario de zona
-date.timezone = "America/Mexico_City"
-
-; en caso de tener problemas de autenticación de la aplicación
-curl.cainfo = "C:\xampp\php\extras\ssl\cacert.pem"
-openssl.cafile = "C:\xampp\php\extras\ssl\cacert.pem"
-
-; descomentar las siguientes líneas para otorgar autorización para usar pg admin
-extension=pdo_pgsql
-extension=pgsql
 ```
 
 ## Troubleshooting
