@@ -45,7 +45,7 @@ class RevisionEvidenciasController extends Controller
             $reviser_rpe = $request->reviser_rpe;
         }
 
-        //solo aprovadp o rechazado puede tener retroalimentacIon
+        //solo aprovado o rechazado puede tener retroalimentación
         $feedback = in_array($estado, ['APROBADA', 'NO APROBADA',]) ? $request->feedback : "";
 
         if ($estado === 'PENDIENTE') {
@@ -62,6 +62,7 @@ class RevisionEvidenciasController extends Controller
                     'status_date' => Carbon::now('America/Mexico_City')
                 ]);
             } else {
+                $user = User::where('user_rpe', $reviser_rpe)->first();
                 // Si no existe, crear uno nuevo
                 Status::create([
                     'evidence_id' => $request->evidence_id,
@@ -70,6 +71,16 @@ class RevisionEvidenciasController extends Controller
                     'status_date' => Carbon::now('America/Mexico_City'),
                     'feedback' => $feedback
                 ]);
+                if($user->user_role !== 'ADMINISTRADOR'){
+                    $adminUser = User::where('user_role', 'ADMINISTRADOR')->first();
+                    Status::create([
+                        'evidence_id' => $request->evidence_id,
+                        'user_rpe' => $adminUser->user_rpe,
+                        'status_description' => $estado,
+                        'status_date' => Carbon::now('America/Mexico_City'),
+                        'feedback' => $feedback
+                    ]);
+                } 
             }
         } else {
             $status = Status::where('user_rpe', $reviser_rpe)
@@ -100,9 +111,6 @@ class RevisionEvidenciasController extends Controller
 
                 if ($user->user_role === "ADMINISTRADOR") {
                     // Primero, aprobar el propio status del administrador
-                    // MARCAR PARA HACER BACKUP - ADMINISTRADOR APRUEBA
-                    $shouldBackup = true;
-
                     Status::updateOrCreate(
                         [
                             'evidence_id' => $evidence->evidence_id,
@@ -151,7 +159,6 @@ class RevisionEvidenciasController extends Controller
                     }
                 } else {
                     $nextRevisors = (new EvidenceController)->nextRevisor($user, $evidence);
-
                     if ($nextRevisors && count($nextRevisors) > 0) {
                         foreach ($nextRevisors as $nextRpe) {
                             Status::create([

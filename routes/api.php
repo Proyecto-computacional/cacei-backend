@@ -337,3 +337,12 @@ Route::middleware(['auth:sanctum', 'refreshToken'])->get('/categories/progress/{
 
 // 14. Backup
 Route::middleware(['auth:sanctum', 'refreshToken'])->get('/backup', [BackupController::class, 'backup']);
+
+//15. Health check
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now(),
+        'environment' => app()->environment()
+    ]);
+});
