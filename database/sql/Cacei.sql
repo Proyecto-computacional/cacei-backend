@@ -138,9 +138,9 @@ CREATE TABLE educations (
 
 CREATE TABLE teacher_trainings (
     teacher_training_id BIGSERIAL NOT NULL,
-    title_certification VARCHAR(50),
+    title_certification VARCHAR(200),
     obtained_year INT,
-    institution_country VARCHAR(50),
+    institution_country VARCHAR(150),
     hours INT,
     cv_id BIGINT,
     PRIMARY KEY (teacher_training_id),
@@ -180,8 +180,8 @@ CREATE TABLE academic_products (
 CREATE TABLE laboral_experiences (
     laboral_experience_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    company_name VARCHAR(60),
-    position VARCHAR(60),
+    company_name VARCHAR(160),
+    position VARCHAR(270),
     start_date VARCHAR(10),
     end_date VARCHAR(10),
     PRIMARY KEY (laboral_experience_id),
@@ -193,7 +193,7 @@ CREATE TABLE engineering_designs (
     cv_id BIGINT,
     institution VARCHAR(70),
     period INT,
-    level_experience VARCHAR(20),
+    level_experience VARCHAR(40),
     PRIMARY KEY (engineering_design_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
@@ -209,9 +209,9 @@ CREATE TABLE professional_achievements (
 CREATE TABLE participations (
     participation_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    institution VARCHAR(70),
+    institution VARCHAR(270),
     period INT,
-    level_participation INT,
+    level_participation VARCHAR(70),
     PRIMARY KEY (participation_id),
     FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
 );
