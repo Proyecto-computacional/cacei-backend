@@ -22,10 +22,11 @@ class Disciplinary_UpdatesSeeder extends Seeder
 
             $registros[] = [
                 "disciplinary_update_id" =>  preg_replace('/[^0-9]/', '',$row[0]),
-                "cv_id" => 1,
+                "cv_id" => preg_replace('/[^0-9]/', '',$row[1]),
                 "title_certification" => DatabaseSeeder::normalizeString($row[2]),
-                "institution_country" => DatabaseSeeder::normalizeString($row[3]),
-                "hours" => DatabaseSeeder::normalizeNumeric($row[4]),
+                "year_certification" => DatabaseSeeder::normalizeNumeric($row[3]),
+                //"institution_country" => DatabaseSeeder::normalizeNumeric($row[4]),
+                "hours" => DatabaseSeeder::normalizeNumeric($row[5]),
             ];
         }
 

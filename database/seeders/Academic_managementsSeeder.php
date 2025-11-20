@@ -25,8 +25,8 @@ class Academic_managementsSeeder extends Seeder
                 "cv_id" => preg_replace('/[^0-9]/', '',$row[1]),
                 "job_position" => DatabaseSeeder::normalizeString($row[2]),
                 "institution" => DatabaseSeeder::normalizeString($row[3]),
-                "start_date" => DatabaseSeeder::normalizeNumeric($row[4]),
-                "end_date" => DatabaseSeeder::normalizeNumeric($row[5]),
+                "start_date" => DatabaseSeeder::normalizeString($row[4]),
+                "end_date" => DatabaseSeeder::normalizeString($row[5]),
             ];
         }
 

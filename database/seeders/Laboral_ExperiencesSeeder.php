@@ -25,8 +25,8 @@ class Laboral_ExperiencesSeeder extends Seeder
                 "cv_id" => preg_replace('/[^0-9]/', '',$row[1]),
                 "company_name" => DatabaseSeeder::normalizeString($row[2]),
                 "position" => DatabaseSeeder::normalizeString($row[3]),
-                "start_date" => DatabaseSeeder::normalizeNumeric($row[4]),
-                "end_date" => DatabaseSeeder::normalizeNumeric($row[5]),
+                "start_date" => DatabaseSeeder::normalizeString($row[4]),
+                "end_date" => DatabaseSeeder::normalizeString($row[5]),
             ];
         }
 

@@ -28,7 +28,6 @@ class DatabaseSeeder extends Seeder
             AwardsSeeder::class,
             Academic_managementsSeeder::class,
             Academic_productsSeeder::class,
-            AwardsSeeder::class,
             Contruibutions_to_peSeeder::class,
             Disciplinary_UpdatesSeeder::class,
             EducationsSeeder::class,
