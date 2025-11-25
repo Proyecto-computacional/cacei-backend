@@ -27,8 +27,11 @@ class ReviserController extends Controller
                 'evidence_id' => $reviser->evidence_id,
                 'due_date' => $reviser->evidence->due_date,
                 'standard_name' => $reviser->evidence->standard->standard_name,
+                'standard_index' => $reviser->evidence->standard->indice,
                 'section_name' => $reviser->evidence->standard->section->section_name,
+                'section_index' => $reviser->evidence->standard->section->indice,
                 'category_name' => $reviser->evidence->standard->section->category->category_name,
+                'category_index' => $reviser->evidence->standard->section->category->indice,
                 'process_id' => $reviser->evidence->process_id
             ];
         });

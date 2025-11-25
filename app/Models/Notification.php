@@ -41,7 +41,7 @@ class Notification extends Model
     // Relación con el revisor usando user_rpe
     public function reviser()
     {
-        return $this->belongsTo(User::class, 'user_rpe', 'user_rpe');
+        return $this->belongsTo(User::class, 'reviser_id', 'user_rpe');
     }
 
     public function evidence()
