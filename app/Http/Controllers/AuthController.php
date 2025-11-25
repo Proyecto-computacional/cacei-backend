@@ -52,11 +52,7 @@ class AuthController extends Controller
                         ]);
                     }
                 } else {
-                    do {
-                        $randomId = rand(1, 100);
-                    } while (Cv::where('cv_id', $randomId)->exists()); // Verifica que no se repita
-                        Cv::create([
-                        'cv_id' => $randomId,
+                        $cv = Cv::create([
                         'professor_number' => $data['rpe'],
                         'professor_name' => $data['nombre'],
                         'actual_position' =>$data['cargo'],
@@ -68,7 +64,7 @@ class AuthController extends Controller
                         'user_role' => $data['cargo'],
                         'user_name' => $data['nombre'],
                         'user_area' => $data['cve_area'],
-                        'cv_id' => $randomId
+                        'cv_id' => $cv->cv_id
                     ]);                  
                 }
 

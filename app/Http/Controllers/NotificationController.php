@@ -93,14 +93,9 @@ class NotificationController extends Controller
             'description' => 'string|max:20',
         ]);
 
-        // Generar un ID único
-        do {
-            $randomId = rand(1, 100);
-        } while (Notification::where('notification_id', $randomId)->exists()); // Verifica que no se repita
 
         $notification = Notification::create([
             'title' => $request->title,
-            'evidence_id' => $request->evidence_id,
             'notification_date' => $request->notification_date,
             'user_rpe' => $request->user_rpe,
             'reviser_id' => $request->reviser_id,

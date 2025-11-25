@@ -13,7 +13,7 @@ class FrameOfReference extends Model
     protected $table = 'frames_of_reference';
     public $timestamps = false;
     protected $primaryKey = 'frame_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [

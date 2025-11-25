@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Jobs\GenerateAcreditacionZip;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -24,13 +25,7 @@ class AccreditationProcessController extends Controller
             'due_date' => 'required|date|after:start_date|before_or_equal:end_date'
         ]);
 
-        // Generate a unique process_id
-        do {
-            $processId = rand(1, 1000);
-        } while (Accreditation_Process::where('process_id', $processId)->exists());
-
         $process = Accreditation_Process::create([
-            'process_id' => $processId,
             'career_id' => $request->career_id,
             'frame_id' => $request->frame_id,
             'process_name' => $request->process_name,
@@ -128,8 +123,10 @@ class AccreditationProcessController extends Controller
         // Ejecutamos el job sin colas, de forma sincrónica
         GenerateAcreditacionZip::dispatchSync($processId);
 
+        $process = Accreditation_Process::find($processId);
         // Ruta del ZIP generado por el job
-        $zipPath = storage_path("app/zips/proceso_{$processId}.zip");
+        $zipName = Str::slug($process->process_name, '_') . '.zip';
+        $zipPath = storage_path("app/zips/{$zipName}");
         Log::debug($zipPath);
 
         // Si el archivo existe, lo devolvemos para descarga
@@ -254,7 +251,7 @@ class AccreditationProcessController extends Controller
         return response()->json(['message' => 'Estado de proceso actualizado']);  // Devuelve una respuesta JSON indicando que se actualizó el estado de favorito
     }
 
-    public function getCVsProcess($processId)
+    public static function getCVsProcess($processId)
     {
 
         $process = Accreditation_Process::with('career')->find($processId);

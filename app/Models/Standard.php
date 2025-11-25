@@ -12,7 +12,7 @@ class Standard extends Model
     public $timestamps = false;
     protected $primaryKey = 'standard_id';
     protected $foreignKey = 'section_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     protected $fillable = [
         'standard_id',
@@ -26,5 +26,9 @@ class Standard extends Model
     public function section()
     {
         return $this->belongsTo(Section::class, 'section_id');
+    }
+
+    public function evidences(){
+        return $this->hasMany(Evidence::class, 'standard_id');
     }
 }

@@ -12,7 +12,7 @@ class File extends Model
     protected $table = 'files';
     public $timestamps = false;
     protected $primaryKey = 'file_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [

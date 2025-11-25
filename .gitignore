@@ -29,3 +29,4 @@ public/phpinfo.php
 storage/app/zips
 !storage/app/public/CV_*.docx
 storage/app/private-backups/*
+storage/app/public/*
