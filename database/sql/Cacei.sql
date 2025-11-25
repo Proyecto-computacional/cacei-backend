@@ -73,7 +73,7 @@ CREATE TABLE frames_of_reference (
 
 CREATE TABLE categories (
     category_id BIGSERIAL NOT NULL,
-    category_name VARCHAR(60) NOT NULL,
+    category_name VARCHAR(100) NOT NULL,
     frame_id BIGINT NOT NULL,
     indice INT NOT NULL, 
     PRIMARY KEY (category_id),
@@ -83,8 +83,8 @@ CREATE TABLE categories (
 CREATE TABLE sections (
     section_id BIGSERIAL NOT NULL,
     category_id BIGINT NOT NULL,
-    section_name VARCHAR(50) NOT NULL,
-    section_description VARCHAR(150) NOT NULL,
+    section_name VARCHAR(1000) NOT NULL,
+    section_description VARCHAR(1500) NOT NULL,
     indice INT NOT NULL,
     is_standard BOOL,
     PRIMARY KEY (section_id),
@@ -94,8 +94,8 @@ CREATE TABLE sections (
 CREATE TABLE standards (
     standard_id BIGSERIAL NOT NULL,
     section_id BIGINT NOT NULL,
-    standard_name VARCHAR(50) NOT NULL,
-    standard_description VARCHAR(150) NOT NULL,
+    standard_name VARCHAR(100) NOT NULL,
+    standard_description VARCHAR(1500) NOT NULL,
     is_transversal BOOL NOT NULL,
     help VARCHAR(255),
     indice INT NOT NULL,
