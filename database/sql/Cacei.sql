@@ -127,109 +127,105 @@ CREATE TABLE revisers (
 CREATE TABLE educations (
     education_id BIGSERIAL NOT NULL,
     cv_id BIGINT NOT NULL,
-    institution VARCHAR(70),
+    institution VARCHAR(150),
     degree_obtained VARCHAR(1),
     obtained_year INT,
-    professional_license VARCHAR(10),
-    degree_name VARCHAR(100),
-    PRIMARY KEY (education_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    professional_license VARCHAR(50),
+    degree_name VARCHAR(150),
+    PRIMARY KEY (education_id)
 );
 
 CREATE TABLE teacher_trainings (
     teacher_training_id BIGSERIAL NOT NULL,
-    title_certification VARCHAR(50),
+    title_certification VARCHAR(200),
     obtained_year INT,
-    institution_country VARCHAR(50),
+    institution_country VARCHAR(150),
     hours INT,
     cv_id BIGINT,
-    PRIMARY KEY (teacher_training_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    PRIMARY KEY (teacher_training_id)
 );
 
 CREATE TABLE disciplinary_updates (
     disciplinary_update_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    title_certification VARCHAR(100),
+    title_certification VARCHAR(260),
     year_certification INT,
     institution_country VARCHAR(50),
     hours INT,
-    PRIMARY KEY (disciplinary_update_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    PRIMARY KEY (disciplinary_update_id)
 );
 
 CREATE TABLE academic_managements (
     academic_management_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    job_position VARCHAR(100),
-    institution VARCHAR(70),
+    job_position VARCHAR(250),
+    institution VARCHAR(200),
     start_date VARCHAR(10),
     end_date VARCHAR(10),
-    PRIMARY KEY (academic_management_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    PRIMARY KEY (academic_management_id)
+
 );
 
 CREATE TABLE academic_products (
     academic_product_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    description VARCHAR(150),
-    PRIMARY KEY (academic_product_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    description VARCHAR(300),
+    PRIMARY KEY (academic_product_id)
+
 );
 
 CREATE TABLE laboral_experiences (
     laboral_experience_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    company_name VARCHAR(60),
-    position VARCHAR(60),
+    company_name VARCHAR(160),
+    position VARCHAR(270),
     start_date VARCHAR(10),
     end_date VARCHAR(10),
-    PRIMARY KEY (laboral_experience_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    PRIMARY KEY (laboral_experience_id)
+
 );
 
 CREATE TABLE engineering_designs (
     engineering_design_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    institution VARCHAR(70),
+    institution VARCHAR(250),
     period INT,
-    level_experience VARCHAR(20),
-    PRIMARY KEY (engineering_design_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    level_experience VARCHAR(40),
+    PRIMARY KEY (engineering_design_id)
 );
 
 CREATE TABLE professional_achievements (
     professional_achievement_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
     description VARCHAR(500),
-    PRIMARY KEY (professional_achievement_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    PRIMARY KEY (professional_achievement_id)
+
 );
 
 CREATE TABLE participations (
     participation_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    institution VARCHAR(70),
+    institution VARCHAR(270),
     period INT,
-    level_participation INT,
-    PRIMARY KEY (participation_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    level_participation VARCHAR(70),
+    PRIMARY KEY (participation_id)
+
 );
 
 CREATE TABLE awards (
     award_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
-    description VARCHAR(255),
-    PRIMARY KEY (award_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    description VARCHAR(300),
+    PRIMARY KEY (award_id)
+
 );
 
 CREATE TABLE contributions_to_pe (
     contribution_id BIGSERIAL NOT NULL,
     cv_id BIGINT,
     description VARCHAR(500),
-    PRIMARY KEY (contribution_id),
-    FOREIGN KEY (cv_id) REFERENCES cvs(cv_id)
+    PRIMARY KEY (contribution_id)
+
 );
 
 CREATE TABLE careers (
